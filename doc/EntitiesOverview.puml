@@ -1,0 +1,72 @@
+@startuml
+class Benutzer{
+    String name,
+    String passwordHashed
+}
+class SerienEventController<? extends Event>{
+    ? event,
+    Date start,
+    Wiederholung wiederholung
+}
+
+abstract class Event{
+    String titel,
+    Herkunft herkunft,
+    Sichtbarkeit sichtbarkeit,
+    String Beschreibung,
+    Optional<SerienEventController> Serie
+}
+
+SerienEventController "0..1" o-- "0..*" Event
+SerienEventController::defaultEvent o-- "1" Event
+
+interface Herkunft{
+    getBesitzer(): Benutzer
+}
+
+Event "1" o-- "1" Herkunft
+
+interface Sichtbarkeit{
+    istSichtbarFuer(Benutzer): bool
+}
+
+Event "1" o-- "1" Sichtbarkeit
+
+class Termin extends Geplant{
+}
+
+interface Machbar{
+    istGetan(): bool
+}
+
+class Aufgabe extends Event implements Machbar{
+    Date deadline
+}
+
+class GeplanteAufgabe extends Geplant implements Machbar {
+
+}
+
+interface Wiederholung{
+    naechsterZeitpunktAb(Date): Date,
+    alleZeitpunkteInZeitraum(Zeitraum): List<Date>
+}
+
+abstract class Geplant extends Event{
+    Zeitraum zeitraum;
+}
+
+class Zuordnung{
+    Benutzer benutzer,
+    Event event
+}
+
+
+
+Event "1" o-- "0..*" Zuordnung
+Benutzer "1" o-- "0..*" Zuordnung
+Benutzer "1" o-- "0..*" Herkunft::getBesitzer
+
+SerienEventController "1" o-- "1" Wiederholung
+
+@enduml
