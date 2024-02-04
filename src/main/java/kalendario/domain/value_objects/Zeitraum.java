@@ -8,10 +8,10 @@ public final class Zeitraum {
     private final Date ende;
 
 
-    public Zeitraum(Date start, Date ende) throws IllegalAccessException {
+    public Zeitraum(Date start, Date ende) throws IllegalArgumentException {
         super();
         if(ende.before(start)){
-            throw new IllegalAccessException("Endzeitpunkt darf nicht vor dem Startzeitpunkt sein");
+            throw new IllegalArgumentException("Endzeitpunkt darf nicht vor dem Startzeitpunkt sein");
         }
         this.start = start;
         this.ende = ende;
