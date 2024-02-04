@@ -1,4 +1,6 @@
-package value_objects;
+package domain.entities.Serie;
+
+import domain.value_objects.Zeitraum;
 
 import java.util.Date;
 import java.util.List;

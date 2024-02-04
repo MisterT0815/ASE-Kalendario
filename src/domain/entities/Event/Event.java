@@ -1,28 +1,29 @@
-package entities;
+package domain.entities.Event;
 
 
-import java.util.Optional;
+import domain.entities.herkunft.Herkunft;
+import domain.entities.Serie.SerienId;
 
 public abstract class Event {
     protected String titel;
     protected Herkunft herkunft;
     protected Sichtbarkeit sichtbarkeit;
     protected String beschreibung;
-    private Optional<SerienEventController> Serie;
+    protected SerienId serienId;
 
     public Event(String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung) {
         this.titel = titel;
         this.herkunft = herkunft;
         this.sichtbarkeit = sichtbarkeit;
         this.beschreibung = beschreibung;
-        Serie = Optional.empty();
+        serienId = null;
     }
 
-    public <T extends Event> Event(String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, SerienEventController<T> serie) {
+    public Event(String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, SerienId serienId) {
         this.titel = titel;
         this.herkunft = herkunft;
         this.sichtbarkeit = sichtbarkeit;
         this.beschreibung = beschreibung;
-        Serie = Optional.of(serie);
+        this.serienId = serienId;
     }
 }

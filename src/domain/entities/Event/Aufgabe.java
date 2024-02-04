@@ -1,8 +1,12 @@
-package entities;
+package domain.entities.Event;
+
+import domain.entities.benutzer.Benutzer;
+import domain.entities.herkunft.Herkunft;
+import domain.entities.benutzer.Machbar;
 
 import java.util.Date;
 
-public class Aufgabe extends Event implements Machbar{
+public class Aufgabe extends Event implements Machbar {
 
     private Date deadline;
     private boolean getan = false;
@@ -13,7 +17,7 @@ public class Aufgabe extends Event implements Machbar{
         this.deadline = deadline;
     }
 
-    public Aufgabe(String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, SerienEventController<Aufgabe> serie, Date deadline) {
+    public Aufgabe(String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, domain.entities.Serie.Serie<Aufgabe> serie, Date deadline) {
         super(titel, herkunft, sichtbarkeit, beschreibung, serie);
         this.deadline = deadline;
     }

@@ -1,4 +1,4 @@
-package value_objects;
+package domain.value_objects;
 
 import java.util.Date;
 import java.util.Objects;

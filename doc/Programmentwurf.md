@@ -110,13 +110,13 @@ Abgabedatum:
 ## Ubiquitous Language
 [4 Beispiele für die Ubiquitous Language; jeweils Bezeichung, Bedeutung und kurze Begründung, warum es zur Ubiquitous Language gehört]
 
-| Bezeichnung   | Bedeutung                                                                  | Begründung                                                                                                                                   |
-|---------------|----------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
-| Event         | Überbegriff für im Kalendar anzeigbare Items                               | Event hier anders Benutzt als typischerweise im Programmierkontext, hier wird Begriff stattdessen aus Domainkontext genommen                 |
-| Serie         | Menge an Events, die alle durch Wiederholung desselben Events entstehen    | Wiederholbare Events, wie z.B. Geburtstage jedes Jahr, sollen so von normalen Events unterschieden werden                                    |
-| Geplant       | Solche Events, die in einem bestimmten (geplanten) Zeitraum stattfinden    | Unterscheidung von Events mit festem Start und Endzeitpunkt von anderen                                                                      |
-| Besitzer      | Derjenige Benutzer, der ein Event erstellt hat, ist dessen Besitzer        | Klare Definition um zu sehen, wem ein Event gehört |
-| Zuordnung     | Hinzufügen einer anderen Person zu einem Event, der nicht der Besitzer ist | Es kann Events geben, die für mehrere Nutzer relevant sind, wie bei z.B. Feiern, Besitzer eines Events können dies mittels Zuordnung umsetzen|
+| Bezeichnung | Bedeutung                                                               | Begründung                                                                                                                                       |
+|-------------|-------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| Event       | Überbegriff für im Kalendar anzeigbare Items                            | Event hier anders Benutzt als typischerweise im Programmierkontext, hier wird Begriff stattdessen aus Domainkontext genommen                     |
+| Serie       | Menge an Events, die alle durch Wiederholung desselben Events entstehen | Wiederholbare Events, wie z.B. Geburtstage jedes Jahr, sollen so von normalen Events unterschieden werden                                        |
+| Geplant     | Solche Events, die in einem bestimmten (geplanten) Zeitraum stattfinden | Unterscheidung von Events mit festem Start und Endzeitpunkt von anderen                                                                          |
+| Besitzer    | Derjenige Benutzer, der ein Event erstellt hat, ist dessen Besitzer     | Klare Definition um zu sehen, wem ein Event gehört                                                                                               |
+| Herkunft    | Ort/Programm/quelle an dem ein Event oder eine Serie erstellt wurde     | Das Programm soll Events aus mehreren Quellen zusammenführen. Damit klar ist wie ein Event entstanden ist, wird die Herkunft des Events benötigt |
 
 ## Entities
 [UML, Beschreibung und Begründung des Einsatzes einer Entity; falls keine Entity vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]
@@ -134,9 +134,9 @@ Zeitraum ist ein Wert in der Domäne, so Semantik definierbar.
 
 ## Aggregates
 [UML, Beschreibung und Begründung des Einsatzes eines Aggregates; falls kein Aggregate vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]
-Event zum Zugriff auf Herkunft und Sichbarkeit
+Event zum Zugriff auf Sichbarkeit
 
-SerienEventController zum Zugriff auf Wiederholung
+Serie zum Zugriff auf Wiederholung
 
 
 # Kapitel 7: Refactoring

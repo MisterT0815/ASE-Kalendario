@@ -1,8 +1,9 @@
-package entities;
+package domain.entities.Event;
 
-import value_objects.Zeitraum;
+import domain.entities.herkunft.Herkunft;
+import domain.value_objects.Zeitraum;
 
-public abstract class Geplant extends Event{
+public abstract class Geplant extends Event {
     protected Zeitraum zeitraum;
 
     public Geplant(String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum) {
@@ -10,7 +11,7 @@ public abstract class Geplant extends Event{
         this.zeitraum = zeitraum;
     }
 
-    public <T extends Event> Geplant(String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, SerienEventController<T> serie, Zeitraum zeitraum) {
+    public <T extends Event> Geplant(String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, domain.entities.Serie.Serie<T> serie, Zeitraum zeitraum) {
         super(titel, herkunft, sichtbarkeit, beschreibung, serie);
         this.zeitraum = zeitraum;
     }
