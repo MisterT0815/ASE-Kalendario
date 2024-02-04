@@ -1,4 +1,4 @@
-package main.java.domain.entities.Event;
+package main.java.domain.entities.event;
 
 public interface Machbar {
     public boolean istGetan();

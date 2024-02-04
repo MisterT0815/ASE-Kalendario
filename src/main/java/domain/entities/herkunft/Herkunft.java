@@ -1,7 +1,7 @@
 package main.java.domain.entities.herkunft;
 
-import main.java.domain.entities.benutzer.Benutzer;
+import main.java.domain.entities.benutzer.BenutzerId;
 
 public interface Herkunft {
-    public Benutzer getBesitzer();
+    public BenutzerId getBesitzerId();
 }

@@ -1,4 +1,4 @@
-package main.java.domain.entities.Event;
+package main.java.domain.entities.event;
 
 import main.java.domain.entities.benutzer.Benutzer;
 

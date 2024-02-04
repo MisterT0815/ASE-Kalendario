@@ -1,4 +1,4 @@
-package main.java.domain.entities.Serie;
+package main.java.domain.entities.serie;
 
 import main.java.domain.value_objects.Zeitraum;
 

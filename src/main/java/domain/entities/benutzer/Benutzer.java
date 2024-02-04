@@ -6,7 +6,8 @@ public class Benutzer {
     private BenutzerId id;
     private String passwordHashed;
 
-    public Benutzer(String name, String passwordHashed) {
+    public Benutzer(BenutzerId id, String name, String passwordHashed) {
+        this.id = id;
         this.name = name;
         this.passwordHashed = passwordHashed;
     }

@@ -1,12 +1,15 @@
-package main.java.domain.entities.Serie;
+package main.java.domain.entities.serie;
 
 import java.util.Objects;
 
 public class SerienId {
-    private int id;
-
+    private final int id;
     public SerienId(int id){
         this.id = id;
+    }
+
+    public int getId(){
+        return this.id;
     }
 
     @Override
