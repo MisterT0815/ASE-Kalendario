@@ -4,6 +4,8 @@ package kalendario.domain.entities.event;
 import kalendario.domain.entities.herkunft.Herkunft;
 import kalendario.domain.entities.serie.SerienId;
 
+import java.util.Optional;
+
 public abstract class Event {
     protected EventId id;
     protected String titel;
@@ -30,4 +32,27 @@ public abstract class Event {
         this.serienId = serienId;
     }
 
+    public Optional<SerienId> getSerienId(){
+        return Optional.ofNullable(this.serienId);
+    }
+
+    public EventId getId() {
+        return id;
+    }
+
+    public String getTitel() {
+        return titel;
+    }
+
+    public Herkunft getHerkunft() {
+        return herkunft;
+    }
+
+    public Sichtbarkeit getSichtbarkeit() {
+        return sichtbarkeit;
+    }
+
+    public String getBeschreibung() {
+        return beschreibung;
+    }
 }

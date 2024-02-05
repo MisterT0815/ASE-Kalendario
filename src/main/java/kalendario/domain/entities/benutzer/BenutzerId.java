@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class BenutzerId{
     private final int id;
-    protected BenutzerId(int id){
+    public BenutzerId(int id){
         this.id = id;
     }
 

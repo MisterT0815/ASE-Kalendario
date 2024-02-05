@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class EventId{
     private final int id;
-    protected EventId(int id){
+    public EventId(int id){
         this.id = id;
     }
 
