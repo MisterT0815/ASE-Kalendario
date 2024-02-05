@@ -14,7 +14,7 @@ public class Serie<T extends Event> {
     private EventId defaultEventId;
     private Date start;
     private Wiederholung wiederholung;
-    private Map<Date, T> events = new HashMap<>();
+    private Map<Date, EventId> changedEventIds = new HashMap<>();
 
     public Serie(SerienId id, EventId defaultEventId, Date start, Wiederholung wiederholung) {
         this.id = id;
