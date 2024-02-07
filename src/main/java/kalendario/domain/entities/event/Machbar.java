@@ -1,12 +1,12 @@
 package kalendario.domain.entities.event;
 
-import kalendario.domain.entities.benutzer.Benutzer;
+import kalendario.domain.entities.benutzer.BenutzerId;
 
 import java.util.Optional;
 
 public interface Machbar {
     public boolean istGetan();
-    public Optional<Benutzer> wurdeGemachtVon();
+    public Optional<BenutzerId> wurdeGemachtVon();
 
-    public void setGetan(Benutzer von, boolean zu);
+    public void setGetan(BenutzerId von, boolean zu);
 }

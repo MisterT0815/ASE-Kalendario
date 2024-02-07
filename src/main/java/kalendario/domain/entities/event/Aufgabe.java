@@ -30,12 +30,12 @@ public class Aufgabe extends Event implements Machbar {
     }
 
     @Override
-    public Optional<Benutzer> wurdeGemachtVon() {
-        return Optional.empty();
+    public Optional<BenutzerId> wurdeGemachtVon() {
+        return Optional.ofNullable(getanVon);
     }
 
     @Override
-    public void setGetan(Benutzer von, boolean zu) {
+    public void setGetan(BenutzerId von, boolean zu) {
 
     }
 }

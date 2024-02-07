@@ -1,7 +1,7 @@
 package kalendario.domain.entities.event;
 
 
-import kalendario.domain.entities.benutzer.Benutzer;
+import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.herkunft.Herkunft;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.value_objects.Zeitraum;
@@ -11,7 +11,7 @@ import java.util.Optional;
 public class GeplanteAufgabe extends Termin implements Machbar {
 
     private boolean getan = false;
-    private Benutzer getanVon;
+    private BenutzerId getanVon;
 
     public GeplanteAufgabe(EventId id, String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum) {
         super(id, titel, herkunft, sichtbarkeit, beschreibung, zeitraum);
@@ -27,12 +27,12 @@ public class GeplanteAufgabe extends Termin implements Machbar {
     }
 
     @Override
-    public Optional<Benutzer> wurdeGemachtVon() {
+    public Optional<BenutzerId> wurdeGemachtVon() {
         return Optional.ofNullable(this.getanVon);
     }
 
     @Override
-    public void setGetan(Benutzer von, boolean zu) {
+    public void setGetan(BenutzerId von, boolean zu) {
         this.getan = zu;
         if(this.getan) {
             this.getanVon = von;
