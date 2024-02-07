@@ -32,9 +32,6 @@ interface Sichtbarkeit{
 
 Event "1" o-- "1" Sichtbarkeit
 
-class Termin extends Geplant{
-}
-
 interface Machbar{
     istGetan(): bool
 }
@@ -43,7 +40,7 @@ class Aufgabe extends Event implements Machbar{
     Date deadline
 }
 
-class GeplanteAufgabe extends Geplant implements Machbar {
+class GeplanteAufgabe extends Termin implements Machbar {
 
 }
 
@@ -52,7 +49,7 @@ interface Wiederholung{
     alleZeitpunkteInZeitraum(Zeitraum): List<Date>
 }
 
-abstract class Geplant extends Event{
+class Termin extends Event{
     Zeitraum zeitraum;
 }
 
@@ -74,6 +71,6 @@ Benutzer "1" o-- "0..*" Herkunft::getBesitzer
 SerienEventController "1" o-- "1" Wiederholung
 
 
-Geplant "1" o-- "1" Zeitraum
+Termin "1" o-- "1" Zeitraum
 Wiederholung::alleZeitpunkteInZeitraum <-- Zeitraum
 @enduml

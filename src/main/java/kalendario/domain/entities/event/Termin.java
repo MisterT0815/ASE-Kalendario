@@ -5,13 +5,16 @@ import kalendario.domain.entities.herkunft.Herkunft;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.value_objects.Zeitraum;
 
-public class Termin extends Geplant {
+public class Termin extends Event {
+    protected Zeitraum zeitraum;
 
     public Termin(EventId id, String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum) {
-        super(id, titel, herkunft, sichtbarkeit, beschreibung, zeitraum);
+        super(id, titel, herkunft, sichtbarkeit, beschreibung);
+        this.zeitraum = zeitraum;
     }
 
-    public <T extends Event> Termin(EventId id, String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, SerienId serienId, Zeitraum zeitraum) {
-        super(id, titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
+    public Termin(EventId id, String titel, Herkunft herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, SerienId serienId, Zeitraum zeitraum) {
+        super(id, titel, herkunft, sichtbarkeit, beschreibung, serienId);
+        this.zeitraum = zeitraum;
     }
 }

@@ -32,8 +32,7 @@ interface Sichtbarkeit{
 
 Event "1" o-- "1" Sichtbarkeit
 
-class Termin extends Geplant{
-}
+
 
 interface Machbar{
     istGetan(): bool
@@ -43,7 +42,7 @@ class Aufgabe extends Event implements Machbar{
     Date deadline
 }
 
-class GeplanteAufgabe extends Geplant implements Machbar {
+class GeplanteAufgabe extends Termin implements Machbar {
 
 }
 
@@ -52,7 +51,7 @@ interface Wiederholung{
     alleZeitpunkteInZeitraum(Zeitraum): List<Date>
 }
 
-abstract class Geplant extends Event{
+class Termin extends Event{
     Zeitraum zeitraum;
 }
 
