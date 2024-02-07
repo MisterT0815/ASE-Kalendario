@@ -36,6 +36,11 @@ public class Aufgabe extends Event implements Machbar {
 
     @Override
     public void setGetan(BenutzerId von, boolean zu) {
-
+        this.getan = zu;
+        if(this.getan) {
+            this.getanVon = von;
+        }else{
+            this.getanVon = null;
+        }
     }
 }
