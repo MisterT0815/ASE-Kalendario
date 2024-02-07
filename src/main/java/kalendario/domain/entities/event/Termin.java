@@ -17,4 +17,8 @@ public class Termin extends Event {
         super(id, titel, herkunft, sichtbarkeit, beschreibung, serienId);
         this.zeitraum = zeitraum;
     }
+
+    public Zeitraum getZeitraum() {
+        return zeitraum;
+    }
 }

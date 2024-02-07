@@ -1,10 +1,12 @@
 package kalendario.domain.entities.event;
 
+import kalendario.domain.entities.benutzer.Benutzer;
 import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.herkunft.Herkunft;
 import kalendario.domain.entities.serie.SerienId;
 
 import java.util.Date;
+import java.util.Optional;
 
 public class Aufgabe extends Event implements Machbar {
 
@@ -25,5 +27,15 @@ public class Aufgabe extends Event implements Machbar {
     @Override
     public boolean istGetan() {
         return getan;
+    }
+
+    @Override
+    public Optional<Benutzer> wurdeGemachtVon() {
+        return Optional.empty();
+    }
+
+    @Override
+    public void setGetan(Benutzer von, boolean zu) {
+
     }
 }
