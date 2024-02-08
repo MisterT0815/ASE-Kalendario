@@ -28,14 +28,14 @@ public class AufgabeTest {
 
 
     @Test
-    void getanSollteFalschSeinWennNichtGesetzt(){
+    void getanSollFalschSeinWennNichtGesetzt(){
         Aufgabe aufgabe = new Aufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, deadline);
         assertFalse(aufgabe.istGetan());
         assertTrue(aufgabe.wurdeGemachtVon().isEmpty());
     }
 
     @Test
-    void getanSollteBenutzerZurueckgebenDerGemachtHat(){
+    void getanSollBenutzerZurueckgebenDerGemachtHat(){
         Aufgabe aufgabe = new Aufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, deadline);
 
         aufgabe.setGetan(benutzer, true);
@@ -46,7 +46,7 @@ public class AufgabeTest {
     }
 
     @Test
-    void getanVonSollteKeinenBenutzerZurueckgebenWennNichtGetanWurde(){
+    void getanVonSollKeinenBenutzerZurueckgebenWennNichtGetanWurde(){
         Aufgabe aufgabe = new Aufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, deadline);
 
         aufgabe.setGetan(benutzer, true);

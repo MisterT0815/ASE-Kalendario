@@ -26,14 +26,14 @@ public class GeplanteAufgabeTest {
 
 
     @Test
-    void getanSollteFalschSeinWennNichtGesetzt(){
+    void getanSollFalschSeinWennNichtGesetzt(){
         GeplanteAufgabe geplanteAufgabe = new GeplanteAufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, zeitraum);
         assertFalse(geplanteAufgabe.istGetan());
         assertTrue(geplanteAufgabe.wurdeGemachtVon().isEmpty());
     }
 
     @Test
-    void getanSollteBenutzerZurueckgebenDerGemachtHat(){
+    void getanSollBenutzerZurueckgebenDerGemachtHat(){
         GeplanteAufgabe geplanteAufgabe = new GeplanteAufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, zeitraum);
 
         geplanteAufgabe.setGetan(benutzer, true);
@@ -44,7 +44,7 @@ public class GeplanteAufgabeTest {
     }
 
     @Test
-    void getanVonSollteKeinenBenutzerZurueckgebenWennNichtGetanWurde(){
+    void getanVonSollKeinenBenutzerZurueckgebenWennNichtGetanWurde(){
         GeplanteAufgabe geplanteAufgabe = new GeplanteAufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, zeitraum);
 
         geplanteAufgabe.setGetan(benutzer, true);

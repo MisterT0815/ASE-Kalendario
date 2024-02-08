@@ -37,7 +37,7 @@ public class EventTest {
 
 
     @Test
-    void getSerienIdSollteOptionalMitSerienIdZurueckgebenWennDieseExistiert(){
+    void getSerienIdSollOptionalMitSerienIdZurueckgebenWennDieseExistiert(){
         DefaultEventImplementation event = new DefaultEventImplementation(id, titel, herkunft, sichtbarkeit, beschreibung, serienId);
         Optional<SerienId> actual = event.getSerienId();
         assertTrue(actual.isPresent());
@@ -45,7 +45,7 @@ public class EventTest {
     }
 
     @Test
-    void getSerienIdSollteLeeresOptionalZurueckgebenWennKeineSerieExistiert(){
+    void getSerienIdSollLeeresOptionalZurueckgebenWennKeineSerieExistiert(){
         DefaultEventImplementation event = new DefaultEventImplementation(id, titel, herkunft, sichtbarkeit, beschreibung);
         Optional<SerienId> actual = event.getSerienId();
         assertTrue(actual.isEmpty());

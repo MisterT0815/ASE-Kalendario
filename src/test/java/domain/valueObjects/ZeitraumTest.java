@@ -20,21 +20,21 @@ class ZeitraumTest {
     private final Date vierterZeitpunkt = new Date(4000L);
 
     @Test
-    void validerZeitraumSollteErstellbarSein() throws IllegalAccessException {
+    void validerZeitraumSollErstellbarSein() throws IllegalAccessException {
         Zeitraum zeitraum = new Zeitraum(ersterZeitpunkt, zweiterZeitpunkt);
         assertEquals(zeitraum.getStart(), ersterZeitpunkt);
         assertEquals(zeitraum.getEnde(), zweiterZeitpunkt);
     }
 
     @Test
-    void invaliderZeitraumSollteExceptionWerfen(){
+    void invaliderZeitraumSollExceptionWerfen(){
         assertThrows(IllegalArgumentException.class, () -> {
             new Zeitraum(zweiterZeitpunkt, ersterZeitpunkt);
         });
     }
 
     @Test
-    void enthaeltSollteTrueZurueckgebenWennUebergebenerZeitpunktStrictlyInZeitraum(){
+    void enthaeltSollTrueZurueckgebenWennUebergebenerZeitpunktStrictlyInZeitraum(){
         Zeitraum zeitraum = new Zeitraum(ersterZeitpunkt, dritterZeitpunkt);
         assertTrue(zeitraum.enthaelt(zweiterZeitpunkt));
     }

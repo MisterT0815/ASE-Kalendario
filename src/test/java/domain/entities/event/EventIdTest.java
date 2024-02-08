@@ -12,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class EventIdTest {
 
     @Test
-    void zweiEventIdsSolltenGleichSeinWennSieAusDemselbenIntegerStammen(){
+    void zweiEventIdsSollenGleichSeinWennSieAusDemselbenIntegerStammen(){
         assertEquals(new EventId(1), new EventId(1));
     }
 
     @Test
-    void zweiEventIdsSolltenNichtGleichSeinWennSieAusVerschiedenenIntegernStammen(){
+    void zweiEventIdsSollenNichtGleichSeinWennSieAusVerschiedenenIntegernStammen(){
         assertNotEquals(new EventId(1), new EventId(2));
     }
 }
