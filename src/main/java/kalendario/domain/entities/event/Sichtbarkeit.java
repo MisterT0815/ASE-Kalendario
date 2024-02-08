@@ -1,7 +1,7 @@
 package kalendario.domain.entities.event;
 
-import kalendario.domain.entities.benutzer.Benutzer;
+import kalendario.domain.entities.benutzer.BenutzerId;
 
 public interface Sichtbarkeit {
-    boolean istSichtbarFuer(Benutzer benutzer);
+    boolean istSichtbarFuer(BenutzerId benutzer);
 }

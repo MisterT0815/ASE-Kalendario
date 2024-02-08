@@ -1,19 +1,29 @@
 package kalendario.domain.entities.event;
 
 
-import kalendario.domain.entities.benutzer.Benutzer;
+import kalendario.domain.entities.benutzer.BenutzerId;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PrivateSichtbarkeit implements Sichtbarkeit {
 
-    List<Benutzer> sichtbarFuer;
+    Set<BenutzerId> sichtbarFuer;
 
-    public PrivateSichtbarkeit(List<Benutzer> sichtbarFuer){
-        this.sichtbarFuer = sichtbarFuer;
+    public PrivateSichtbarkeit(Set<BenutzerId> sichtbarFuer){
+        this.sichtbarFuer = new HashSet<>(sichtbarFuer);
     }
     @Override
-    public boolean istSichtbarFuer(Benutzer benutzer) {
+    public boolean istSichtbarFuer(BenutzerId benutzer) {
         return sichtbarFuer.contains(benutzer);
+    }
+
+    public boolean machSichtbarFuer(BenutzerId benutzer){
+        return sichtbarFuer.add(benutzer);
+    }
+
+    public boolean entferneSichtbarkeitFuer(BenutzerId benutzer){
+        return sichtbarFuer.remove(benutzer);
     }
 }
