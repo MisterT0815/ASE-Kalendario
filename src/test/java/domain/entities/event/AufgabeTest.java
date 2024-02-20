@@ -5,7 +5,6 @@ import kalendario.domain.entities.event.Aufgabe;
 import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.event.Sichtbarkeit;
 import kalendario.domain.entities.herkunft.Herkunft;
-import kalendario.domain.value_objects.Zeitraum;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,6 @@
 package domain.entities.event;
 
+import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.event.Event;
 import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.event.Sichtbarkeit;
@@ -11,9 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
 public class EventTest {
@@ -50,4 +50,33 @@ public class EventTest {
         Optional<SerienId> actual = event.getSerienId();
         assertTrue(actual.isEmpty());
     }
+
+    @Test
+    void istSichtbarFuerSollTrueZurueckgebenWennBenutzerBesitzerIst(){
+        BenutzerId besitzer = mock();
+        when(herkunft.getBesitzerId()).thenReturn(besitzer);
+        DefaultEventImplementation event = new DefaultEventImplementation(id, titel, herkunft, sichtbarkeit, beschreibung, serienId);
+        assertTrue(event.istSichtbarFuer(besitzer));
+        verifyNoInteractions(sichtbarkeit);
+    }
+
+    @Test
+    void istSichtbarFuerSollAnSichtbarkeitDeligierenWennBenutzerNichtBesitzerIst(){
+        BenutzerId besitzer = mock();
+        BenutzerId benutzer = mock();
+        when(herkunft.getBesitzerId()).thenReturn(besitzer);
+        when(sichtbarkeit.istSichtbarFuer(benutzer)).thenReturn(true);
+        DefaultEventImplementation event = new DefaultEventImplementation(id, titel, herkunft, sichtbarkeit, beschreibung, serienId);
+        assertTrue(event.istSichtbarFuer(benutzer));
+        verify(sichtbarkeit).istSichtbarFuer(benutzer);
+    }
+
+    @Test
+    void getBesitzerSollAnHerkunftDeligieren(){
+        DefaultEventImplementation event = new DefaultEventImplementation(id, titel, herkunft, sichtbarkeit, beschreibung, serienId);
+        event.getBesitzer();
+        verify(herkunft).getBesitzerId();
+    }
+
+
 }

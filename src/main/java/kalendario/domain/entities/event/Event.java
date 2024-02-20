@@ -1,6 +1,7 @@
 package kalendario.domain.entities.event;
 
 
+import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.herkunft.Herkunft;
 import kalendario.domain.entities.serie.SerienId;
 
@@ -48,8 +49,16 @@ public abstract class Event {
         return herkunft;
     }
 
-    public Sichtbarkeit getSichtbarkeit() {
-        return sichtbarkeit;
+    public boolean istSichtbarFuer(BenutzerId benutzer){
+        if(getBesitzer().equals(benutzer)){
+            return true;
+        }else{
+            return sichtbarkeit.istSichtbarFuer(benutzer);
+        }
+    }
+
+    public BenutzerId getBesitzer(){
+        return herkunft.getBesitzerId();
     }
 
     public String getBeschreibung() {
