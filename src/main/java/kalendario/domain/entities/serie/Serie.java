@@ -33,7 +33,10 @@ public class Serie<T extends Event> {
         this.defaultEventId = changedEvent;
     }
 
-    public List<EventId> getEventsInZeitraum(Zeitraum zeitraum){
+    public List<EventId> getEventsInZeitraum(Zeitraum zeitraum) throws IllegalArgumentException{
+        if(zeitraum.getStart().after(start)){
+            throw new IllegalArgumentException("Zeitraum ist vor Start der Serie");
+        }
         List<EventId> eventsInZeitraum = new ArrayList<>();
         for(Date date : wiederholung.alleZeitpunkteInZeitraum(zeitraum)){
             eventsInZeitraum.add(getEventAnZeitpunkt(date));

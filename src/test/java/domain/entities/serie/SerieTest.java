@@ -83,4 +83,14 @@ public class SerieTest {
         assertEquals(2, serie.getEventsInZeitraum(zeitraum).size());
     }
 
+    @Test
+    void getEventInZeitraumSollExceptionWerfenWennZeitraumVorStart(){
+        Zeitraum zeitraum = mock();
+        Date zeitraumStart = mock();
+        when(zeitraum.getStart()).thenReturn(zeitraumStart);
+        when(zeitraumStart.before(start)).thenReturn(false);
+        when(zeitraumStart.after(start)).thenReturn(true);
+        assertThrows(IllegalArgumentException.class, () -> serie.getEventsInZeitraum(zeitraum));
+    }
+
 }
