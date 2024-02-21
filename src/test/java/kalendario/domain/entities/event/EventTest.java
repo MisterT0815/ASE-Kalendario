@@ -1,4 +1,4 @@
-package domain.entities.event;
+package kalendario.domain.entities.event;
 
 import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.event.Event;

@@ -1,4 +1,4 @@
-package domain.valueObjects;
+package kalendario.domain.valueObjects;
 
 import kalendario.domain.value_objects.Zeitraum;
 import org.junit.jupiter.api.DisplayNameGeneration;

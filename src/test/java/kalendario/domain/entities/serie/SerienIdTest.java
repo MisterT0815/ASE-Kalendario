@@ -1,6 +1,7 @@
-package domain.entities.event;
+package kalendario.domain.entities.serie;
 
 import kalendario.domain.entities.event.EventId;
+import kalendario.domain.entities.serie.SerienId;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -9,15 +10,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
-public class EventIdTest {
+public class SerienIdTest {
 
     @Test
     void zweiEventIdsSollenGleichSeinWennSieAusDemselbenIntegerStammen(){
-        assertEquals(new EventId(1), new EventId(1));
+        assertEquals(new SerienId(1), new SerienId(1));
     }
 
     @Test
     void zweiEventIdsSollenNichtGleichSeinWennSieAusVerschiedenenIntegernStammen(){
-        assertNotEquals(new EventId(1), new EventId(2));
+        assertNotEquals(new SerienId(1), new SerienId(2));
     }
 }

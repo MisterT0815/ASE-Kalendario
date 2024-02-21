@@ -1,4 +1,4 @@
-package domain.entities.serie;
+package kalendario.domain.entities.serie;
 
 import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.serie.Serie;
@@ -74,6 +74,10 @@ public class SerieTest {
         Date date1 = mock();
         Date date2 = mock();
         Iterator<Date> dateIterator = mock();
+        Date zeitraumStart = mock();
+        when(zeitraum.getStart()).thenReturn(zeitraumStart);
+        when(zeitraumStart.before(start)).thenReturn(true);
+        when(zeitraumStart.after(start)).thenReturn(false);
         when(dates.iterator()).thenReturn(dateIterator);
         when(dateIterator.hasNext()).thenReturn(true, true, false);
         when(dateIterator.next()).thenReturn(date1, date2);
