@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class Aufgabe extends Event implements Machbar {
 
-    private Date deadline;
+    private final Date deadline;
     private boolean getan = false;
     private BenutzerId getanVon = null;
 

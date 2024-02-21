@@ -12,7 +12,7 @@ public class PrivateSichtbarkeit implements Sichtbarkeit {
     Set<BenutzerId> sichtbarFuer;
 
     public PrivateSichtbarkeit(Set<BenutzerId> sichtbarFuer){
-        this.sichtbarFuer = new HashSet<>(sichtbarFuer);
+        this.sichtbarFuer = sichtbarFuer;
     }
     @Override
     public boolean istSichtbarFuer(BenutzerId benutzer) {

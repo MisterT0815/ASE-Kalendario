@@ -9,11 +9,11 @@ import java.util.*;
 
 public class Serie<T extends Event> {
 
-    private SerienId id;
+    private final SerienId id;
     private EventId defaultEventId;
-    private Date start;
-    private Wiederholung wiederholung;
-    private Map<Date, EventId> angepassteEventIds = new HashMap<>();
+    private final Date start;
+    private final Wiederholung wiederholung;
+    private final Map<Date, EventId> angepassteEventIds = new HashMap<>();
 
     public Serie(SerienId id, EventId defaultEventId, Date start, Wiederholung wiederholung) {
         this.id = id;

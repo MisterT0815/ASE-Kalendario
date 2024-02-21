@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface Wiederholung {
-    public Date naechsterZeitpunktAb(Date date);
-    public List<Date> alleZeitpunkteInZeitraum(Zeitraum zeitraum);
-    public boolean istZeitpunktInWiederholung(Date date);
+    Date naechsterZeitpunktAb(Date date);
+    List<Date> alleZeitpunkteInZeitraum(Zeitraum zeitraum);
+    boolean istZeitpunktInWiederholung(Date date);
 }
