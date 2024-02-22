@@ -79,4 +79,11 @@ public class EventCreationTest {
         verify(eventRepository).saveGeplanteAufgabe(geplanteAufgabe);
     }
 
+    @Test
+    void createEventSollSaveExceptionWerfenWennSpeichernInEventRepositoryUnerfolgreichWar() throws SaveException {
+        Zeitraum zeitraum = mock();
+        doThrow(SaveException.class).when(eventRepository).saveTermin(any(Termin.class));
+        assertThrows(SaveException.class, () -> eventCreation.createEvent(titel, herkunft, sichtbarkeit, beschreibung, zeitraum));
+    }
+
 }
