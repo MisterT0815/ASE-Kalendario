@@ -16,5 +16,14 @@ public class Benutzer {
         return this.id;
     }
 
+    public String getName(){
+        return this.name;
+    }
+
+
+    public boolean isSamePassword(String passwordHashed){
+        return this.passwordHashed.equals(passwordHashed);
+    }
+
 
 }

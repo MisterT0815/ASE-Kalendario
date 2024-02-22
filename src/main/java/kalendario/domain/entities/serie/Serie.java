@@ -59,4 +59,15 @@ public class Serie<T extends Event> {
         return id;
     }
 
+    public EventId getDefaultEvent() {
+        return defaultEventId;
+    }
+
+    public Date getStart() {
+        return start;
+    }
+
+    public Wiederholung getWiederholung() {
+        return wiederholung;
+    }
 }

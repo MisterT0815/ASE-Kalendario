@@ -35,6 +35,16 @@ public class EventCreationTest {
         Event event = eventCreation.createEvent(titel, herkunft, sichtbarkeit, beschreibung, zeitraum);
         assertInstanceOf(Termin.class, event);
         verify(eventRepository).saveTermin((Termin) event);
+        assertEquals(titel, event.getTitel());
+        assertEquals(herkunft, event.getHerkunft());
+        assertEquals(beschreibung, event.getBeschreibung());
+        assertEquals(zeitraum, ((Termin) event).getZeitraum());
+        //Workaround, da Sichtbarkeit nicht per getter erreichbar
+        BenutzerId benutzerId = mock();
+        BenutzerId besitzerId = mock();
+        when(herkunft.getBesitzerId()).thenReturn(besitzerId);
+        event.istSichtbarFuer(benutzerId);
+        verify(sichtbarkeit).istSichtbarFuer(benutzerId);
     }
 
     @Test
@@ -43,6 +53,17 @@ public class EventCreationTest {
         Event event = eventCreation.createEvent(titel, herkunft, sichtbarkeit, beschreibung, deadline, false);
         assertInstanceOf(Aufgabe.class, event);
         verify(eventRepository).saveAufgabe((Aufgabe) event);
+        assertEquals(titel, event.getTitel());
+        assertEquals(herkunft, event.getHerkunft());
+        assertEquals(beschreibung, event.getBeschreibung());
+        assertEquals(deadline, ((Aufgabe) event).getDeadline());
+        assertFalse(((Aufgabe) event).istGetan());
+        //Workaround, da Sichtbarkeit nicht per getter erreichbar
+        BenutzerId benutzerId = mock();
+        BenutzerId besitzerId = mock();
+        when(herkunft.getBesitzerId()).thenReturn(besitzerId);
+        event.istSichtbarFuer(benutzerId);
+        verify(sichtbarkeit).istSichtbarFuer(benutzerId);
     }
 
     @Test
@@ -64,6 +85,17 @@ public class EventCreationTest {
         Event event = eventCreation.createEvent(titel, herkunft, sichtbarkeit, beschreibung, zeitraum, false);
         assertInstanceOf(GeplanteAufgabe.class, event);
         verify(eventRepository).saveGeplanteAufgabe((GeplanteAufgabe) event);
+        assertEquals(titel, event.getTitel());
+        assertEquals(herkunft, event.getHerkunft());
+        assertEquals(beschreibung, event.getBeschreibung());
+        assertEquals(zeitraum, ((GeplanteAufgabe) event).getZeitraum());
+        assertFalse(((GeplanteAufgabe) event).istGetan());
+        //Workaround, da Sichtbarkeit nicht per getter erreichbar
+        BenutzerId benutzerId = mock();
+        BenutzerId besitzerId = mock();
+        when(herkunft.getBesitzerId()).thenReturn(besitzerId);
+        event.istSichtbarFuer(benutzerId);
+        verify(sichtbarkeit).istSichtbarFuer(benutzerId);
     }
 
     @Test
@@ -87,7 +119,7 @@ public class EventCreationTest {
     }
 
     @Test
-    void createEventSollBenutzerEindeutigeIdVonRepositoryGeben() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
+    void createEventSollEventEindeutigeIdVonRepositoryGeben() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
         Zeitraum zeitraum = mock();
         EventId id = mock();
         when(eventRepository.neueId()).thenReturn(id);

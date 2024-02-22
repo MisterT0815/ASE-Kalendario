@@ -46,11 +46,19 @@ public class SerieCreationTest {
     }
 
     @Test
-    void createSerieSollBenutzerEindeutigeIdVonRepositoryGeben() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
+    void createSerieSollSerieEindeutigeIdVonRepositoryGeben() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
         SerienId id = mock();
         when(serienRepository.neueId()).thenReturn(id);
         Serie serie = serieCreation.createSerie(eventId, start, wiederholung);
         assertEquals(id, serie.getId());
+    }
+
+    @Test
+    void createSerieSollAlleUebergebenenEigenschaftenSpeichern() throws SaveException {
+        Serie serie = serieCreation.createSerie(eventId, start, wiederholung);
+        assertEquals(eventId, serie.getDefaultEvent());
+        assertEquals(start, serie.getStart());
+        assertEquals(wiederholung, serie.getWiederholung());
     }
 
 }

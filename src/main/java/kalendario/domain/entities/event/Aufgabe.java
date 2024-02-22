@@ -43,4 +43,8 @@ public class Aufgabe extends Event implements Machbar {
             this.getanVon = null;
         }
     }
+
+    public Date getDeadline() {
+        return deadline;
+    }
 }

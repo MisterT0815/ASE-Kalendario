@@ -9,8 +9,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
@@ -50,6 +49,13 @@ public class BenutzerCreationTest {
         when(benutzerRepository.neueId()).thenReturn(id);
         Benutzer benutzer = benutzerCreation.createBenutzer(name, passwordHashed);
         assertEquals(id, benutzer.getId());
+    }
+
+    @Test
+    void createBenutzerSollAlleUebergebenenEigenschaftenSpeichern() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
+        Benutzer benutzer = benutzerCreation.createBenutzer(name, passwordHashed);
+        assertEquals(name, benutzer.getName());
+        assertTrue(benutzer.isSamePassword(passwordHashed));
     }
 
 
