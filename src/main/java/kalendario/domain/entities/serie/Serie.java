@@ -55,4 +55,8 @@ public class Serie<T extends Event> {
         }
     }
 
+    public SerienId getId() {
+        return id;
+    }
+
 }

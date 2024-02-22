@@ -1,5 +1,6 @@
 package kalendario.application.crud;
 
+import kalendario.domain.entities.benutzer.Benutzer;
 import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.event.*;
 import kalendario.domain.entities.herkunft.Herkunft;
@@ -83,6 +84,15 @@ public class EventCreationTest {
         Zeitraum zeitraum = mock();
         doThrow(SaveException.class).when(eventRepository).saveTermin(any(Termin.class));
         assertThrows(SaveException.class, () -> eventCreation.createEvent(titel, herkunft, sichtbarkeit, beschreibung, zeitraum));
+    }
+
+    @Test
+    void createEventSollBenutzerEindeutigeIdVonRepositoryGeben() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
+        Zeitraum zeitraum = mock();
+        EventId id = mock();
+        when(eventRepository.neueId()).thenReturn(id);
+        Event event = eventCreation.createEvent(titel, herkunft, sichtbarkeit, beschreibung, zeitraum);
+        assertEquals(id, event.getId());
     }
 
 }

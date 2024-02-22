@@ -12,5 +12,9 @@ public class Benutzer {
         this.passwordHashed = passwordHashed;
     }
 
+    public BenutzerId getId(){
+        return this.id;
+    }
+
 
 }
