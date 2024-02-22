@@ -16,7 +16,6 @@ import static org.mockito.Mockito.*;
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
 public class EventCreationTest {
 
-    EventId id = mock();
     String titel = "Titel";
     Herkunft herkunft = mock();
     Sichtbarkeit sichtbarkeit = mock();

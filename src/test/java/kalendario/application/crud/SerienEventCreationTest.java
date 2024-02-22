@@ -20,7 +20,6 @@ import static org.mockito.Mockito.verify;
 public class SerienEventCreationTest {
 
 
-    EventId id = mock();
     String titel = "Titel";
     Herkunft herkunft = mock();
     Sichtbarkeit sichtbarkeit = mock();
