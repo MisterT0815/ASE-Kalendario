@@ -1,9 +1,9 @@
 package kalendario.domain.repositories;
 
-import kalendario.domain.entities.event.Aufgabe;
-import kalendario.domain.entities.event.EventId;
-import kalendario.domain.entities.event.GeplanteAufgabe;
-import kalendario.domain.entities.event.Termin;
+import kalendario.domain.entities.event.*;
+import kalendario.domain.entities.serie.SerienId;
+
+import java.util.List;
 
 public interface EventRepository {
 
@@ -11,5 +11,7 @@ public interface EventRepository {
     void saveTermin(Termin termin) throws SaveException;
     void saveAufgabe(Aufgabe aufgabe) throws SaveException;
     void saveGeplanteAufgabe(GeplanteAufgabe geplanteAufgabe) throws SaveException;
+    Event getEvent(EventId id);
+    List<Event> getEventsOfSerie(SerienId serie);
 
 }

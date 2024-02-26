@@ -1,4 +1,4 @@
-package kalendario.application.crud;
+package kalendario.application.crud.event;
 
 import kalendario.domain.entities.event.*;
 import kalendario.domain.entities.herkunft.Herkunft;

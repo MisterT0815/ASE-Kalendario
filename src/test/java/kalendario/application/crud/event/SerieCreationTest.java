@@ -1,13 +1,13 @@
-package kalendario.application.crud;
+package kalendario.application.crud.event;
 
-import kalendario.domain.entities.event.Event;
+import kalendario.application.crud.benutzer.BenutzerCreation;
+import kalendario.application.crud.serie.SerieCreation;
 import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.entities.serie.Wiederholung;
 import kalendario.domain.repositories.SaveException;
 import kalendario.domain.repositories.SerienRepository;
-import kalendario.domain.value_objects.Zeitraum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

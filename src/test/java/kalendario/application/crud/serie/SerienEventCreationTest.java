@@ -1,6 +1,7 @@
-package kalendario.application.crud;
+package kalendario.application.crud.serie;
 
-import kalendario.domain.entities.benutzer.Benutzer;
+import kalendario.application.crud.benutzer.BenutzerCreation;
+import kalendario.application.crud.event.SerienEventCreation;
 import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.event.*;
 import kalendario.domain.entities.herkunft.Herkunft;

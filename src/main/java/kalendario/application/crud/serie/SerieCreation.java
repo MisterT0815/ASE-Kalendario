@@ -1,4 +1,4 @@
-package kalendario.application.crud;
+package kalendario.application.crud.serie;
 
 import kalendario.domain.entities.event.Event;
 import kalendario.domain.entities.event.EventId;
