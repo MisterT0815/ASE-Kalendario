@@ -5,6 +5,7 @@ import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.event.GeplanteAufgabe;
 import kalendario.domain.entities.event.Sichtbarkeit;
 import kalendario.domain.entities.herkunft.Herkunft;
+import kalendario.domain.entities.herkunft.HerkunftId;
 import kalendario.domain.value_objects.Zeitraum;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -18,7 +19,7 @@ public class GeplanteAufgabeTest {
 
     EventId id = mock();
     String titel = "Titel";
-    Herkunft herkunft = mock();
+    HerkunftId herkunft = mock();
     Sichtbarkeit sichtbarkeit = mock();
     String beschreibung = "Beschreibung";
     Zeitraum zeitraum = mock();
