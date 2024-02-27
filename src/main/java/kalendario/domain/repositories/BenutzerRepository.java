@@ -9,4 +9,5 @@ public interface BenutzerRepository {
     BenutzerId neueId();
     void saveBenutzer(Benutzer benutzer) throws SaveException;
     boolean benutzerExistiert(String name, String passwordHashed);
+    BenutzerId getIdOfName(String name);
 }
