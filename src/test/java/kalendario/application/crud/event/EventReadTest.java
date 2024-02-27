@@ -1,6 +1,5 @@
 package kalendario.application.crud.event;
 
-import kalendario.application.crud.exception.NotAvailableException;
 import kalendario.domain.entities.event.*;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.EventRepository;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Not;
 
 import java.util.List;
 
