@@ -6,6 +6,7 @@ import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.EventRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EventRead {
 
@@ -19,28 +20,31 @@ public class EventRead {
         return eventRepository.getEvent(eventId);
     }
 
-    public Aufgabe getAufgabe(EventId eventId) throws NotAvailableException {
-        Event event = eventRepository.getEvent(eventId);
-        if(event == null || !(event instanceof Aufgabe)){
-            throw new NotAvailableException(String.format("Aufgabe mit Id %d exitstiert nicht", eventId.getId()));
+    public Optional<Aufgabe> getAufgabe(EventId eventId) {
+        Event event = this.getEvent(eventId);
+        try{
+            return (Optional.of((Aufgabe) event));
+        }catch (Exception e){
+            return Optional.empty();
         }
-        return (Aufgabe) event;
     }
 
-    public GeplanteAufgabe getGeplanteAufgabe(EventId eventId) throws NotAvailableException {
-        Event event = eventRepository.getEvent(eventId);
-        if(event == null || !(event instanceof GeplanteAufgabe)){
-            throw new NotAvailableException(String.format("GeplanteAufgabe mit Id %d exitstiert nicht", eventId.getId()));
+    public Optional<GeplanteAufgabe> getGeplanteAufgabe(EventId eventId) {
+        Event event = this.getEvent(eventId);
+        try{
+            return (Optional.of((GeplanteAufgabe) event));
+        }catch (Exception e){
+            return Optional.empty();
         }
-        return (GeplanteAufgabe) event;
     }
 
-    public Termin getTermin(EventId eventId) throws NotAvailableException {
-        Event event = eventRepository.getEvent(eventId);
-        if(event == null || !(event instanceof Termin)){
-            throw new NotAvailableException(String.format("Termin mit Id %d exitstiert nicht", eventId.getId()));
+    public Optional<Termin> getTermin(EventId eventId) {
+        Event event = this.getEvent(eventId);
+        try{
+            return (Optional.of((Termin) event));
+        }catch (Exception e){
+            return Optional.empty();
         }
-        return (Termin) event;
     }
 
     public List<Event> getEventsOfSerie(SerienId serienId){

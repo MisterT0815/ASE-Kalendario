@@ -12,8 +12,7 @@ import org.mockito.internal.matchers.Not;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,45 +41,45 @@ public class EventReadTest {
     }
 
     @Test
-    void getAufgabeSollAufgabeVonEventRepositoryZurueckgeben() throws NotAvailableException {
+    void getAufgabeSollAufgabeVonEventRepositoryZurueckgeben() {
         when(eventRepository.getEvent(eventId)).thenReturn(aufgabe);
-        assertEquals(aufgabe, eventRead.getAufgabe(eventId));
+        assertEquals(aufgabe, eventRead.getAufgabe(eventId).get());
     }
 
     @Test
-    void getGeplanteAufgabeSollGeplanteAufgabeVonEventRepositoryZurueckgeben() throws NotAvailableException {
+    void getGeplanteAufgabeSollGeplanteAufgabeVonEventRepositoryZurueckgeben() {
         when(eventRepository.getEvent(eventId)).thenReturn(geplanteAufgabe);
-        assertEquals(geplanteAufgabe, eventRead.getGeplanteAufgabe(eventId));
+        assertEquals(geplanteAufgabe, eventRead.getGeplanteAufgabe(eventId).get());
     }
 
     @Test
-    void getTerminSollTerminvonEventRepositoryZurueckgeben() throws NotAvailableException {
+    void getTerminSollTerminvonEventRepositoryZurueckgeben() {
         when(eventRepository.getEvent(eventId)).thenReturn(termin);
-        assertEquals(termin, eventRead.getTermin(eventId));
+        assertEquals(termin, eventRead.getTermin(eventId).get());
     }
 
     @Test
     void getAufgabeSollExceptionWerfenWennRepositoryMitKeinerAufgabeAntwortet(){
         when(eventRepository.getEvent(eventId)).thenReturn(null);
-        assertThrows(NotAvailableException.class, () -> eventRead.getAufgabe(eventId));
+        assertTrue(eventRead.getAufgabe(eventId).isEmpty());
         when(eventRepository.getEvent(eventId)).thenReturn(geplanteAufgabe);
-        assertThrows(NotAvailableException.class, () -> eventRead.getAufgabe(eventId));
+        assertTrue(eventRead.getAufgabe(eventId).isEmpty());
     }
 
     @Test
     void getGeplanteAufgabeSollExceptionWerfenWennRepositoryMitKeinerGeplanteAufgabeAntwortet(){
         when(eventRepository.getEvent(eventId)).thenReturn(null);
-        assertThrows(NotAvailableException.class, () -> eventRead.getGeplanteAufgabe(eventId));
+        assertTrue(eventRead.getGeplanteAufgabe(eventId).isEmpty());
         when(eventRepository.getEvent(eventId)).thenReturn(aufgabe);
-        assertThrows(NotAvailableException.class, () -> eventRead.getGeplanteAufgabe(eventId));
+        assertTrue(eventRead.getGeplanteAufgabe(eventId).isEmpty());
     }
 
     @Test
     void getTerminSollExceptionWerfenWennRepositoryMitKeinemTerminAntwortet(){
         when(eventRepository.getEvent(eventId)).thenReturn(null);
-        assertThrows(NotAvailableException.class, () -> eventRead.getTermin(eventId));
+        assertTrue(eventRead.getTermin(eventId).isEmpty());
         when(eventRepository.getEvent(eventId)).thenReturn(aufgabe);
-        assertThrows(NotAvailableException.class, () -> eventRead.getTermin(eventId));
+        assertTrue(eventRead.getTermin(eventId).isEmpty());
     }
 
     @Test
