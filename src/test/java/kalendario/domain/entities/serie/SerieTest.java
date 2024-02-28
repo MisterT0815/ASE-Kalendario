@@ -7,6 +7,7 @@ import kalendario.domain.entities.serie.Wiederholung;
 import kalendario.domain.value_objects.Zeitraum;
 import org.junit.jupiter.api.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -70,17 +71,15 @@ public class SerieTest {
     @Test
     void getEventsInZeitraumSollFuerJedenZeitpunktInWiederholungEinEventZurueckgeben(){
         Zeitraum zeitraum = mock();
-        List<Date> dates = mock();
+        List<Date> dates = new ArrayList<>();
         Date date1 = mock();
         Date date2 = mock();
-        Iterator<Date> dateIterator = mock();
+        dates.add(date1);
+        dates.add(date2);
         Date zeitraumStart = mock();
         when(zeitraum.getStart()).thenReturn(zeitraumStart);
         when(zeitraumStart.before(start)).thenReturn(true);
         when(zeitraumStart.after(start)).thenReturn(false);
-        when(dates.iterator()).thenReturn(dateIterator);
-        when(dateIterator.hasNext()).thenReturn(true, true, false);
-        when(dateIterator.next()).thenReturn(date1, date2);
         when(wiederholung.alleZeitpunkteInZeitraum(zeitraum)).thenReturn(dates);
         when(wiederholung.istZeitpunktInWiederholung(date1)).thenReturn(true);
         when(wiederholung.istZeitpunktInWiederholung(date2)).thenReturn(true);
