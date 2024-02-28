@@ -1,11 +1,7 @@
 package kalendario.application.crud.serie;
 
-import kalendario.application.crud.event.EventRead;
-import kalendario.application.session.NoAccessException;
-import kalendario.application.session.Session;
-import kalendario.domain.entities.benutzer.BenutzerId;
-import kalendario.domain.entities.event.Event;
-import kalendario.domain.entities.event.EventId;
+import kalendario.application.crud.sicherheit.ZugriffVerfizierer;
+import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.SerienRepository;
@@ -14,67 +10,41 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
 public class SerieReadTest {
 
     SerienRepository serienRepository = mock();
-    EventRead eventRead = mock();
-    BenutzerId benutzerId = mock();
-    Session session = mock();
     SerienId serienId = mock();
     Serie serie = mock();
-    Event defaultEvent = mock();
-    EventId defaultEventId = mock();
     SerieRead serieRead;
+    ZugriffVerfizierer zugriffVerfizierer = mock();
 
     @BeforeEach
     void init(){
-        serieRead = new SerieRead(serienRepository, session, eventRead);
+        serieRead = new SerieRead(serienRepository, zugriffVerfizierer);
     }
 
     @Test
-    void getSerieSollSerieVonSerienRepositoryHolen() throws NoAccessException {
-        when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzerId));
-        when(serie.getDefaultEvent()).thenReturn(defaultEventId);
-        when(eventRead.getEvent(defaultEventId)).thenReturn(Optional.of(defaultEvent));
-        when(defaultEvent.istSichtbarFuer(benutzerId)).thenReturn(true);
+    void getSerieSollSerieVonSerienRepositoryHolen() throws KeinZugriffException {
         when(serienRepository.getSerie(serienId)).thenReturn(serie);
         assertEquals(serie, serieRead.getSerie(serienId).get());
     }
 
     @Test
-    void getSerieSollEmptyOptionalZurueckgebenWennSerienRepositoryNichtsZurueckgibt() throws NoAccessException {
-        when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzerId));
-        when(serie.getDefaultEvent()).thenReturn(defaultEventId);
-        when(eventRead.getEvent(defaultEventId)).thenReturn(Optional.of(defaultEvent));
-        when(defaultEvent.istSichtbarFuer(benutzerId)).thenReturn(true);
+    void getSerieSollEmptyOptionalZurueckgebenWennSerienRepositoryNichtsZurueckgibt() throws KeinZugriffException {
         when(serienRepository.getSerie(serienId)).thenReturn(null);
         assertTrue(serieRead.getSerie(serienId).isEmpty());
     }
 
     @Test
-    void getSerieSollNoAccessExceptionWerfenBasierendAufSichtbarkeitDesDefaultEvents() throws NoAccessException {
-        when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzerId));
-        when(serie.getDefaultEvent()).thenReturn(defaultEventId);
-        when(eventRead.getEvent(defaultEventId)).thenReturn(Optional.of(defaultEvent));
-        when(defaultEvent.istSichtbarFuer(benutzerId)).thenReturn(false);
+    void getSerieSollNoAccessExceptionWerfenWennNutzerKeinZugriffAufSerieHat() throws KeinZugriffException {
+        doThrow(KeinZugriffException.class).when(zugriffVerfizierer).verifiziereZugriffFuerSerie(serie);
         when(serienRepository.getSerie(serienId)).thenReturn(serie);
-        assertThrows(NoAccessException.class, () -> serieRead.getSerie(serienId));
+        assertThrows(KeinZugriffException.class, () -> serieRead.getSerie(serienId));
     }
 
-    @Test
-    void getSerieSollNoAccessExceptionWerfenWennDefaultEventNichtSichtbarIst() throws NoAccessException {
-        when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzerId));
-        when(serie.getDefaultEvent()).thenReturn(defaultEventId);
-        when(eventRead.getEvent(defaultEventId)).thenThrow(NoAccessException.class);
-        when(serienRepository.getSerie(serienId)).thenReturn(serie);
-        assertThrows(NoAccessException.class, () -> serieRead.getSerie(serienId));
-    }
 
 }

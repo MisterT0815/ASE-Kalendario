@@ -1,44 +1,35 @@
 package kalendario.application.crud.event;
 
-import kalendario.application.crud.serie.SerieRead;
-import kalendario.application.session.NoAccessException;
-import kalendario.application.session.Session;
+import kalendario.application.crud.sicherheit.ZugriffVerfizierer;
+import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.event.*;
-import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.EventRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class EventRead {
 
     EventRepository eventRepository;
-    Session session;
-    SerieRead serieRead;
+    ZugriffVerfizierer zugriffVerfizierer;
 
-    public EventRead(EventRepository eventRepository, Session session, SerieRead serieRead) {
+    public EventRead(EventRepository eventRepository, ZugriffVerfizierer zugriffVerfizierer) {
         this.eventRepository = eventRepository;
-        this.session = session;
-        this.serieRead = serieRead;
+        this.zugriffVerfizierer = zugriffVerfizierer;
     }
 
-    public Optional<Event> getEvent(EventId eventId) throws NoAccessException {
+    public Optional<Event> getEvent(EventId eventId) throws KeinZugriffException {
         Event event = eventRepository.getEvent(eventId);
         if(event == null){
             return Optional.empty();
         }
-        if(!eventIstSichtbarFuerAktuellenNutzer(event)){
-            throw new NoAccessException();
-        }
+        zugriffVerfizierer.verifiziereZugriffFuerEvent(event);
         return Optional.of(event);
     }
 
 
-    public Optional<Aufgabe> getAufgabe(EventId eventId) throws NoAccessException {
+    public Optional<Aufgabe> getAufgabe(EventId eventId) throws KeinZugriffException {
         Optional<Event> event = this.getEvent(eventId);
         try{
             return (Optional.of((Aufgabe) event.orElseThrow()));
@@ -47,7 +38,7 @@ public class EventRead {
         }
     }
 
-    public Optional<GeplanteAufgabe> getGeplanteAufgabe(EventId eventId) throws NoAccessException {
+    public Optional<GeplanteAufgabe> getGeplanteAufgabe(EventId eventId) throws KeinZugriffException {
         Optional<Event> event = this.getEvent(eventId);
         try{
             return (Optional.of((GeplanteAufgabe) event.orElseThrow()));
@@ -56,7 +47,7 @@ public class EventRead {
         }
     }
 
-    public Optional<Termin> getTermin(EventId eventId) throws NoAccessException {
+    public Optional<Termin> getTermin(EventId eventId) throws KeinZugriffException {
         Optional<Event> event = this.getEvent(eventId);
         try{
             return (Optional.of((Termin) event.orElseThrow()));
@@ -65,19 +56,17 @@ public class EventRead {
         }
     }
 
-    public List<Event> getEventsOfSerie(SerienId serienId) throws NoAccessException {
-        //Serie holen um zu verifizieren, dass Access auf Serie vorhanden ist
-        serieRead.getSerie(serienId);
+    public List<Event> getEventsOfSerie(SerienId serienId) throws KeinZugriffException {
+        zugriffVerfizierer.verifiziereZugriffFuerSerie(serienId);
         List<Event> events = eventRepository.getEventsOfSerie(serienId);
-        return events.stream().filter(this::eventIstSichtbarFuerAktuellenNutzer).toList();
-    }
-
-    private boolean eventIstSichtbarFuerAktuellenNutzer(Event event) {
-        try{
-            return event.istSichtbarFuer(session.getCurrentBenutzer().orElseThrow());
-        }catch(NoSuchElementException e){
-            return false;
-        }
+        return events.stream().filter(event -> {
+            try {
+                zugriffVerfizierer.verifiziereZugriffFuerEvent(event);
+            } catch (KeinZugriffException e) {
+                return false;
+            }
+            return true;
+        }).toList();
     }
 
 }
