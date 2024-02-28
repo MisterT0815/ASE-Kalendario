@@ -1,19 +1,24 @@
 package kalendario.application.crud.sicherheit;
 
+import kalendario.application.crud.herkunft.HerkunftRead;
 import kalendario.application.session.KeinZugriffException;
 import kalendario.application.session.Session;
 import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.event.Event;
 import kalendario.domain.entities.event.EventId;
+import kalendario.domain.entities.herkunft.Herkunft;
+import kalendario.domain.entities.herkunft.HerkunftId;
 import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.EventRepository;
+import kalendario.domain.repositories.HerkunftRepository;
 import kalendario.domain.repositories.SerienRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,17 +27,24 @@ public class ZugriffVerifiziererTest {
 
     EventRepository eventRepository = mock();
     SerienRepository serienRepository = mock();
+    HerkunftRepository herkunftRepository = mock();
     Session session = mock();
     Event event = mock();
     EventId eventId = mock();
     Serie serie = mock();
     SerienId serienId = mock();
     BenutzerId benutzer = mock();
+    BenutzerId besitzer = mock();
+    Herkunft herkunft = mock();
+    HerkunftId herkunftId = mock();
     ZugriffVerfizierer zugriffVerfizierer;
 
     @BeforeEach
     void init(){
-        zugriffVerfizierer = new ZugriffVerfizierer(session, eventRepository, serienRepository);
+        zugriffVerfizierer = new ZugriffVerfizierer(session, eventRepository, serienRepository, herkunftRepository);
+        when(event.getHerkunftId()).thenReturn(herkunftId);
+        when(herkunftRepository.getHerkunftWithId(herkunftId)).thenReturn(herkunft);
+        when(herkunft.getBesitzerId()).thenReturn(besitzer);
     }
 
     @Test
@@ -41,7 +53,7 @@ public class ZugriffVerifiziererTest {
         when(serie.getDefaultEvent()).thenReturn(eventId);
         when(eventRepository.getEvent(eventId)).thenReturn(event);
         when(event.istSichtbarFuer(benutzer)).thenReturn(true);
-        zugriffVerfizierer.verifiziereZugriffFuerSerie(serie);
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serie));
         when(event.istSichtbarFuer(benutzer)).thenReturn(false);
         assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serie));
     }
@@ -61,7 +73,7 @@ public class ZugriffVerifiziererTest {
         when(serie.getDefaultEvent()).thenReturn(eventId);
         when(eventRepository.getEvent(eventId)).thenReturn(event);
         when(event.istSichtbarFuer(benutzer)).thenReturn(true);
-        zugriffVerfizierer.verifiziereZugriffFuerSerie(serie);
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serie));
         when(event.istSichtbarFuer(benutzer)).thenReturn(false);
         assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serie));
     }
@@ -79,7 +91,7 @@ public class ZugriffVerifiziererTest {
     void verifiziereZugriffFuerEventSollBasierendAufEventSichtbarkeitVerfizierenMitEvent() throws KeinZugriffException {
         when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzer));
         when(event.istSichtbarFuer(benutzer)).thenReturn(true);
-        zugriffVerfizierer.verifiziereZugriffFuerEvent(event);
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerEvent(event));
         when(event.istSichtbarFuer(benutzer)).thenReturn(false);
         assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerEvent(event));
     }
@@ -95,7 +107,7 @@ public class ZugriffVerifiziererTest {
         when(eventRepository.getEvent(eventId)).thenReturn(event);
         when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzer));
         when(event.istSichtbarFuer(benutzer)).thenReturn(true);
-        zugriffVerfizierer.verifiziereZugriffFuerEvent(event);
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerEvent(event));
         when(event.istSichtbarFuer(benutzer)).thenReturn(false);
         assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerEvent(event));
     }
@@ -117,5 +129,39 @@ public class ZugriffVerifiziererTest {
     void verifiziereZugriffFuerEventSollKeinAccessGebenWennEventNichtVerfuegbar(){
         when(eventRepository.getEvent(eventId)).thenReturn(null);
         assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerEvent(eventId));
+    }
+
+    @Test
+    void verifiziereZugriffFuerEventSollAccessGebenWennBenutzerBesitzerIstMitEvent(){
+        when(herkunft.getBesitzerId()).thenReturn(benutzer);
+        when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzer));
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerEvent(event));
+    }
+
+    @Test
+    void verifiziereZugriffFuerEventSollAccessGebenWennBenutzerBesitzerIstMitEventId(){
+        when(eventRepository.getEvent(eventId)).thenReturn(event);
+        when(herkunft.getBesitzerId()).thenReturn(benutzer);
+        when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzer));
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerEvent(eventId));
+    }
+
+    @Test
+    void verifiziereZugriffFuerSerieSollAccessGebenWennBenutzerBesitzerDesDefualtEventsIst(){
+        when(serie.getDefaultEvent()).thenReturn(eventId);
+        when(eventRepository.getEvent(eventId)).thenReturn(event);
+        when(herkunft.getBesitzerId()).thenReturn(benutzer);
+        when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzer));
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serie));
+    }
+
+    @Test
+    void verifiziereZugriffFuerSerieSollAccessGebenWennBenutzerBesitzerIstMitSerienId(){
+        when(serienRepository.getSerie(serienId)).thenReturn(serie);
+        when(serie.getDefaultEvent()).thenReturn(eventId);
+        when(eventRepository.getEvent(eventId)).thenReturn(event);
+        when(herkunft.getBesitzerId()).thenReturn(benutzer);
+        when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzer));
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serienId));
     }
 }
