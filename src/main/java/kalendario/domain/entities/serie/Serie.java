@@ -7,7 +7,7 @@ import kalendario.domain.value_objects.Zeitraum;
 
 import java.util.*;
 
-public class Serie<T extends Event> {
+public class Serie{
 
     private final SerienId id;
     private EventId defaultEventId;
@@ -37,11 +37,10 @@ public class Serie<T extends Event> {
         if(zeitraum.getStart().after(start)){
             throw new IllegalArgumentException("Zeitraum ist vor Start der Serie");
         }
-        List<EventId> eventsInZeitraum = new ArrayList<>();
-        for(Date date : wiederholung.alleZeitpunkteInZeitraum(zeitraum)){
-            eventsInZeitraum.add(getEventAnZeitpunkt(date));
-        }
-        return eventsInZeitraum;
+        return wiederholung.alleZeitpunkteInZeitraum(zeitraum)
+                .stream()
+                .map(this::getEventAnZeitpunkt)
+                .toList();
     }
 
     public EventId getEventAnZeitpunkt(Date zeitpunkt) throws IllegalArgumentException{
