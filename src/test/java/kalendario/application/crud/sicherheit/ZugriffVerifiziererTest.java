@@ -73,9 +73,9 @@ public class ZugriffVerifiziererTest {
         when(serie.getDefaultEvent()).thenReturn(eventId);
         when(eventRepository.getEvent(eventId)).thenReturn(event);
         when(event.istSichtbarFuer(benutzer)).thenReturn(true);
-        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serie));
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serienId));
         when(event.istSichtbarFuer(benutzer)).thenReturn(false);
-        assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serie));
+        assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serienId));
     }
 
     @Test
@@ -84,11 +84,11 @@ public class ZugriffVerifiziererTest {
         when(session.getCurrentBenutzer()).thenReturn(Optional.empty());
         when(serie.getDefaultEvent()).thenReturn(eventId);
         when(eventRepository.getEvent(eventId)).thenReturn(event);
-        assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serie));
+        assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerSerie(serienId));
     }
 
     @Test
-    void verifiziereZugriffFuerEventSollBasierendAufEventSichtbarkeitVerfizierenMitEvent() throws KeinZugriffException {
+    void verifiziereZugriffFuerEventSollBasierendAufEventSichtbarkeitVerfizierenMitEvent() {
         when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzer));
         when(event.istSichtbarFuer(benutzer)).thenReturn(true);
         assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerEvent(event));
@@ -107,16 +107,16 @@ public class ZugriffVerifiziererTest {
         when(eventRepository.getEvent(eventId)).thenReturn(event);
         when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzer));
         when(event.istSichtbarFuer(benutzer)).thenReturn(true);
-        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerEvent(event));
+        assertDoesNotThrow(() -> zugriffVerfizierer.verifiziereZugriffFuerEvent(eventId));
         when(event.istSichtbarFuer(benutzer)).thenReturn(false);
-        assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerEvent(event));
+        assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerEvent(eventId));
     }
 
     @Test
     void verifiziereZugriffFuerEventSollKeinAccessGebenWennKeinBenutzerAngemeldetIstMitEventId(){
         when(eventRepository.getEvent(eventId)).thenReturn(event);
         when(session.getCurrentBenutzer()).thenReturn(Optional.empty());
-        assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerEvent(event));
+        assertThrows(KeinZugriffException.class, () -> zugriffVerfizierer.verifiziereZugriffFuerEvent(eventId));
     }
 
     @Test
