@@ -2,6 +2,8 @@ package kalendario.application.crud.event;
 
 import kalendario.application.crud.benutzer.BenutzerCreation;
 import kalendario.application.crud.serie.SerieCreation;
+import kalendario.application.crud.sicherheit.SchreibZugriffVerifizierer;
+import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.entities.serie.SerienId;
@@ -26,11 +28,12 @@ public class SerieCreationTest {
     Date start = mock();
     Wiederholung wiederholung = mock();
     SerienRepository serienRepository = mock();
+    SchreibZugriffVerifizierer schreibZugriffVerifizierer = mock();
     SerieCreation serieCreation;
 
     @BeforeEach
     void init(){
-        serieCreation = new SerieCreation(serienRepository);
+        serieCreation = new SerieCreation(serienRepository, schreibZugriffVerifizierer);
     }
 
     @Test
@@ -60,5 +63,13 @@ public class SerieCreationTest {
         assertEquals(start, serie.getStart());
         assertEquals(wiederholung, serie.getWiederholung());
     }
+
+    @Test
+    void createSerieSollSchreibZugriffVerifizieren() throws SaveException, KeinZugriffException {
+        Serie serie = serieCreation.createSerie(eventId, start, wiederholung);
+        verify(schreibZugriffVerifizierer).verifiziereZugriffFuerSerie(serie);
+    }
+
+
 
 }
