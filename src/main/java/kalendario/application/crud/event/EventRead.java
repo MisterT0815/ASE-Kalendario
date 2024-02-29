@@ -1,6 +1,6 @@
 package kalendario.application.crud.event;
 
-import kalendario.application.crud.sicherheit.ZugriffVerfizierer;
+import kalendario.application.crud.sicherheit.LeseZugriffVerfizierer;
 import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.event.*;
 import kalendario.domain.entities.serie.SerienId;
@@ -12,11 +12,11 @@ import java.util.Optional;
 public class EventRead {
 
     EventRepository eventRepository;
-    ZugriffVerfizierer zugriffVerfizierer;
+    LeseZugriffVerfizierer leseZugriffVerfizierer;
 
-    public EventRead(EventRepository eventRepository, ZugriffVerfizierer zugriffVerfizierer) {
+    public EventRead(EventRepository eventRepository, LeseZugriffVerfizierer leseZugriffVerfizierer) {
         this.eventRepository = eventRepository;
-        this.zugriffVerfizierer = zugriffVerfizierer;
+        this.leseZugriffVerfizierer = leseZugriffVerfizierer;
     }
 
     public Optional<Event> getEvent(EventId eventId) throws KeinZugriffException {
@@ -24,7 +24,7 @@ public class EventRead {
         if(event == null){
             return Optional.empty();
         }
-        zugriffVerfizierer.verifiziereZugriffFuerEvent(event);
+        leseZugriffVerfizierer.verifiziereZugriffFuerEvent(event);
         return Optional.of(event);
     }
 
@@ -57,11 +57,11 @@ public class EventRead {
     }
 
     public List<Event> getEventsOfSerie(SerienId serienId) throws KeinZugriffException {
-        zugriffVerfizierer.verifiziereZugriffFuerSerie(serienId);
+        leseZugriffVerfizierer.verifiziereZugriffFuerSerie(serienId);
         List<Event> events = eventRepository.getEventsOfSerie(serienId);
         return events.stream().filter(event -> {
             try {
-                zugriffVerfizierer.verifiziereZugriffFuerEvent(event);
+                leseZugriffVerfizierer.verifiziereZugriffFuerEvent(event);
             } catch (KeinZugriffException e) {
                 return false;
             }

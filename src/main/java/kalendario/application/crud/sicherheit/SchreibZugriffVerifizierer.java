@@ -12,28 +12,33 @@ import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.HerkunftRepository;
 import kalendario.domain.repositories.SerienRepository;
 
-public class ZugriffVerfizierer {
+public class SchreibZugriffVerifizierer implements ZugriffVerifizierer{
 
     Session session;
     EventRepository eventRepository;
     SerienRepository serienRepository;
     HerkunftRepository herkunftRepository;
 
-    public ZugriffVerfizierer(Session session, EventRepository eventRepository, SerienRepository serienRepository, HerkunftRepository herkunftRepository) {
+    public SchreibZugriffVerifizierer(Session session, EventRepository eventRepository, SerienRepository serienRepository, HerkunftRepository herkunftRepository) {
         this.session = session;
         this.eventRepository = eventRepository;
         this.serienRepository = serienRepository;
         this.herkunftRepository = herkunftRepository;
     }
 
+    @Override
     public void verifiziereZugriffFuerSerie(Serie serie) throws KeinZugriffException {
         Event defaultEvent = eventRepository.getEvent(serie.getDefaultEvent());
-        if(!currentBenutzerIstBesitzerVon(defaultEvent) && !defaultEvent.istSichtbarFuer(getCurrentBenutzerOrThrow())){
+        if(defaultEvent == null){
+            throw new KeinZugriffException();
+        }
+        if(!currentBenutzerIstBesitzerVon(defaultEvent)){
             throw new KeinZugriffException();
         }
     }
 
-    public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException{
+    @Override
+    public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException {
         Serie serie = serienRepository.getSerie(serienId);
         if(serie == null){
             throw new KeinZugriffException();
@@ -41,13 +46,15 @@ public class ZugriffVerfizierer {
         verifiziereZugriffFuerSerie(serie);
     }
 
-    public void verifiziereZugriffFuerEvent(Event event) throws KeinZugriffException{
-        if(!currentBenutzerIstBesitzerVon(event) &&  !event.istSichtbarFuer(getCurrentBenutzerOrThrow())){
+    @Override
+    public void verifiziereZugriffFuerEvent(Event event) throws KeinZugriffException {
+        if(!currentBenutzerIstBesitzerVon(event)){
             throw new KeinZugriffException();
         }
     }
 
-    public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException{
+    @Override
+    public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException {
         Event event = eventRepository.getEvent(eventId);
         if(event == null){
             throw new KeinZugriffException();
@@ -62,7 +69,7 @@ public class ZugriffVerfizierer {
     private boolean currentBenutzerIstBesitzerVon(Event event) throws KeinZugriffException {
         Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
         if(herkunft == null){
-            throw new RuntimeException("Herkunft von Event with id %d ist nicht verfuegbar");
+            throw new KeinZugriffException();
         }
         return herkunft.getBesitzerId().equals(getCurrentBenutzerOrThrow());
     }

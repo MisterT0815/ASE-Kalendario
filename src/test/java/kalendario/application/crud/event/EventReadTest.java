@@ -1,6 +1,6 @@
 package kalendario.application.crud.event;
 
-import kalendario.application.crud.sicherheit.ZugriffVerfizierer;
+import kalendario.application.crud.sicherheit.LeseZugriffVerfizierer;
 import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.event.*;
 import kalendario.domain.entities.serie.SerienId;
@@ -27,11 +27,11 @@ public class EventReadTest {
     Termin termin = mock();
     SerienId serienId = mock();
     EventRead eventRead;
-    ZugriffVerfizierer zugriffVerfizierer = mock();
+    LeseZugriffVerfizierer leseZugriffVerfizierer = mock();
 
     @BeforeEach
     void init(){
-        eventRead = new EventRead(eventRepository, zugriffVerfizierer);
+        eventRead = new EventRead(eventRepository, leseZugriffVerfizierer);
     }
 
     @Test
@@ -84,28 +84,28 @@ public class EventReadTest {
 
     @Test
     void getEventSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(zugriffVerfizierer).verifiziereZugriffFuerEvent(event);
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(event);
         when(eventRepository.getEvent(eventId)).thenReturn(event);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEvent(eventId));
     }
 
     @Test
     void getAufgabeSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(zugriffVerfizierer).verifiziereZugriffFuerEvent(aufgabe);
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(aufgabe);
         when(eventRepository.getEvent(eventId)).thenReturn(aufgabe);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEvent(eventId));
     }
 
     @Test
     void getGeplanteAufgabeSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(zugriffVerfizierer).verifiziereZugriffFuerEvent(geplanteAufgabe);
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(geplanteAufgabe);
         when(eventRepository.getEvent(eventId)).thenReturn(geplanteAufgabe);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEvent(eventId));
     }
 
     @Test
     void getTerminSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(zugriffVerfizierer).verifiziereZugriffFuerEvent(termin);
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(termin);
         when(eventRepository.getEvent(eventId)).thenReturn(termin);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEvent(eventId));
     }
@@ -125,7 +125,7 @@ public class EventReadTest {
 
     @Test
     void getEventsOfSerieSollExceptionWerfenWennBenutzerKeinenAccessAufSerieHat() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(zugriffVerfizierer).verifiziereZugriffFuerSerie(serienId);
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerSerie(serienId);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEventsOfSerie(serienId));
     }
 
@@ -137,7 +137,7 @@ public class EventReadTest {
         events.add(event1);
         events.add(event2);
         when(eventRepository.getEventsOfSerie(serienId)).thenReturn(events);
-        doThrow(KeinZugriffException.class).when(zugriffVerfizierer).verifiziereZugriffFuerEvent(event2);
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(event2);
         List<Event> returnedEvents = eventRead.getEventsOfSerie(serienId);
         assertTrue(returnedEvents.contains(event1));
         assertFalse(returnedEvents.contains(event2));

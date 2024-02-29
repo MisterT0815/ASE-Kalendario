@@ -1,6 +1,6 @@
 package kalendario.application.crud.serie;
 
-import kalendario.application.crud.sicherheit.ZugriffVerfizierer;
+import kalendario.application.crud.sicherheit.LeseZugriffVerfizierer;
 import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.entities.serie.SerienId;
@@ -11,11 +11,11 @@ import java.util.Optional;
 public class SerieRead {
 
     SerienRepository serienRepository;
-    ZugriffVerfizierer zugriffVerfizierer;
+    LeseZugriffVerfizierer leseZugriffVerfizierer;
 
-    public SerieRead(SerienRepository serienRepository, ZugriffVerfizierer zugriffVerfizierer) {
+    public SerieRead(SerienRepository serienRepository, LeseZugriffVerfizierer leseZugriffVerfizierer) {
         this.serienRepository = serienRepository;
-        this.zugriffVerfizierer = zugriffVerfizierer;
+        this.leseZugriffVerfizierer = leseZugriffVerfizierer;
     }
 
     public Optional<Serie> getSerie(SerienId serienId) throws KeinZugriffException {
@@ -23,7 +23,7 @@ public class SerieRead {
         if(serie == null){
             return Optional.empty();
         }
-        zugriffVerfizierer.verifiziereZugriffFuerSerie(serie);
+        leseZugriffVerfizierer.verifiziereZugriffFuerSerie(serie);
         return Optional.of(serie);
     }
 

@@ -1,6 +1,6 @@
 package kalendario.application.crud.serie;
 
-import kalendario.application.crud.sicherheit.ZugriffVerfizierer;
+import kalendario.application.crud.sicherheit.LeseZugriffVerfizierer;
 import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.entities.serie.SerienId;
@@ -20,11 +20,11 @@ public class SerieReadTest {
     SerienId serienId = mock();
     Serie serie = mock();
     SerieRead serieRead;
-    ZugriffVerfizierer zugriffVerfizierer = mock();
+    LeseZugriffVerfizierer leseZugriffVerfizierer = mock();
 
     @BeforeEach
     void init(){
-        serieRead = new SerieRead(serienRepository, zugriffVerfizierer);
+        serieRead = new SerieRead(serienRepository, leseZugriffVerfizierer);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class SerieReadTest {
 
     @Test
     void getSerieSollNoAccessExceptionWerfenWennNutzerKeinZugriffAufSerieHat() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(zugriffVerfizierer).verifiziereZugriffFuerSerie(serie);
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerSerie(serie);
         when(serienRepository.getSerie(serienId)).thenReturn(serie);
         assertThrows(KeinZugriffException.class, () -> serieRead.getSerie(serienId));
     }
