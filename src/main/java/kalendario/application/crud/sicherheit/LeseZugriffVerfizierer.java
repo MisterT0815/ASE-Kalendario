@@ -28,10 +28,7 @@ public class LeseZugriffVerfizierer implements ZugriffVerifizierer {
 
     @Override
     public void verifiziereZugriffFuerSerie(Serie serie) throws KeinZugriffException {
-        Event defaultEvent = eventRepository.getEvent(serie.getDefaultEvent());
-        if(!currentBenutzerIstBesitzerVon(defaultEvent) && !defaultEvent.istSichtbarFuer(getCurrentBenutzerOrThrow())){
-            throw new KeinZugriffException();
-        }
+        verifiziereZugriffFuerEvent(serie.getDefaultEvent());
     }
 
     @Override

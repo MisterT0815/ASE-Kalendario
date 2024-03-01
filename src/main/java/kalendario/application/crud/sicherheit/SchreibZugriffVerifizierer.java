@@ -28,13 +28,7 @@ public class SchreibZugriffVerifizierer implements ZugriffVerifizierer{
 
     @Override
     public void verifiziereZugriffFuerSerie(Serie serie) throws KeinZugriffException {
-        Event defaultEvent = eventRepository.getEvent(serie.getDefaultEvent());
-        if(defaultEvent == null){
-            throw new KeinZugriffException();
-        }
-        if(!currentBenutzerIstBesitzerVon(defaultEvent)){
-            throw new KeinZugriffException();
-        }
+        verifiziereZugriffFuerEvent(serie.getDefaultEvent());
     }
 
     @Override
