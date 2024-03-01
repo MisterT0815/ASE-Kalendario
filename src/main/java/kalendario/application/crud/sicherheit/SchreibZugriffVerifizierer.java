@@ -27,17 +27,22 @@ public class SchreibZugriffVerifizierer implements ZugriffVerifizierer{
     }
 
     @Override
+    public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException {
+        Serie serie = serienRepository.getSerie(serienId);
+        nullCheck(serie);
+        verifiziereZugriffFuerSerie(serie);
+    }
+
+    @Override
     public void verifiziereZugriffFuerSerie(Serie serie) throws KeinZugriffException {
         verifiziereZugriffFuerEvent(serie.getDefaultEvent());
     }
 
     @Override
-    public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException {
-        Serie serie = serienRepository.getSerie(serienId);
-        if(serie == null){
-            throw new KeinZugriffException();
-        }
-        verifiziereZugriffFuerSerie(serie);
+    public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException {
+        Event event = eventRepository.getEvent(eventId);
+        nullCheck(event);
+        verifiziereZugriffFuerEvent(event);
     }
 
     @Override
@@ -47,24 +52,20 @@ public class SchreibZugriffVerifizierer implements ZugriffVerifizierer{
         }
     }
 
-    @Override
-    public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException {
-        Event event = eventRepository.getEvent(eventId);
-        if(event == null){
-            throw new KeinZugriffException();
-        }
-        verifiziereZugriffFuerEvent(event);
+    private boolean currentBenutzerIstBesitzerVon(Event event) throws KeinZugriffException {
+        Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
+        nullCheck(herkunft);
+        return herkunft.getBesitzerId().equals(getCurrentBenutzerOrThrow());
     }
 
     private BenutzerId getCurrentBenutzerOrThrow() throws KeinZugriffException{
         return session.getCurrentBenutzer().orElseThrow(KeinZugriffException::new);
     }
 
-    private boolean currentBenutzerIstBesitzerVon(Event event) throws KeinZugriffException {
-        Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
-        if(herkunft == null){
+    private void nullCheck(Object o) throws KeinZugriffException{
+        if(o == null){
             throw new KeinZugriffException();
         }
-        return herkunft.getBesitzerId().equals(getCurrentBenutzerOrThrow());
     }
+
 }
