@@ -56,7 +56,7 @@ public abstract class ZugriffVerifizierer {
     }
 
     public void verifiziereZugriffFuerHerkunft(HerkunftId herkunftId) throws KeinZugriffException{
-        Herkunft herkunft = herkunftRepository.getHerkunftWithId(herkunftId);
+        Herkunft herkunft = herkunftRepository.getHerkunftMitId(herkunftId);
         nullCheck(herkunftId);
         verifiziereZugriffFuerHerkunft(herkunft);
     }
@@ -68,7 +68,7 @@ public abstract class ZugriffVerifizierer {
     }
 
     protected boolean currentBenutzerIstBesitzerVon(Event event) {
-        Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
+        Herkunft herkunft = herkunftRepository.getHerkunftMitId(event.getHerkunftId());
         try{
             nullCheck(herkunft);
             return herkunft.getBesitzerId().equals(session.getCurrentBenutzer().orElseThrow());

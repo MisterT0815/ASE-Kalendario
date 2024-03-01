@@ -15,7 +15,7 @@ public class HerkunftRead {
     }
 
     public Optional<Herkunft> getHerkunft(HerkunftId herkunftId){
-        return Optional.ofNullable(herkunftRepository.getHerkunftWithId(herkunftId));
+        return Optional.ofNullable(herkunftRepository.getHerkunftMitId(herkunftId));
     }
 
 }

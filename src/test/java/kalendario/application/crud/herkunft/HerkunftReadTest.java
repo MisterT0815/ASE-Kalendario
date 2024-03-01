@@ -8,8 +8,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -30,7 +28,7 @@ public class HerkunftReadTest {
 
     @Test
     void getHerkunftSollAnRepositoryDelegieren(){
-        when(herkunftRepository.getHerkunftWithId(herkunftId)).thenReturn(herkunft);
+        when(herkunftRepository.getHerkunftMitId(herkunftId)).thenReturn(herkunft);
         assertEquals(herkunft, herkunftRead.getHerkunft(herkunftId).get());
         when(herkunftRead.getHerkunft(herkunftId)).thenReturn(null);
         assertTrue(herkunftRead.getHerkunft(herkunftId).isEmpty());

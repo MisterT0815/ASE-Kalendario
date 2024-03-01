@@ -42,7 +42,7 @@ public class LeseZugriffVerifiziererTest {
     void init(){
         leseZugriffVerfizierer = new LeseZugriffVerfizierer(session, eventRepository, serienRepository, herkunftRepository);
         when(event.getHerkunftId()).thenReturn(herkunftId);
-        when(herkunftRepository.getHerkunftWithId(herkunftId)).thenReturn(herkunft);
+        when(herkunftRepository.getHerkunftMitId(herkunftId)).thenReturn(herkunft);
         when(herkunft.getBesitzerId()).thenReturn(besitzer);
     }
 
@@ -166,7 +166,7 @@ public class LeseZugriffVerifiziererTest {
 
     @Test
     void verifiziereZugriffFuerEventSollKeinenAccessGebenWennHerkunftDesEventsNichtExistiert(){
-        when(herkunftRepository.getHerkunftWithId(herkunftId)).thenReturn(null);
+        when(herkunftRepository.getHerkunftMitId(herkunftId)).thenReturn(null);
         assertThrows(KeinZugriffException.class, () -> leseZugriffVerfizierer.verifiziereZugriffFuerEvent(event));
     }
 }

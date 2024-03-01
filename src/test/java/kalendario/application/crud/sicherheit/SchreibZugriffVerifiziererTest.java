@@ -47,7 +47,7 @@ public class SchreibZugriffVerifiziererTest {
         when(serie.getDefaultEvent()).thenReturn(eventId);
         when(eventRepository.getEvent(eventId)).thenReturn(event);
         when(event.getHerkunftId()).thenReturn(herkunftId);
-        when(herkunftRepository.getHerkunftWithId(herkunftId)).thenReturn(herkunft);
+        when(herkunftRepository.getHerkunftMitId(herkunftId)).thenReturn(herkunft);
         when(herkunft.getBesitzerId()).thenReturn(besitzer);
     }
 
@@ -98,7 +98,7 @@ public class SchreibZugriffVerifiziererTest {
     @Test
     void verifiziereZugriffFuerEventSollZugriffVerweigernWennEsHerkunftDesEventsNichtGibt() {
         when(session.getCurrentBenutzer()).thenReturn(Optional.of(besitzer));
-        when(herkunftRepository.getHerkunftWithId(herkunftId)).thenReturn(null);
+        when(herkunftRepository.getHerkunftMitId(herkunftId)).thenReturn(null);
         assertThrows(KeinZugriffException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerEvent(eventId));
     }
 
