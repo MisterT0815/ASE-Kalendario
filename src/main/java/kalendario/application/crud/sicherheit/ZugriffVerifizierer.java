@@ -5,6 +5,7 @@ import kalendario.application.session.Session;
 import kalendario.domain.entities.event.Event;
 import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.herkunft.Herkunft;
+import kalendario.domain.entities.herkunft.HerkunftId;
 import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.EventRepository;
@@ -19,8 +20,9 @@ public abstract class ZugriffVerifizierer {
     EventRepository eventRepository;
     SerienRepository serienRepository;
     HerkunftRepository herkunftRepository;
-    Predicate<Event> eventCheck;
-    Predicate<Serie> serieCheck;
+    Predicate eventCheck = x -> false;
+    Predicate<Serie> serieCheck = x -> false;
+    Predicate<Herkunft> herkunftCheck = x -> false;
 
     public ZugriffVerifizierer(Session session, EventRepository eventRepository, SerienRepository serienRepository, HerkunftRepository herkunftRepository) {
         this.session = session;
@@ -49,6 +51,18 @@ public abstract class ZugriffVerifizierer {
 
     public void verifiziereZugriffFuerEvent(Event event) throws KeinZugriffException{
         if(!eventCheck.test(event)){
+            throw new KeinZugriffException();
+        }
+    }
+
+    public void verifiziereZugriffFuerHerkunft(HerkunftId herkunftId) throws KeinZugriffException{
+        Herkunft herkunft = herkunftRepository.getHerkunftWithId(herkunftId);
+        nullCheck(herkunftId);
+        verifiziereZugriffFuerHerkunft(herkunft);
+    }
+
+    public void verifiziereZugriffFuerHerkunft(Herkunft herkunft) throws KeinZugriffException{
+        if(!herkunftCheck.test(herkunft)){
             throw new KeinZugriffException();
         }
     }

@@ -12,16 +12,19 @@ import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.HerkunftRepository;
 import kalendario.domain.repositories.SerienRepository;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 public class SchreibZugriffVerifizierer extends ZugriffVerifizierer{
 
     public SchreibZugriffVerifizierer(Session session, EventRepository eventRepository, SerienRepository serienRepository, HerkunftRepository herkunftRepository) {
         super(session, eventRepository, serienRepository, herkunftRepository);
-        Predicate<Event> userIstAngemeldet = (event) -> session.getCurrentBenutzer().isPresent();
+        BooleanSupplier userIstAngemeldet = () -> session.getCurrentBenutzer().isPresent();
+        Predicate<Event> userIstAngemeldetEvent = x -> userIstAngemeldet.getAsBoolean();
         Predicate<Event> userIstBesitzer = this::currentBenutzerIstBesitzerVon;
-        eventCheck = userIstAngemeldet.and(userIstBesitzer);
-        serieCheck = (serie) -> {
+        eventCheck = userIstAngemeldetEvent.and(userIstBesitzer);
+        Predicate<Serie> userIstAngemeltetSerie = x -> userIstAngemeldet.getAsBoolean();
+        Predicate<Serie> userHatZugriffAufDefaultEvent = (serie) -> {
             try{
                 verifiziereZugriffFuerEvent(serie.getDefaultEvent());
             } catch (KeinZugriffException e) {
@@ -29,6 +32,10 @@ public class SchreibZugriffVerifizierer extends ZugriffVerifizierer{
             }
             return true;
         };
+        serieCheck = userIstAngemeltetSerie.and(userHatZugriffAufDefaultEvent);
+        Predicate<Herkunft> userIstAngemeltetHerkunft = x -> userIstAngemeldet.getAsBoolean();
+        Predicate<Herkunft> userIstBesitzerDerHerkunft = (herkunft) -> herkunft.getBesitzerId().equals(session.getCurrentBenutzer().get());
+        herkunftCheck = userIstAngemeltetHerkunft.and(userIstBesitzerDerHerkunft);
     }
 
 

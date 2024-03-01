@@ -102,4 +102,21 @@ public class SchreibZugriffVerifiziererTest {
         assertThrows(KeinZugriffException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerEvent(eventId));
     }
 
+    @Test
+    void verifiziereZugriffFuerHerkunftSollZugriffNurFuerBesitzerGeben(){
+        when(session.getCurrentBenutzer()).thenReturn(Optional.of(besitzer));
+        assertDoesNotThrow(() -> schreibZugriffVerifizierer.verifiziereZugriffFuerHerkunft(herkunftId));
+        assertDoesNotThrow(() -> schreibZugriffVerifizierer.verifiziereZugriffFuerHerkunft(herkunft));
+        when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzer));
+        assertThrows(KeinZugriffException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerHerkunft(herkunftId));
+        assertThrows(KeinZugriffException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerHerkunft(herkunft));
+    }
+
+    @Test
+    void verifiziereZugriffFuerHerkunftSollKeinenZugriffGebenWennNutzerNichtAngemeldetIst(){
+        when(session.getCurrentBenutzer()).thenReturn(Optional.empty());
+        assertThrows(KeinZugriffException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerHerkunft(herkunftId));
+        assertThrows(KeinZugriffException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerHerkunft(herkunft));
+    }
+
 }
