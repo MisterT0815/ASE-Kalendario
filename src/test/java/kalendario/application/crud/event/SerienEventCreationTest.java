@@ -3,6 +3,9 @@ package kalendario.application.crud.event;
 import kalendario.application.crud.benutzer.BenutzerCreation;
 import kalendario.application.crud.event.SerienEventCreation;
 import kalendario.application.crud.herkunft.HerkunftRead;
+import kalendario.application.crud.sicherheit.SchreibZugriffVerifizierer;
+import kalendario.application.session.KeinZugriffException;
+import kalendario.application.session.Session;
 import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.event.*;
 import kalendario.domain.entities.herkunft.Herkunft;
@@ -32,16 +35,16 @@ public class SerienEventCreationTest {
     EventRepository eventRepository = mock();
     SerienId serie = mock();
     SerienEventCreation serienEventCreation;
-    Herkunft herkunft = mock();
-    HerkunftRead herkunftRead = mock();
+    Session session = mock();
+    SchreibZugriffVerifizierer schreibZugriffVerifizierer = mock();
 
     @BeforeEach
     void init() {
-        serienEventCreation = new SerienEventCreation(eventRepository, herkunftRead);
+        serienEventCreation = new SerienEventCreation(eventRepository, session, schreibZugriffVerifizierer);
     }
 
     @Test
-    void createEventSollTerminSpeichernWennZeitraumMitgegeben() throws SaveException {
+    void createEventSollTerminSpeichernWennZeitraumMitgegeben() throws SaveException, KeinZugriffException {
         Zeitraum zeitraum = mock();
         Event event = serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serie);
         assertInstanceOf(Termin.class, event);
@@ -55,7 +58,7 @@ public class SerienEventCreationTest {
     }
 
     @Test
-    void createEventSollAufgabeSpeichernWennDeadlineUndGetanMitgegeben() throws SaveException {
+    void createEventSollAufgabeSpeichernWennDeadlineUndGetanMitgegeben() throws SaveException, KeinZugriffException {
         Date deadline = mock();
         Event event = serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline,false, serie);
         assertInstanceOf(Aufgabe.class, event);
@@ -70,11 +73,10 @@ public class SerienEventCreationTest {
     }
 
     @Test
-    void createEventSollGetanVonAufBesitzerSpeichernWennGetanWahrMitgegebenBeiAufgabe() throws SaveException {
+    void createEventSollGetanVonAufBesitzerSpeichernWennGetanWahrMitgegebenBeiAufgabe() throws SaveException, KeinZugriffException {
         Date deadline = mock();
         BenutzerId besitzerId = mock();
-        when(herkunftRead.getHerkunft(herkunftId)).thenReturn(Optional.of(herkunft));
-        when(herkunft.getBesitzerId()).thenReturn(besitzerId);
+        when(session.getCurrentBenutzer()).thenReturn(Optional.of(besitzerId));
         Event event = serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, true, serie);
         assertInstanceOf(Aufgabe.class, event);
         Aufgabe aufgabe = (Aufgabe) event;
@@ -84,7 +86,7 @@ public class SerienEventCreationTest {
     }
 
     @Test
-    void createEventSollGeplanteAufgabeSpeichernWennZeitraumUndGeplantMitgegeben() throws SaveException {
+    void createEventSollGeplanteAufgabeSpeichernWennZeitraumUndGeplantMitgegeben() throws SaveException, KeinZugriffException {
         Zeitraum zeitraum = mock();
         Event event = serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serie);
         assertInstanceOf(GeplanteAufgabe.class, event);
@@ -98,11 +100,10 @@ public class SerienEventCreationTest {
     }
 
     @Test
-    void createEventSollGetanVonAufBesitzerSpeichernWennGetanWahrMitgegebenBeiGeplanteAufgabe() throws SaveException {
+    void createEventSollGetanVonAufBesitzerSpeichernWennGetanWahrMitgegebenBeiGeplanteAufgabe() throws SaveException, KeinZugriffException {
         Zeitraum zeitraum = mock();
         BenutzerId besitzerId = mock();
-        when(herkunftRead.getHerkunft(herkunftId)).thenReturn(Optional.of(herkunft));
-        when(herkunft.getBesitzerId()).thenReturn(besitzerId);
+        when(session.getCurrentBenutzer()).thenReturn(Optional.of(besitzerId));
         Event event = serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, true, serie);
         assertInstanceOf(GeplanteAufgabe.class, event);
         GeplanteAufgabe geplanteAufgabe = (GeplanteAufgabe) event;
@@ -112,7 +113,7 @@ public class SerienEventCreationTest {
     }
 
     @Test
-    void createEventSollEventEindeutigeIdVonRepositoryGeben() throws SaveException {
+    void createEventSollEventEindeutigeIdVonRepositoryGeben() throws SaveException, KeinZugriffException {
         EventId id = mock();
         Zeitraum zeitraum = mock();
         when(eventRepository.neueId()).thenReturn(id);
@@ -121,11 +122,14 @@ public class SerienEventCreationTest {
     }
 
     @Test
-    void createAufgabeSollSaveExceptionWerfenWennHerkunftUngueltig(){
+    void createEventSollSaveExceptionWerfenWennKeinSchreibzugriffAufHerkunftExistiert() throws KeinZugriffException {
         Date deadline = mock();
-        BenutzerId besitzerId = mock();
-        when(herkunftRead.getHerkunft(herkunftId)).thenReturn(Optional.empty());
-        assertThrows(SaveException.class, () -> serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline,true, serie));
+        Zeitraum zeitraum = mock();
+        doThrow(KeinZugriffException.class).when(schreibZugriffVerifizierer).verifiziereZugriffFuerHerkunft(herkunftId);
+        assertThrows(KeinZugriffException.class, () -> serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serie));
+        assertThrows(KeinZugriffException.class, () -> serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serie));
+        assertThrows(KeinZugriffException.class, () -> serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serie));
+        verifyNoInteractions(eventRepository);
     }
 
 }

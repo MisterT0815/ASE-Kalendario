@@ -1,6 +1,9 @@
 package kalendario.application.crud.event;
 
 import kalendario.application.crud.herkunft.HerkunftRead;
+import kalendario.application.crud.sicherheit.SchreibZugriffVerifizierer;
+import kalendario.application.session.KeinZugriffException;
+import kalendario.application.session.Session;
 import kalendario.domain.entities.event.*;
 import kalendario.domain.entities.herkunft.Herkunft;
 import kalendario.domain.entities.herkunft.HerkunftId;
@@ -16,44 +19,43 @@ import java.util.Optional;
 public class SerienEventCreation {
 
     EventRepository eventRepository;
-    HerkunftRead herkunftRead;
+    Session session;
+    SchreibZugriffVerifizierer schreibZugriffVerifizierer;
 
-    public SerienEventCreation(EventRepository eventRepository, HerkunftRead herkunftRead){
+    public SerienEventCreation(EventRepository eventRepository, Session session, SchreibZugriffVerifizierer schreibZugriffVerifizierer) {
         this.eventRepository = eventRepository;
-        this.herkunftRead = herkunftRead;
+        this.session = session;
+        this.schreibZugriffVerifizierer = schreibZugriffVerifizierer;
     }
-    public Event createEvent(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum, SerienId serie) throws SaveException {
+
+    public Event createEvent(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum, SerienId serie) throws SaveException, KeinZugriffException {
+        schreibZugriffVerifizierer.verifiziereZugriffFuerHerkunft(herkunft);
         EventId id = eventRepository.neueId();
         Termin termin = new Termin(id, titel, herkunft, sichtbarkeit, beschreibung, serie, zeitraum);
         eventRepository.saveTermin(termin);
         return termin;
     }
 
-    public Event createEvent(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Date deadline, boolean getan, SerienId serie) throws SaveException {
+    public Event createEvent(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Date deadline, boolean getan, SerienId serie) throws SaveException, KeinZugriffException {
+        schreibZugriffVerifizierer.verifiziereZugriffFuerHerkunft(herkunft);
         EventId id = eventRepository.neueId();
         Aufgabe aufgabe = new Aufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, serie, deadline);
         if (getan) {
-            setGetanToBesitzer(herkunft, aufgabe);
+            aufgabe.setGetan(session.getCurrentBenutzer().orElseThrow(), true);
         }
         eventRepository.saveAufgabe(aufgabe);
         return aufgabe;
     }
 
-    public Event createEvent(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum, boolean getan, SerienId serie) throws SaveException {
+    public Event createEvent(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum, boolean getan, SerienId serie) throws SaveException, KeinZugriffException {
+        schreibZugriffVerifizierer.verifiziereZugriffFuerHerkunft(herkunft);
         EventId id = eventRepository.neueId();
         GeplanteAufgabe geplanteAufgabe = new GeplanteAufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, serie, zeitraum);
         if (getan) {
-            setGetanToBesitzer(herkunft, geplanteAufgabe);
+            geplanteAufgabe.setGetan(session.getCurrentBenutzer().orElseThrow(), true);
         }
         eventRepository.saveGeplanteAufgabe(geplanteAufgabe);
         return geplanteAufgabe;
     }
 
-    private void setGetanToBesitzer(HerkunftId herkunftId, Machbar aufgabe) throws SaveException {
-        Optional<Herkunft> herkunftOptional = herkunftRead.getHerkunft(herkunftId);
-        if(herkunftOptional.isEmpty()){
-            throw new SaveException(String.format("Herkunft mit Id %d existiert nicht", herkunftId.getId()));
-        }
-        aufgabe.setGetan(herkunftOptional.get().getBesitzerId(), true);
-    }
 }

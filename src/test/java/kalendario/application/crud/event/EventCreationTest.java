@@ -31,7 +31,6 @@ public class EventCreationTest {
     EventCreation eventCreation;
     Session session = mock();
     SchreibZugriffVerifizierer schreibZugriffVerifizierer = mock();
-    Herkunft herkunft = mock();
 
     @BeforeEach
     void init() {
@@ -119,7 +118,7 @@ public class EventCreationTest {
     }
 
     @Test
-    void createAufgabeSollSaveExceptionWerfenWennKeinSchreibzugriffAufHerkunftExistiert() throws KeinZugriffException {
+    void createEventSollSaveExceptionWerfenWennKeinSchreibzugriffAufHerkunftExistiert() throws KeinZugriffException {
         Date deadline = mock();
         Zeitraum zeitraum = mock();
         doThrow(KeinZugriffException.class).when(schreibZugriffVerifizierer).verifiziereZugriffFuerHerkunft(herkunftId);
