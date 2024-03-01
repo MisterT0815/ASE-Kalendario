@@ -62,6 +62,7 @@ public class SerienEventCreationTest {
         Event event = serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(Termin.class, event);
         verify(eventRepository).saveTermin((Termin) event);
+        verify(serieUpdate).updateSerie(serie);
         Termin termin = (Termin) event;
         assertEquals(titel, termin.getTitel());
         assertEquals(herkunftId, termin.getHerkunftId());
@@ -76,6 +77,7 @@ public class SerienEventCreationTest {
         Event event = serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline,false, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(Aufgabe.class, event);
         verify(eventRepository).saveAufgabe((Aufgabe) event);
+        verify(serieUpdate).updateSerie(serie);
         assertEquals(titel, event.getTitel());
         assertEquals(herkunftId, event.getHerkunftId());
         assertEquals(beschreibung, event.getBeschreibung());
@@ -96,6 +98,7 @@ public class SerienEventCreationTest {
         assertTrue(aufgabe.istGetan());
         assertEquals(besitzerId, aufgabe.wurdeGemachtVon().get());
         verify(eventRepository).saveAufgabe(aufgabe);
+        verify(serieUpdate).updateSerie(serie);
     }
 
     @Test
@@ -104,6 +107,7 @@ public class SerienEventCreationTest {
         Event event = serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(GeplanteAufgabe.class, event);
         verify(eventRepository).saveGeplanteAufgabe((GeplanteAufgabe) event);
+        verify(serieUpdate).updateSerie(serie);
         assertEquals(titel, event.getTitel());
         assertEquals(herkunftId, event.getHerkunftId());
         assertEquals(beschreibung, event.getBeschreibung());
@@ -123,6 +127,7 @@ public class SerienEventCreationTest {
         assertTrue(geplanteAufgabe.istGetan());
         assertEquals(besitzerId, geplanteAufgabe.wurdeGemachtVon().get());
         verify(eventRepository).saveGeplanteAufgabe(geplanteAufgabe);
+        verify(serieUpdate).updateSerie(serie);
     }
 
     @Test
@@ -141,6 +146,7 @@ public class SerienEventCreationTest {
         assertThrows(KeinZugriffException.class, () -> serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
         assertThrows(KeinZugriffException.class, () -> serienEventCreation.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
         verifyNoInteractions(eventRepository);
+        verifyNoInteractions(serieUpdate);
     }
 
     @Test
