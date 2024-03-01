@@ -22,14 +22,10 @@ public class SerieCreation {
         this.schreibZugriffVerifizierer = schreibZugriffVerifizierer;
     }
 
-    public Serie createSerie(EventId defaultEvent, Date start, Wiederholung wiederholung) throws SaveException {
+    public Serie createSerie(EventId defaultEvent, Date start, Wiederholung wiederholung) throws SaveException, KeinZugriffException {
         SerienId id = serienRepository.neueId();
         Serie serie = new Serie(id, defaultEvent, start, wiederholung);
-        try {
-            schreibZugriffVerifizierer.verifiziereZugriffFuerSerie(serie);
-        } catch (KeinZugriffException e) {
-            throw new SaveException("Kein Zugriff auf Default Event", e);
-        }
+        schreibZugriffVerifizierer.verifiziereZugriffFuerSerie(serie);
         serienRepository.saveSerie(serie);
         return serie;
     }

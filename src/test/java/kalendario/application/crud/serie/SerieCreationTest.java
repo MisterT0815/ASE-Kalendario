@@ -37,7 +37,7 @@ public class SerieCreationTest {
     }
 
     @Test
-    void createSerieSollSerienRepositoryRufen() throws SaveException {
+    void createSerieSollSerienRepositoryRufen() throws SaveException, KeinZugriffException {
         Serie serie = serieCreation.createSerie(eventId, start, wiederholung);
         verify(serienRepository).saveSerie(serie);
     }
@@ -49,7 +49,7 @@ public class SerieCreationTest {
     }
 
     @Test
-    void createSerieSollSerieEindeutigeIdVonRepositoryGeben() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
+    void createSerieSollSerieEindeutigeIdVonRepositoryGeben() throws SaveException, KeinZugriffException {
         SerienId id = mock();
         when(serienRepository.neueId()).thenReturn(id);
         Serie serie = serieCreation.createSerie(eventId, start, wiederholung);
@@ -57,7 +57,7 @@ public class SerieCreationTest {
     }
 
     @Test
-    void createSerieSollAlleUebergebenenEigenschaftenSpeichern() throws SaveException {
+    void createSerieSollAlleUebergebenenEigenschaftenSpeichern() throws SaveException, KeinZugriffException {
         Serie serie = serieCreation.createSerie(eventId, start, wiederholung);
         assertEquals(eventId, serie.getDefaultEvent());
         assertEquals(start, serie.getStart());
@@ -73,7 +73,7 @@ public class SerieCreationTest {
     @Test
     void createSerieSollExeptionWerfenWennKeinSchreibzugriffErlaubtIst() throws KeinZugriffException, SaveException {
         doThrow(KeinZugriffException.class).when(schreibZugriffVerifizierer).verifiziereZugriffFuerSerie(any(Serie.class));
-        assertThrows(SaveException.class, () -> serieCreation.createSerie(eventId, start, wiederholung));
+        assertThrows(KeinZugriffException.class, () -> serieCreation.createSerie(eventId, start, wiederholung));
         verify(serienRepository, never()).saveSerie(any());
     }
 
