@@ -97,9 +97,9 @@ public class SchreibZugriffVerifiziererTest {
 
     @Test
     void verifiziereZugriffFuerEventSollZugriffVerweigernWennEsHerkunftDesEventsNichtGibt() {
+        when(session.getCurrentBenutzer()).thenReturn(Optional.of(besitzer));
         when(herkunftRepository.getHerkunftWithId(herkunftId)).thenReturn(null);
         assertThrows(KeinZugriffException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerEvent(eventId));
     }
-
 
 }

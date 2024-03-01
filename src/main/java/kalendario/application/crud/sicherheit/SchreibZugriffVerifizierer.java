@@ -12,36 +12,23 @@ import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.HerkunftRepository;
 import kalendario.domain.repositories.SerienRepository;
 
+import java.util.function.Predicate;
+
 public class SchreibZugriffVerifizierer extends ZugriffVerifizierer{
 
     public SchreibZugriffVerifizierer(Session session, EventRepository eventRepository, SerienRepository serienRepository, HerkunftRepository herkunftRepository) {
         super(session, eventRepository, serienRepository, herkunftRepository);
-    }
-
-    @Override
-    public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException {
-        Serie serie = serienRepository.getSerie(serienId);
-        nullCheck(serie);
-        verifiziereZugriffFuerSerie(serie);
-    }
-
-    @Override
-    public void verifiziereZugriffFuerSerie(Serie serie) throws KeinZugriffException {
-        verifiziereZugriffFuerEvent(serie.getDefaultEvent());
-    }
-
-    @Override
-    public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException {
-        Event event = eventRepository.getEvent(eventId);
-        nullCheck(event);
-        verifiziereZugriffFuerEvent(event);
-    }
-
-    @Override
-    public void verifiziereZugriffFuerEvent(Event event) throws KeinZugriffException {
-        if(!currentBenutzerIstBesitzerVon(event)){
-            throw new KeinZugriffException();
-        }
+        Predicate<Event> userIstAngemeldet = (event) -> session.getCurrentBenutzer().isPresent();
+        Predicate<Event> userIstBesitzer = this::currentBenutzerIstBesitzerVon;
+        eventCheck = userIstAngemeldet.and(userIstBesitzer);
+        serieCheck = (serie) -> {
+            try{
+                verifiziereZugriffFuerEvent(serie.getDefaultEvent());
+            } catch (KeinZugriffException e) {
+                return false;
+            }
+            return true;
+        };
     }
 
 

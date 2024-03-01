@@ -12,36 +12,28 @@ import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.HerkunftRepository;
 import kalendario.domain.repositories.SerienRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.function.Predicate;
+
 public class LeseZugriffVerfizierer extends ZugriffVerifizierer {
 
     public LeseZugriffVerfizierer(Session session, EventRepository eventRepository, SerienRepository serienRepository, HerkunftRepository herkunftRepository) {
         super(session, eventRepository, serienRepository, herkunftRepository);
+        Predicate<Event> userIstAngemeldet = (event) -> session.getCurrentBenutzer().isPresent();
+        Predicate<Event> userIstBesitzer = this::currentBenutzerIstBesitzerVon;
+        Predicate<Event> userSiehtEvent = (event) -> event.istSichtbarFuer(session.getCurrentBenutzer().get());
+        eventCheck = userIstAngemeldet.and(userSiehtEvent.or(userIstBesitzer));
+        serieCheck = (serie) -> {
+            try{
+                verifiziereZugriffFuerEvent(serie.getDefaultEvent());
+            } catch (KeinZugriffException e) {
+                return false;
+            }
+            return true;
+        };
     }
 
-    @Override
-    public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException {
-        Serie serie = serienRepository.getSerie(serienId);
-        nullCheck(serie);
-        verifiziereZugriffFuerSerie(serie);
-    }
-
-    @Override
-    public void verifiziereZugriffFuerSerie(Serie serie) throws KeinZugriffException {
-        verifiziereZugriffFuerEvent(serie.getDefaultEvent());
-    }
-
-    @Override
-    public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException{
-        Event event = eventRepository.getEvent(eventId);
-        nullCheck(event);
-        verifiziereZugriffFuerEvent(event);
-    }
-
-    @Override
-    public void verifiziereZugriffFuerEvent(Event event) throws KeinZugriffException{
-        if(!currentBenutzerIstBesitzerVon(event) &&  !event.istSichtbarFuer(getCurrentBenutzerOrThrow())){
-            throw new KeinZugriffException();
-        }
-    }
 
 }

@@ -2,7 +2,6 @@ package kalendario.application.crud.sicherheit;
 
 import kalendario.application.session.KeinZugriffException;
 import kalendario.application.session.Session;
-import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.event.Event;
 import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.herkunft.Herkunft;
@@ -12,12 +11,16 @@ import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.HerkunftRepository;
 import kalendario.domain.repositories.SerienRepository;
 
+import java.util.function.Predicate;
+
 public abstract class ZugriffVerifizierer {
 
     Session session;
     EventRepository eventRepository;
     SerienRepository serienRepository;
     HerkunftRepository herkunftRepository;
+    Predicate<Event> eventCheck;
+    Predicate<Serie> serieCheck;
 
     public ZugriffVerifizierer(Session session, EventRepository eventRepository, SerienRepository serienRepository, HerkunftRepository herkunftRepository) {
         this.session = session;
@@ -26,21 +29,38 @@ public abstract class ZugriffVerifizierer {
         this.herkunftRepository = herkunftRepository;
     }
 
-    abstract void verifiziereZugriffFuerSerie(Serie serie) throws KeinZugriffException;
-    abstract void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException;
-    abstract public void verifiziereZugriffFuerEvent(Event event) throws KeinZugriffException;
-    abstract public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException;
-
-    protected boolean currentBenutzerIstBesitzerVon(Event event) throws KeinZugriffException {
-        Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
-        if(herkunft == null) {
-            throw new KeinZugriffException();
-        }
-        return herkunft.getBesitzerId().equals(getCurrentBenutzerOrThrow());
+    public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException{
+        Serie serie = serienRepository.getSerie(serienId);
+        nullCheck(serie);
+        verifiziereZugriffFuerSerie(serie);
     }
 
-    protected BenutzerId getCurrentBenutzerOrThrow() throws KeinZugriffException{
-        return session.getCurrentBenutzer().orElseThrow(KeinZugriffException::new);
+    public void verifiziereZugriffFuerSerie(Serie serie) throws KeinZugriffException{
+        if(!serieCheck.test(serie)){
+            throw new KeinZugriffException();
+        }
+    }
+
+    public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException{
+        Event event = eventRepository.getEvent(eventId);
+        nullCheck(event);
+        verifiziereZugriffFuerEvent(event);
+    }
+
+    public void verifiziereZugriffFuerEvent(Event event) throws KeinZugriffException{
+        if(!eventCheck.test(event)){
+            throw new KeinZugriffException();
+        }
+    }
+
+    protected boolean currentBenutzerIstBesitzerVon(Event event) {
+        Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
+        try{
+            nullCheck(herkunft);
+            return herkunft.getBesitzerId().equals(session.getCurrentBenutzer().orElseThrow());
+        } catch (KeinZugriffException e) {
+            return false;
+        }
     }
 
     protected void nullCheck(Object o) throws KeinZugriffException{
