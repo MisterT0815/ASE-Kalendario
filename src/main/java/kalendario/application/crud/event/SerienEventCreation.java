@@ -11,6 +11,7 @@ import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.HerkunftRepository;
 import kalendario.domain.repositories.SaveException;
+import kalendario.domain.repositories.SerienRepository;
 import kalendario.domain.value_objects.Zeitraum;
 
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class SerienEventCreation {
 
     EventRepository eventRepository;
+    SerienRepository serienRepository;
     Session session;
     SchreibZugriffVerifizierer schreibZugriffVerifizierer;
 

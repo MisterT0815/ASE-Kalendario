@@ -7,6 +7,7 @@ public interface SerienRepository {
 
     SerienId neueId();
     void saveSerie(Serie serie) throws SaveException;
-
+    void editSerie(Serie serie) throws SaveException;
     Serie getSerie(SerienId serienId);
+
 }
