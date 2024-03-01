@@ -12,18 +12,10 @@ import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.HerkunftRepository;
 import kalendario.domain.repositories.SerienRepository;
 
-public class LeseZugriffVerfizierer implements ZugriffVerifizierer {
-
-    Session session;
-    EventRepository eventRepository;
-    SerienRepository serienRepository;
-    HerkunftRepository herkunftRepository;
+public class LeseZugriffVerfizierer extends ZugriffVerifizierer {
 
     public LeseZugriffVerfizierer(Session session, EventRepository eventRepository, SerienRepository serienRepository, HerkunftRepository herkunftRepository) {
-        this.session = session;
-        this.eventRepository = eventRepository;
-        this.serienRepository = serienRepository;
-        this.herkunftRepository = herkunftRepository;
+        super(session, eventRepository, serienRepository, herkunftRepository);
     }
 
     @Override
@@ -52,21 +44,4 @@ public class LeseZugriffVerfizierer implements ZugriffVerifizierer {
         }
     }
 
-    private boolean currentBenutzerIstBesitzerVon(Event event) throws KeinZugriffException {
-        Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
-        if(herkunft == null) {
-            throw new KeinZugriffException();
-        }
-        return herkunft.getBesitzerId().equals(getCurrentBenutzerOrThrow());
-    }
-
-    private BenutzerId getCurrentBenutzerOrThrow() throws KeinZugriffException{
-        return session.getCurrentBenutzer().orElseThrow(KeinZugriffException::new);
-    }
-
-    private void nullCheck(Object o) throws KeinZugriffException{
-        if(o == null){
-            throw new KeinZugriffException();
-        }
-    }
 }
