@@ -28,7 +28,7 @@ public class SerieCreation {
         try {
             schreibZugriffVerifizierer.verifiziereZugriffFuerSerie(serie);
         } catch (KeinZugriffException e) {
-            throw new SaveException("Kein Zugriff auf Default Event");
+            throw new SaveException("Kein Zugriff auf Default Event", e);
         }
         serienRepository.saveSerie(serie);
         return serie;

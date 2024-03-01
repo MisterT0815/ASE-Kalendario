@@ -1,4 +1,4 @@
-package kalendario.application.crud.serie;
+package kalendario.application.crud.event;
 
 import kalendario.application.crud.benutzer.BenutzerCreation;
 import kalendario.application.crud.event.SerienEventCreation;

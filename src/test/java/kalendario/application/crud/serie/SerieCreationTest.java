@@ -1,4 +1,4 @@
-package kalendario.application.crud.event;
+package kalendario.application.crud.serie;
 
 import kalendario.application.crud.benutzer.BenutzerCreation;
 import kalendario.application.crud.serie.SerieCreation;
@@ -68,6 +68,13 @@ public class SerieCreationTest {
     void createSerieSollSchreibZugriffVerifizieren() throws SaveException, KeinZugriffException {
         Serie serie = serieCreation.createSerie(eventId, start, wiederholung);
         verify(schreibZugriffVerifizierer).verifiziereZugriffFuerSerie(serie);
+    }
+
+    @Test
+    void createSerieSollExeptionWerfenWennKeinSchreibzugriffErlaubtIst() throws KeinZugriffException, SaveException {
+        doThrow(KeinZugriffException.class).when(schreibZugriffVerifizierer).verifiziereZugriffFuerSerie(any(Serie.class));
+        assertThrows(SaveException.class, () -> serieCreation.createSerie(eventId, start, wiederholung));
+        verify(serienRepository, never()).saveSerie(any());
     }
 
 
