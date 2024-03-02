@@ -11,6 +11,7 @@ import java.util.Optional;
 public class Session {
 
     private BenutzerId benutzer = null;
+    private String benutzerName = null;
     BenutzerRead benutzerRead;
     BenutzerCreation benutzerCreation;
 
@@ -24,18 +25,25 @@ public class Session {
             throw new LoginException("Fehler bei Login, checke Benutzername und Passwort");
         }
         benutzer = benutzerRead.getBenutzerIdOfName(name).orElseThrow();
+        benutzerName = name;
     }
 
     public void signUp(String name, String password) throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
         benutzer = benutzerCreation.createBenutzer(name, password).getId();
+        benutzerName = name;
     }
 
     public void logout(){
         benutzer = null;
+        benutzerName = null;
     }
 
     public Optional<BenutzerId> getCurrentBenutzer(){
         return Optional.ofNullable(benutzer);
+    }
+
+    public Optional<String> getCurrentBenutzerName(){
+        return Optional.ofNullable(benutzerName);
     }
 
 }

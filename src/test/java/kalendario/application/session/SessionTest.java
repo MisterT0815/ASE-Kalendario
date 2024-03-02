@@ -32,11 +32,12 @@ public class SessionTest {
     }
 
     @Test
-    void loginSollBenutzerVonBenutzerReadLesenUndBenutzerIdSetzenFallsErfolgreich() throws LoginException {
+    void loginSollBenutzerVonBenutzerReadLesenUndBenutzerIdUndNameSetzenFallsErfolgreich() throws LoginException {
         when(benutzerRead.verifyBenutzer(name, passwort)).thenReturn(true);
         when(benutzerRead.getBenutzerIdOfName(name)).thenReturn(Optional.ofNullable(benutzerId));
         session.login(name, passwort);
         assertEquals(benutzerId, session.getCurrentBenutzer().get());
+        assertEquals(name, session.getCurrentBenutzerName().get());
     }
 
     @Test
@@ -52,6 +53,7 @@ public class SessionTest {
         when(benutzer.getId()).thenReturn(benutzerId);
         session.signUp(name, passwort);
         assertEquals(benutzerId, session.getCurrentBenutzer().get());
+        assertEquals(name, session.getCurrentBenutzerName().get());
     }
 
     @Test
@@ -62,6 +64,7 @@ public class SessionTest {
         assertEquals(benutzerId, session.getCurrentBenutzer().get());
         session.logout();
         assertTrue(session.getCurrentBenutzer().isEmpty());
+        assertTrue(session.getCurrentBenutzerName().isEmpty());
     }
 
 
