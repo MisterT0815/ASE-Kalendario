@@ -4,12 +4,12 @@ public class Benutzer {
 
     private final String name;
     private final BenutzerId id;
-    private final String passwordHashed;
+    private final String passwort;
 
-    public Benutzer(BenutzerId id, String name, String passwordHashed) {
+    public Benutzer(BenutzerId id, String name, String passwort) {
         this.id = id;
         this.name = name;
-        this.passwordHashed = passwordHashed;
+        this.passwort = passwort;
     }
 
     public BenutzerId getId(){
@@ -22,7 +22,7 @@ public class Benutzer {
 
 
     public boolean isSamePassword(String passwordHashed){
-        return this.passwordHashed.equals(passwordHashed);
+        return this.passwort.equals(passwordHashed);
     }
 
 

@@ -23,6 +23,5 @@ public class BenutzerCreation {
         return benutzer;
     }
 
-    public static class BenutzerNameExistiertException extends Exception{}
 
 }

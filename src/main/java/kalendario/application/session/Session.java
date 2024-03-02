@@ -1,6 +1,7 @@
 package kalendario.application.session;
 
 import kalendario.application.crud.benutzer.BenutzerCreation;
+import kalendario.application.crud.benutzer.BenutzerNameExistiertException;
 import kalendario.application.crud.benutzer.BenutzerRead;
 import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.repositories.SaveException;
@@ -28,7 +29,7 @@ public class Session {
         benutzerName = name;
     }
 
-    public void signUp(String name, String password) throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
+    public void signUp(String name, String password) throws SaveException, BenutzerNameExistiertException {
         benutzer = benutzerCreation.createBenutzer(name, password).getId();
         benutzerName = name;
     }

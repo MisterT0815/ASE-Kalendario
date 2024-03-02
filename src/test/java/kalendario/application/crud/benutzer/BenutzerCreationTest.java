@@ -27,7 +27,7 @@ public class BenutzerCreationTest {
     }
 
     @Test
-    void createBenutzerSollBenutzerRepositoryZumSaveAufrufen() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
+    void createBenutzerSollBenutzerRepositoryZumSaveAufrufen() throws SaveException, BenutzerNameExistiertException {
         Benutzer benutzer = benutzerCreation.createBenutzer(name, passwordHashed);
         verify(benutzerRepository).saveBenutzer(benutzer);
     }
@@ -35,7 +35,7 @@ public class BenutzerCreationTest {
     @Test
     void createBenutzerSollExceptionWerfenWennBenutzerMitSelbenNameBereitsExistiert(){
         when(benutzerRepository.benutzerNameExistiert(name)).thenReturn(true);
-        assertThrows(BenutzerCreation.BenutzerNameExistiertException.class, () -> benutzerCreation.createBenutzer(name, passwordHashed));
+        assertThrows(BenutzerNameExistiertException.class, () -> benutzerCreation.createBenutzer(name, passwordHashed));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class BenutzerCreationTest {
     }
 
     @Test
-    void createBenutzerSollBenutzerEindeutigeIdVonRepositoryGeben() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
+    void createBenutzerSollBenutzerEindeutigeIdVonRepositoryGeben() throws SaveException, BenutzerNameExistiertException {
         BenutzerId id = mock();
         when(benutzerRepository.neueId()).thenReturn(id);
         Benutzer benutzer = benutzerCreation.createBenutzer(name, passwordHashed);
@@ -53,7 +53,7 @@ public class BenutzerCreationTest {
     }
 
     @Test
-    void createBenutzerSollAlleUebergebenenEigenschaftenSpeichern() throws SaveException, BenutzerCreation.BenutzerNameExistiertException {
+    void createBenutzerSollAlleUebergebenenEigenschaftenSpeichern() throws SaveException, BenutzerNameExistiertException {
         Benutzer benutzer = benutzerCreation.createBenutzer(name, passwordHashed);
         assertEquals(name, benutzer.getName());
         assertTrue(benutzer.isSamePassword(passwordHashed));
