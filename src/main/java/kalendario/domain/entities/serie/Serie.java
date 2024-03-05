@@ -29,10 +29,6 @@ public class Serie{
         angepassteEventIds.put(zeitpunkt, event);
     }
 
-    public void changeDefaultEvent(EventId changedEvent){
-        this.defaultEventId = changedEvent;
-    }
-
     public List<EventId> getEventsInZeitraum(Zeitraum zeitraum) throws IllegalArgumentException{
         if(zeitraum.getStart().after(start)){
             throw new IllegalArgumentException("Zeitraum ist vor Start der Serie");

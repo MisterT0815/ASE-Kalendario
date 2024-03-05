@@ -61,14 +61,6 @@ public class SerieTest {
     }
 
     @Test
-    void changeDefaultEventSollDefaultEventErsetzen(){
-        EventId changedEvent = mock();
-        when(wiederholung.istZeitpunktInWiederholung(start)).thenReturn(true);
-        serie.changeDefaultEvent(changedEvent);
-        assertEquals(changedEvent, serie.getEventAnZeitpunkt(start));
-    }
-
-    @Test
     void getEventsInZeitraumSollFuerJedenZeitpunktInWiederholungEinEventZurueckgeben(){
         Zeitraum zeitraum = mock();
         List<Date> dates = new ArrayList<>();
