@@ -80,7 +80,7 @@ public class SchreibZugriffVerifiziererTest {
     @Test
     void verifiziereZugriffFuerSerieSollZugriffVerweigernWennEsSerieNichtGibt() {
         when(serienRepository.getSerie(serienId)).thenReturn(null);
-        assertThrows(KeinZugriffException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerSerie(serienId));
+        assertThrows(ExistiertNichtException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerSerie(serienId));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class SchreibZugriffVerifiziererTest {
     @Test
     void verifiziereZugriffFuerEventSollZugriffVerweigernWennEsEventNichtGibt() {
         when(eventRepository.getEvent(eventId)).thenReturn(null);
-        assertThrows(KeinZugriffException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerEvent(eventId));
+        assertThrows(ExistiertNichtException.class, () -> schreibZugriffVerifizierer.verifiziereZugriffFuerEvent(eventId));
     }
 
     @Test

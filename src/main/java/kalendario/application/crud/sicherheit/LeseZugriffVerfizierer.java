@@ -28,7 +28,7 @@ public class LeseZugriffVerfizierer extends ZugriffVerifizierer {
         serieCheck = (serie) -> {
             try{
                 verifiziereZugriffFuerEvent(serie.getDefaultEvent());
-            } catch (KeinZugriffException e) {
+            } catch (KeinZugriffException | ExistiertNichtException e) {
                 return false;
             }
             return true;

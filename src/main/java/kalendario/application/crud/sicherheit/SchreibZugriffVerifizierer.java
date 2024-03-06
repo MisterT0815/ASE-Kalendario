@@ -27,7 +27,7 @@ public class SchreibZugriffVerifizierer extends ZugriffVerifizierer{
         Predicate<Serie> userHatZugriffAufDefaultEvent = (serie) -> {
             try{
                 verifiziereZugriffFuerEvent(serie.getDefaultEvent());
-            } catch (KeinZugriffException e) {
+            } catch (KeinZugriffException | ExistiertNichtException e) {
                 return false;
             }
             return true;

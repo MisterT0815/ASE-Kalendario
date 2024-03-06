@@ -1,5 +1,6 @@
 package kalendario.application.crud.event;
 
+import kalendario.application.crud.sicherheit.ExistiertNichtException;
 import kalendario.application.crud.sicherheit.LeseZugriffVerfizierer;
 import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.event.*;
@@ -111,7 +112,7 @@ public class EventReadTest {
     }
 
     @Test
-    void getEventsOfSerieSollEventsVonRepositoryZurueckgeben() throws KeinZugriffException {
+    void getEventsOfSerieSollEventsVonRepositoryZurueckgeben() throws KeinZugriffException, ExistiertNichtException {
         Event event1 = mock();
         Event event2 = mock();
         List<Event> events = new ArrayList<>();
@@ -124,13 +125,13 @@ public class EventReadTest {
     }
 
     @Test
-    void getEventsOfSerieSollExceptionWerfenWennBenutzerKeinenAccessAufSerieHat() throws KeinZugriffException {
+    void getEventsOfSerieSollExceptionWerfenWennBenutzerKeinenAccessAufSerieHat() throws KeinZugriffException, ExistiertNichtException {
         doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerSerie(serienId);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEventsOfSerie(serienId));
     }
 
     @Test
-    void getEventsOfSerieSollNichtSichtbareEventsAussortieren() throws KeinZugriffException {
+    void getEventsOfSerieSollNichtSichtbareEventsAussortieren() throws KeinZugriffException, ExistiertNichtException {
         Event event1 = mock();
         Event event2 = mock();
         List<Event> events = new ArrayList<>();

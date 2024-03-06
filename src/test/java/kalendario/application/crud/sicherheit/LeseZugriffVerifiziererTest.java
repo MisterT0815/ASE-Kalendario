@@ -121,13 +121,13 @@ public class LeseZugriffVerifiziererTest {
     @Test
     void verifiziereZugriffFuerSerieSollKeinAccessGebenWennSerieNichtVerfuegbar(){
         when(serienRepository.getSerie(serienId)).thenReturn(null);
-        assertThrows(KeinZugriffException.class, () -> leseZugriffVerfizierer.verifiziereZugriffFuerSerie(serienId));
+        assertThrows(ExistiertNichtException.class, () -> leseZugriffVerfizierer.verifiziereZugriffFuerSerie(serienId));
     }
 
     @Test
     void verifiziereZugriffFuerEventSollKeinAccessGebenWennEventNichtVerfuegbar(){
         when(eventRepository.getEvent(eventId)).thenReturn(null);
-        assertThrows(KeinZugriffException.class, () -> leseZugriffVerfizierer.verifiziereZugriffFuerEvent(eventId));
+        assertThrows(ExistiertNichtException.class, () -> leseZugriffVerfizierer.verifiziereZugriffFuerEvent(eventId));
     }
 
     @Test

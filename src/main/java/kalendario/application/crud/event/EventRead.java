@@ -1,5 +1,6 @@
 package kalendario.application.crud.event;
 
+import kalendario.application.crud.sicherheit.ExistiertNichtException;
 import kalendario.application.crud.sicherheit.LeseZugriffVerfizierer;
 import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.event.*;
@@ -56,7 +57,7 @@ public class EventRead {
         }
     }
 
-    public List<Event> getEventsOfSerie(SerienId serienId) throws KeinZugriffException {
+    public List<Event> getEventsOfSerie(SerienId serienId) throws KeinZugriffException, ExistiertNichtException {
         leseZugriffVerfizierer.verifiziereZugriffFuerSerie(serienId);
         List<Event> events = eventRepository.getEventsOfSerie(serienId);
         return events.stream().filter(event -> {

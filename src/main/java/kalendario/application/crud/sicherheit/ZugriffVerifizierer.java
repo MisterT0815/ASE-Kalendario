@@ -31,7 +31,7 @@ public abstract class ZugriffVerifizierer {
         this.herkunftRepository = herkunftRepository;
     }
 
-    public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException{
+    public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException, ExistiertNichtException {
         Serie serie = serienRepository.getSerie(serienId);
         nullCheck(serie);
         verifiziereZugriffFuerSerie(serie);
@@ -43,7 +43,7 @@ public abstract class ZugriffVerifizierer {
         }
     }
 
-    public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException{
+    public void verifiziereZugriffFuerEvent(EventId eventId) throws KeinZugriffException, ExistiertNichtException {
         Event event = eventRepository.getEvent(eventId);
         nullCheck(event);
         verifiziereZugriffFuerEvent(event);
@@ -55,7 +55,7 @@ public abstract class ZugriffVerifizierer {
         }
     }
 
-    public void verifiziereZugriffFuerHerkunft(HerkunftId herkunftId) throws KeinZugriffException{
+    public void verifiziereZugriffFuerHerkunft(HerkunftId herkunftId) throws KeinZugriffException, ExistiertNichtException {
         Herkunft herkunft = herkunftRepository.getHerkunftMitId(herkunftId);
         nullCheck(herkunftId);
         verifiziereZugriffFuerHerkunft(herkunft);
@@ -72,14 +72,14 @@ public abstract class ZugriffVerifizierer {
         try{
             nullCheck(herkunft);
             return herkunft.getBesitzerId().equals(session.getCurrentBenutzer().orElseThrow());
-        } catch (KeinZugriffException e) {
+        } catch (ExistiertNichtException e) {
             return false;
         }
     }
 
-    protected void nullCheck(Object o) throws KeinZugriffException{
+    protected void nullCheck(Object o) throws ExistiertNichtException {
         if(o == null){
-            throw new KeinZugriffException();
+            throw new ExistiertNichtException();
         }
     }
 
