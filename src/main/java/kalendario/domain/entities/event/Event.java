@@ -55,4 +55,6 @@ public abstract class Event {
     public String getBeschreibung() {
         return beschreibung;
     }
+
+    public Sichtbarkeit getSichtbarkeit(){return sichtbarkeit;}
 }

@@ -13,6 +13,9 @@ public interface EventRepository {
     void saveGeplanteAufgabe(GeplanteAufgabe geplanteAufgabe) throws SaveException;
     Event getEvent(EventId id);
     List<Event> getEventsOfSerie(SerienId serie);
-    void setSerie(EventId event, SerienId serie);
+    void setSerie(EventId event, SerienId serie) throws SaveException;
+    void setTitel(EventId event, String titel) throws SaveException;
+    void setBeschreibung(EventId event, String beschreibung) throws SaveException;
+    void setSichtbarkeit(EventId event, Sichtbarkeit sichtbarkeit) throws SaveException;
 
 }
