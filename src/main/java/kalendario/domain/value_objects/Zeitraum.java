@@ -26,7 +26,7 @@ public final class Zeitraum {
     }
 
     public Date getEnde() {
-        return new Date(this.start.getTime());
+        return new Date(this.ende.getTime());
     }
 
     @Override
