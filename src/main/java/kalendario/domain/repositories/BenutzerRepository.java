@@ -12,4 +12,5 @@ public interface BenutzerRepository {
     BenutzerId getIdOfName(String name);
     void updatePasswortOf(BenutzerId benutzerId, String neuesPasswort) throws SaveException;
     void updateNameOf(BenutzerId benutzerId, String neuerName) throws SaveException;
+    String getBenutzerNameOfId(BenutzerId benutzerId);
 }
