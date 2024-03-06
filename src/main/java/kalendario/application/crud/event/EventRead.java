@@ -21,12 +21,13 @@ public class EventRead {
     }
 
     public Optional<Event> getEvent(EventId eventId) throws KeinZugriffException {
-        Event event = eventRepository.getEvent(eventId);
-        if(event == null){
+        try {
+            leseZugriffVerfizierer.verifiziereZugriffFuerEvent(eventId);
+        }catch (ExistiertNichtException e){
             return Optional.empty();
         }
-        leseZugriffVerfizierer.verifiziereZugriffFuerEvent(event);
-        return Optional.of(event);
+        Event event = eventRepository.getEvent(eventId);
+        return Optional.ofNullable(event);
     }
 
 
