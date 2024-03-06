@@ -84,29 +84,29 @@ public class EventReadTest {
     }
 
     @Test
-    void getEventSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(event);
+    void getEventSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException, ExistiertNichtException {
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(eventId);
         when(eventRepository.getEvent(eventId)).thenReturn(event);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEvent(eventId));
     }
 
     @Test
-    void getAufgabeSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(aufgabe);
+    void getAufgabeSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException, ExistiertNichtException {
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(eventId);
         when(eventRepository.getEvent(eventId)).thenReturn(aufgabe);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEvent(eventId));
     }
 
     @Test
-    void getGeplanteAufgabeSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(geplanteAufgabe);
+    void getGeplanteAufgabeSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException, ExistiertNichtException {
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(eventId);
         when(eventRepository.getEvent(eventId)).thenReturn(geplanteAufgabe);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEvent(eventId));
     }
 
     @Test
-    void getTerminSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException {
-        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(termin);
+    void getTerminSollNoAccessExceptionWerfenWennEventNichtSichtbarFuerAktuellenBenutzerIst() throws KeinZugriffException, ExistiertNichtException {
+        doThrow(KeinZugriffException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(eventId);
         when(eventRepository.getEvent(eventId)).thenReturn(termin);
         assertThrows(KeinZugriffException.class, () -> eventRead.getEvent(eventId));
     }
@@ -142,6 +142,12 @@ public class EventReadTest {
         List<Event> returnedEvents = eventRead.getEventsOfSerie(serienId);
         assertTrue(returnedEvents.contains(event1));
         assertFalse(returnedEvents.contains(event2));
+    }
+
+    @Test
+    void getEventSollLeeresOptionalZurueckgebenWennEventNichtExistiert() throws KeinZugriffException, ExistiertNichtException {
+        doThrow(ExistiertNichtException.class).when(leseZugriffVerfizierer).verifiziereZugriffFuerEvent(eventId);
+        assertTrue(eventRead.getEvent(eventId).isEmpty());
     }
 
 }
