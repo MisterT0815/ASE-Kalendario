@@ -21,4 +21,12 @@ public class BenutzerRead {
         return Optional.ofNullable(benutzerRepository.getIdOfName(name));
     }
 
+    public Optional<String> getBenutzerNameOfId(BenutzerId benutzerId){
+        return Optional.ofNullable(benutzerRepository.getBenutzerNameOfId(benutzerId));
+    }
+
+    public boolean benutzerExistiert(String name){
+        return getBenutzerIdOfName(name).isPresent();
+    }
+
 }

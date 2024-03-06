@@ -34,11 +34,27 @@ public class BenutzerReadTest {
     }
 
     @Test
-    void getBenutzerIdOfNameSollAnBenutzerSollAnBenutzerRepositoryDelegieren(){
+    void getBenutzerIdOfNameSollAnBenutzerRepositoryDelegieren(){
         when(benutzerRepository.getIdOfName(name)).thenReturn(benutzerId);
         assertEquals(benutzerId, benutzerRead.getBenutzerIdOfName(name).get());
         when(benutzerRepository.getIdOfName(name)).thenReturn(null);
         assertTrue(benutzerRead.getBenutzerIdOfName(name).isEmpty());
+    }
+
+    @Test
+    void getBenutzerNameOfIdSollAnBenutzerRepositoryDelegieren(){
+        when(benutzerRepository.getBenutzerNameOfId(benutzerId)).thenReturn(name);
+        assertEquals(name, benutzerRead.getBenutzerNameOfId(benutzerId).get());
+        when(benutzerRepository.getBenutzerNameOfId(benutzerId)).thenReturn(null);
+        assertTrue(benutzerRead.getBenutzerNameOfId(benutzerId).isEmpty());
+    }
+
+    @Test
+    void benutzerExistiertSollPerIdOfNameExistenzUeberpruefe(){
+        when(benutzerRepository.getIdOfName(name)).thenReturn(benutzerId);
+        assertTrue(benutzerRead.benutzerExistiert(name));
+        when(benutzerRepository.getIdOfName(name)).thenReturn(null);
+        assertFalse(benutzerRead.benutzerExistiert(name));
     }
 
 }
