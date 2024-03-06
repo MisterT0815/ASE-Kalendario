@@ -22,11 +22,11 @@ public final class Zeitraum {
     }
 
     public Date getStart(){
-        return this.start;
+        return new Date(this.start.getTime());
     }
 
     public Date getEnde() {
-        return this.ende;
+        return new Date(this.start.getTime());
     }
 
     @Override
