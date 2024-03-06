@@ -13,5 +13,6 @@ public interface EventRepository {
     void saveGeplanteAufgabe(GeplanteAufgabe geplanteAufgabe) throws SaveException;
     Event getEvent(EventId id);
     List<Event> getEventsOfSerie(SerienId serie);
+    void setSerie(EventId event, SerienId serie);
 
 }
