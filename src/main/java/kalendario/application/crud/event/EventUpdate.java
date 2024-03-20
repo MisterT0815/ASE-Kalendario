@@ -62,8 +62,8 @@ public class EventUpdate {
 
     public Event entferneSichtbarkeitFuer(EventId eventId, String benutzerName) throws KeinZugriffException, ExistiertNichtException, SaveException {
         schreibZugriffVerifizierer.verifiziereZugriffFuerEvent(eventId);
-        PrivateSichtbarkeit sichtbarkeit = getPrivateSichtbarkeitFuerEvent(eventId);
         BenutzerId benutzer = benutzerRead.getBenutzerIdOfName(benutzerName).orElseThrow(() -> new ExistiertNichtException(String.format("Kein Benutzer mit Name %s existiert", benutzerName)));
+        PrivateSichtbarkeit sichtbarkeit = getPrivateSichtbarkeitFuerEvent(eventId);
 
         sichtbarkeit.entferneSichtbarkeitFuer(benutzer);
         eventRepository.setSichtbarkeit(eventId, sichtbarkeit);
