@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -13,11 +15,13 @@ public class BenutzerIdTest {
 
     @Test
     void zweiEventIdsSollenGleichSeinWennSieAusDemselbenIntegerStammen(){
-        assertEquals(new BenutzerId(1), new BenutzerId(1));
+        UUID id = UUID.randomUUID();
+        String idString = id.toString();
+        assertEquals(new BenutzerId(UUID.fromString(idString)), new BenutzerId(UUID.fromString(idString)));
     }
 
     @Test
     void zweiEventIdsSollenNichtGleichSeinWennSieAusVerschiedenenIntegernStammen(){
-        assertNotEquals(new BenutzerId(1), new BenutzerId(2));
+        assertNotEquals(new BenutzerId(UUID.randomUUID()), new BenutzerId(UUID.randomUUID()));
     }
 }

@@ -40,9 +40,9 @@ class ZeitraumTest {
     }
 
     @Test
-    void enthealtSollteFalseZurueckgebenWennUebergebenerZeitpunktNichtStrictlyInZeitraum(){
+    void enthealtSollteFalseZurueckgebenWennUebergebenerZeitpunktNichtInZeitraumAusserStart(){
         Zeitraum zeitraum = new Zeitraum(ersterZeitpunkt, dritterZeitpunkt);
-        assertFalse(zeitraum.enthaelt(ersterZeitpunkt));
+        assertTrue(zeitraum.enthaelt(ersterZeitpunkt));
         assertFalse(zeitraum.enthaelt(dritterZeitpunkt));
         assertFalse(zeitraum.enthaelt(vierterZeitpunkt));
     }

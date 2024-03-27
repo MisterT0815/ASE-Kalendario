@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -62,7 +63,7 @@ public class BenutzerUpdateTest {
     }
 
     @Test
-    void updateNameSollVerfuegbarkeitDesNamensTesten() throws SaveException {
+    void updateNameSollVerfuegbarkeitDesNamensTesten() throws SaveException, SQLException {
         when(benutzerRepository.benutzerNameExistiert(neuerName)).thenReturn(true);
         assertThrows(BenutzerNameExistiertException.class, () -> benutzerUpdate.updateName(neuerName));
         verify(session, never()).logout();

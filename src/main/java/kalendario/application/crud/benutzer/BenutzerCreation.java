@@ -5,6 +5,8 @@ import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.repositories.BenutzerRepository;
 import kalendario.domain.repositories.SaveException;
 
+import java.sql.SQLException;
+
 public class BenutzerCreation {
 
     BenutzerRepository benutzerRepository;
@@ -14,8 +16,12 @@ public class BenutzerCreation {
     }
 
     public Benutzer createBenutzer(String name, String passwordHashed) throws BenutzerNameExistiertException, SaveException {
-        if(benutzerRepository.benutzerNameExistiert(name)){
-            throw new BenutzerNameExistiertException();
+        try {
+            if(benutzerRepository.benutzerNameExistiert(name)){
+                throw new BenutzerNameExistiertException();
+            }
+        } catch (SQLException e) {
+            throw new SaveException(e);
         }
         BenutzerId id = benutzerRepository.neueId();
         Benutzer benutzer = new Benutzer(id, name, passwordHashed);

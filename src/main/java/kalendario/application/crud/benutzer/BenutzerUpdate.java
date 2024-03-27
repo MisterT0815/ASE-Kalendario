@@ -6,6 +6,8 @@ import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.repositories.BenutzerRepository;
 import kalendario.domain.repositories.SaveException;
 
+import java.sql.SQLException;
+
 public class BenutzerUpdate {
 
     BenutzerRepository benutzerRepository;
@@ -28,8 +30,12 @@ public class BenutzerUpdate {
 
     public void updateName(String neuerName) throws BenutzerNameExistiertException, SaveException, KeinZugriffException {
         BenutzerId benutzer = session.getCurrentBenutzer().orElseThrow(KeinZugriffException::new);
-        if(benutzerRepository.benutzerNameExistiert(neuerName)){
-            throw new BenutzerNameExistiertException();
+        try {
+            if(benutzerRepository.benutzerNameExistiert(neuerName)){
+                throw new BenutzerNameExistiertException();
+            }
+        } catch (SQLException e) {
+            throw new SaveException(e);
         }
         benutzerRepository.updateNameOf(benutzer, neuerName);
         session.logout();

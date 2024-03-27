@@ -10,6 +10,8 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -33,7 +35,7 @@ public class BenutzerCreationTest {
     }
 
     @Test
-    void createBenutzerSollExceptionWerfenWennBenutzerMitSelbenNameBereitsExistiert(){
+    void createBenutzerSollExceptionWerfenWennBenutzerMitSelbenNameBereitsExistiert() throws SQLException {
         when(benutzerRepository.benutzerNameExistiert(name)).thenReturn(true);
         assertThrows(BenutzerNameExistiertException.class, () -> benutzerCreation.createBenutzer(name, passwordHashed));
     }

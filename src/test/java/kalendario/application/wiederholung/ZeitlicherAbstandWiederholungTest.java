@@ -62,6 +62,7 @@ public class ZeitlicherAbstandWiederholungTest {
 
     @Test
     void alleZeitpunkteInZeitraumSollInklusiveStartExklusiveEndeArbeiten(){
+        //TODO Zeitraum durch mocking entfernen
         Zeitraum zeitraum = new Zeitraum(start, fuenfTageSpeater);
         calendar = new Calendar.Builder().setDate(YEAR, MONTH, DAY).setTimeOfDay(HOUR,MINUTE,SECOND).build();
         List<Date> gewollteZeitpunkte = new ArrayList<>();
