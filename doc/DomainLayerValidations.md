@@ -11,3 +11,5 @@
 - Serie:
   - changeEventAnZeitpunkt:
     - originaler Zeitpunkt muss Teil der Serie sein (über Wiederholung)
+
+Zeitraum und Wiederholung checks immer inklusive start, exklusive ende

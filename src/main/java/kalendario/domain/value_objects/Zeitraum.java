@@ -18,7 +18,7 @@ public final class Zeitraum {
     }
 
     public boolean enthaelt(Date zeitpunkt){
-        return start.before(zeitpunkt) && ende.after(zeitpunkt);
+        return start.equals(zeitpunkt) || (start.before(zeitpunkt) && ende.after(zeitpunkt));
     }
 
     public Date getStart(){
