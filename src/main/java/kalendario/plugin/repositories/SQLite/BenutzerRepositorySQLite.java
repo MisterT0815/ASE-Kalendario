@@ -17,9 +17,13 @@ public class BenutzerRepositorySQLite implements BenutzerRepository {
                     Passwort VARCHAR(255)
                 );
             """;
-    private static final String INSERT_SQL = "INSERT INTO Benutzer (BenutzerId, Name, Passwort) VALUES (?, ?, ?)";
-    private static final String BENUTZER_EXITIERT_SQL = "SELECT COUNT(*) AS NumRows FROM Benutzer WHERE Name = ?";
-
+    private static final String INSERT_SQL = "INSERT INTO Benutzer (BenutzerId, Name, Passwort) VALUES (?, ?, ?);";
+    private static final String BENUTZER_EXISTIERT_SQL = "SELECT COUNT(*) AS NumRows FROM Benutzer WHERE Name = ?;";
+    private static final String BENUTZER_EXISTIERT_MIT_PASSWORT = "SELECT COUNT(*) AS NumBenutzer FROM Benutzer WHERE Name = ? AND Passwort = ?;";
+    private static final String ID_OF_NAME = "SELECT BenutzerId FROM Benutzer WHERE Name = ? LIMIT 1;";
+    private static final String UPDATE_PASSWORT = "UPDATE Benutzer SET Passwort = ? WHERE BenutzerId = ?";
+    private static final String UPDATE_NAME = "UPDATE Benutzer SET Name = ? WHERE BenutzerId = ?";
+    private static final String NAME_OF_ID = "SELECT Name FROM Benutzer WHERE BenutzerId = ? LIMIT 1;";
 
     Connection connection;
     public BenutzerRepositorySQLite(Connection connection) throws SQLException {
@@ -35,7 +39,7 @@ public class BenutzerRepositorySQLite implements BenutzerRepository {
 
     @Override
     public boolean benutzerNameExistiert(String name) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(BENUTZER_EXITIERT_SQL);
+        PreparedStatement preparedStatement = connection.prepareStatement(BENUTZER_EXISTIERT_SQL);
         preparedStatement.setString(1, name);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
@@ -62,27 +66,69 @@ public class BenutzerRepositorySQLite implements BenutzerRepository {
     }
 
     @Override
-    public boolean benutzerExistiert(String name, String passwort) {
+    public boolean benutzerExistiert(String name, String passwort) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(BENUTZER_EXISTIERT_MIT_PASSWORT);
+        preparedStatement.setString(1, name);
+        preparedStatement.setString(2, passwort);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            int numRows = resultSet.getInt("NumBenutzer");
+            return numRows >= 1;
+        }
         return false;
     }
 
     @Override
-    public BenutzerId getIdOfName(String name) {
+    public BenutzerId getIdOfName(String name) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(ID_OF_NAME);
+        preparedStatement.setString(1, name);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            String id = resultSet.getString("BenutzerId");
+            return new BenutzerId(UUID.fromString(id));
+        }
         return null;
     }
 
     @Override
     public void updatePasswortOf(BenutzerId benutzerId, String neuesPasswort) throws SaveException {
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PASSWORT);
+            preparedStatement.setString(1, neuesPasswort);
+            preparedStatement.setString(2, benutzerId.getId().toString());
+            int rowsAffected = preparedStatement.executeUpdate();
+            if(rowsAffected != 1){
+                throw new SQLException("Update soll nur eine Reihe aendern, aber " + rowsAffected + " Reihen wurden geaendert");
+            }
+        } catch (SQLException e) {
+            throw new SaveException(e);
+        }
 
     }
 
     @Override
     public void updateNameOf(BenutzerId benutzerId, String neuerName) throws SaveException {
-
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_NAME);
+            preparedStatement.setString(1, neuerName);
+            preparedStatement.setString(2, benutzerId.getId().toString());
+            int rowsAffected = preparedStatement.executeUpdate();
+            if(rowsAffected != 1){
+                throw new SQLException("Update soll nur eine Reihe aendern, aber " + rowsAffected + " Reihen wurden geaendert");
+            }
+        } catch (SQLException e) {
+            throw new SaveException(e);
+        }
     }
 
     @Override
-    public String getBenutzerNameOfId(BenutzerId benutzerId) {
+    public String getBenutzerNameOfId(BenutzerId benutzerId) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(NAME_OF_ID);
+        preparedStatement.setString(1, benutzerId.getId().toString());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            return resultSet.getString("Name");
+        }
         return null;
     }
 }

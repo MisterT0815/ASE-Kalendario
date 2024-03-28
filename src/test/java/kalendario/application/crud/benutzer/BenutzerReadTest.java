@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,7 +28,7 @@ public class BenutzerReadTest {
     }
 
     @Test
-    void verifyBenutzerSollBenutzerExistiertAnBenutzerRepositoryDelegieren(){
+    void verifyBenutzerSollBenutzerExistiertAnBenutzerRepositoryDelegieren() throws SQLException {
         when(benutzerRepository.benutzerExistiert(name, password)).thenReturn(true);
         assertTrue(benutzerRead.verifyBenutzer(name, password));
         when(benutzerRepository.benutzerExistiert(name, password)).thenReturn(false);
@@ -34,7 +36,7 @@ public class BenutzerReadTest {
     }
 
     @Test
-    void getBenutzerIdOfNameSollAnBenutzerRepositoryDelegieren(){
+    void getBenutzerIdOfNameSollAnBenutzerRepositoryDelegieren() throws SQLException {
         when(benutzerRepository.getIdOfName(name)).thenReturn(benutzerId);
         assertEquals(benutzerId, benutzerRead.getBenutzerIdOfName(name).get());
         when(benutzerRepository.getIdOfName(name)).thenReturn(null);
@@ -42,7 +44,7 @@ public class BenutzerReadTest {
     }
 
     @Test
-    void getBenutzerNameOfIdSollAnBenutzerRepositoryDelegieren(){
+    void getBenutzerNameOfIdSollAnBenutzerRepositoryDelegieren() throws SQLException {
         when(benutzerRepository.getBenutzerNameOfId(benutzerId)).thenReturn(name);
         assertEquals(name, benutzerRead.getBenutzerNameOfId(benutzerId).get());
         when(benutzerRepository.getBenutzerNameOfId(benutzerId)).thenReturn(null);
@@ -50,7 +52,7 @@ public class BenutzerReadTest {
     }
 
     @Test
-    void benutzerExistiertSollPerIdOfNameExistenzUeberpruefe(){
+    void benutzerExistiertSollPerIdOfNameExistenzUeberpruefe() throws SQLException {
         when(benutzerRepository.getIdOfName(name)).thenReturn(benutzerId);
         assertTrue(benutzerRead.benutzerExistiert(name));
         when(benutzerRepository.getIdOfName(name)).thenReturn(null);

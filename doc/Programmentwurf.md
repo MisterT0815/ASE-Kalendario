@@ -28,6 +28,7 @@ Abgabedatum:
 [(1 Klasse, die die Dependency Rule einhält und eine Klasse, die die Dependency Rule verletzt);   jeweils UML der Klasse und Analyse der Abhängigkeiten in beide Richtungen (d.h., von wem hängt die Klasse ab und wer hängt von der Klasse ab) in Bezug auf die Dependency Rule]
 
 ### Positiv-Beispiel: Dependency Rule
+
 ### Negativ-Beispiel: Dependency Rule
 
 ## Analyse der Schichten
@@ -42,17 +43,22 @@ Abgabedatum:
 ## Analyse Single-Responsibility-Principle (SRP)
 [jeweils eine Klasse als positives und negatives Beispiel für SRP;  jeweils UML der Klasse und Beschreibung der Aufgabe bzw. der Aufgaben und möglicher Lösungsweg des Negativ-Beispiels (inkl. UML)]
 ### Positiv-Beispiel
+Session: einzige Aufgabe ist den aktuell angemeldeten Benutzer zu tracken. Es gibt keine weiteren Aufgaben zum speichern, Zugriffe verifizieren oder ähnliches.
 ### Negativ-Beispiel
+Herkunft. Sehr überladene Klasse. Ist gleichzeitig Anzeigepunkt für den Besitzer von Events als auch Implementationsstelle im Plugin Layer für die Nutzung von Use Cases.
 
 ## Analyse Open-Closed-Principle (OCP)
 [jeweils eine Klasse als positives und negatives Beispiel für OCP;  jeweils UML der Klasse und Analyse mit Begründung, warum das OCP erfüllt/nicht erfüllt wurde – falls erfüllt: warum hier sinnvoll/welches Problem gab es? Falls nicht erfüllt: wie könnte man es lösen (inkl. UML)?]
 ### Positiv-Beispiel
+
 ### Negativ-Beispiel
+
 
 ## Analyse Liskov-Substitution- (LSP), Interface-Segreggation- (ISP), Dependency-Inversion-Principle (DIP)
 [jeweils eine Klasse als positives und negatives Beispiel für entweder LSP oder ISP oder DIP);  jeweils UML der Klasse und Begründung, warum man hier das Prinzip erfüllt/nicht erfüllt wird]
 [Anm.: es darf nur ein Prinzip ausgewählt werden; es darf NICHT z.B. ein positives Beispiel für LSP und ein negatives Beispiel für ISP genommen werden]
 ### Positiv-Beispiel
+
 ### Negativ-Beispiel
 
 

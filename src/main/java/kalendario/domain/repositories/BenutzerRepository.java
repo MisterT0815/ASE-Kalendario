@@ -10,9 +10,9 @@ public interface BenutzerRepository {
     boolean benutzerNameExistiert(String name) throws SQLException;
     BenutzerId neueId();
     void saveBenutzer(Benutzer benutzer) throws SaveException;
-    boolean benutzerExistiert(String name, String passwort);
-    BenutzerId getIdOfName(String name);
+    boolean benutzerExistiert(String name, String passwort) throws SQLException;
+    BenutzerId getIdOfName(String name) throws SQLException;
     void updatePasswortOf(BenutzerId benutzerId, String neuesPasswort) throws SaveException;
     void updateNameOf(BenutzerId benutzerId, String neuerName) throws SaveException;
-    String getBenutzerNameOfId(BenutzerId benutzerId);
+    String getBenutzerNameOfId(BenutzerId benutzerId) throws SQLException;
 }

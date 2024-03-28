@@ -7,6 +7,7 @@ import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.repositories.SaveException;
 
 import javax.security.auth.login.LoginException;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class Session {
@@ -22,7 +23,11 @@ public class Session {
     }
 
     public void login(String name, String password) throws LoginException {
-        if(!benutzerRead.verifyBenutzer(name, password)){
+        try {
+            if(!benutzerRead.verifyBenutzer(name, password)){
+                throw new LoginException("Fehler bei Login, checke Benutzername und Passwort");
+            }
+        } catch (SQLException e) {
             throw new LoginException("Fehler bei Login, checke Benutzername und Passwort");
         }
         benutzer = benutzerRead.getBenutzerIdOfName(name).orElseThrow();

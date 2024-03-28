@@ -22,10 +22,15 @@ public class BenutzerUpdate {
     public void updatePasswort(String passwortAlt, String passwortNeu) throws KeinZugriffException, SaveException {
         BenutzerId benutzerId = session.getCurrentBenutzer().orElseThrow(KeinZugriffException::new);
         String name = session.getCurrentBenutzerName().orElseThrow(KeinZugriffException::new);
-        if(!benutzerRepository.benutzerExistiert(name, passwortAlt)){
+        try {
+            if(!benutzerRepository.benutzerExistiert(name, passwortAlt)){
+                throw new KeinZugriffException();
+            }
+        } catch (SQLException e) {
             throw new KeinZugriffException();
-        };
+        }
         benutzerRepository.updatePasswortOf(benutzerId, passwortNeu);
+        session.logout();
     }
 
     public void updateName(String neuerName) throws BenutzerNameExistiertException, SaveException, KeinZugriffException {

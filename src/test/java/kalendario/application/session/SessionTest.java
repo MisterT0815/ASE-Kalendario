@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.LoginException;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +34,7 @@ public class SessionTest {
     }
 
     @Test
-    void loginSollBenutzerVonBenutzerReadLesenUndBenutzerIdUndNameSetzenFallsErfolgreich() throws LoginException {
+    void loginSollBenutzerVonBenutzerReadLesenUndBenutzerIdUndNameSetzenFallsErfolgreich() throws LoginException, SQLException {
         when(benutzerRead.verifyBenutzer(name, passwort)).thenReturn(true);
         when(benutzerRead.getBenutzerIdOfName(name)).thenReturn(Optional.ofNullable(benutzerId));
         session.login(name, passwort);
@@ -42,7 +43,7 @@ public class SessionTest {
     }
 
     @Test
-    void loginSollExceptionWerfenWennBenutzerNichtExistiert() {
+    void loginSollExceptionWerfenWennBenutzerNichtExistiert() throws SQLException {
         when(benutzerRead.verifyBenutzer(name, passwort)).thenReturn(false);
         when(benutzerRead.getBenutzerIdOfName(name)).thenReturn(Optional.empty());
         assertThrows(LoginException.class, () -> session.login(name, passwort));
@@ -58,7 +59,7 @@ public class SessionTest {
     }
 
     @Test
-    void logoutSollAktuellenBenutzerEntfernen() throws LoginException {
+    void logoutSollAktuellenBenutzerEntfernen() throws LoginException, SQLException {
         when(benutzerRead.verifyBenutzer(name, passwort)).thenReturn(true);
         when(benutzerRead.getBenutzerIdOfName(name)).thenReturn(Optional.ofNullable(benutzerId));
         session.login(name, passwort);

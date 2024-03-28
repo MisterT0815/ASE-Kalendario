@@ -31,7 +31,7 @@ public class BenutzerUpdateTest {
     BenutzerUpdate benutzerUpdate;
 
     @BeforeEach
-    void init(){
+    void init() throws SQLException {
         benutzerUpdate = new BenutzerUpdate(benutzerRepository, session);
         when(session.getCurrentBenutzer()).thenReturn(Optional.of(benutzerId));
         when(session.getCurrentBenutzerName()).thenReturn(Optional.of(name));
