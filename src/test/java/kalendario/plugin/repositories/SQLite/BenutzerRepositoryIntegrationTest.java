@@ -31,14 +31,14 @@ public class BenutzerRepositoryIntegrationTest {
 
     @BeforeAll
     static void initializeConnection() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:sqlite:test.db");
+        connection = DriverManager.getConnection("jdbc:sqlite:benutzerrepositorytest.db");
         System.out.println("connection initialized");
     }
 
     @AfterAll
     static void deleteConnection() throws SQLException {
         connection.close();
-        boolean result = new File("test.db").delete();
+        boolean result = new File("benutzerrepositorytest.db").delete();
         System.out.println("connection dead: " + result);
     }
 

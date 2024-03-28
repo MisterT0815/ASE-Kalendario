@@ -50,9 +50,12 @@ public class EventRepositorySQLite implements EventRepository {
                 );
             """;
     private static final String CREATE_TABLE_ZEITRAUM = """
-                CREATE TABLE IF NOT EXIST Zeitraum (
+                CREATE TABLE IF NOT EXISTS Zeitraum (
                     EventId VARCHAR(255) PRIMARY KEY,
-                    Start Date
+                    Start TIMESTAMP,
+                    End TIMESTAMP,
+                    FOREIGN KEY (EventId) REFERENCES Events(EventId) ON UPDATE CASCADE ON DELETE CASCADE
+                );
             """;
 
     public EventRepositorySQLite(Connection connection) throws SQLException {
@@ -61,6 +64,7 @@ public class EventRepositorySQLite implements EventRepository {
         createTables.execute(CREATE_TABLE_EVENTS);
         createTables.execute(CREATE_TABLE_SICHTBARKEIT);
         createTables.execute(CREATE_TABLE_MACHBAR);
+        createTables.execute(CREATE_TABLE_ZEITRAUM);
     }
 
 
