@@ -1,14 +1,15 @@
 package kalendario.domain.entities.event;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class EventId{
-    private final int id;
-    public EventId(int id){
+    private final UUID id;
+    public EventId(UUID id){
         this.id = id;
     }
 
-    public int getId(){
+    public UUID getId(){
         return this.id;
     }
 
