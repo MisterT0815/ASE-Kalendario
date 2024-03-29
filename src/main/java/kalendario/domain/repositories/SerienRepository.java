@@ -10,7 +10,6 @@ public interface SerienRepository {
 
     SerienId neueId();
     void saveSerie(Serie serie) throws SaveException;
-    void editSerie(Serie serie) throws SaveException;
     void addAngepasstesEvent(Date when, EventId event) throws SaveException;
     void removeAngepasstesEvent(Date when) throws SaveException;
     Serie getSerie(SerienId serienId);

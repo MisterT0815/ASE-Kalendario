@@ -58,9 +58,10 @@ Herkunft. Sehr überladene Klasse. Ist gleichzeitig Anzeigepunkt für den Besitz
 [jeweils eine Klasse als positives und negatives Beispiel für entweder LSP oder ISP oder DIP);  jeweils UML der Klasse und Begründung, warum man hier das Prinzip erfüllt/nicht erfüllt wird]
 [Anm.: es darf nur ein Prinzip ausgewählt werden; es darf NICHT z.B. ein positives Beispiel für LSP und ein negatives Beispiel für ISP genommen werden]
 ### Positiv-Beispiel
-
+Wiederholung
 ### Negativ-Beispiel
-
+EventRepository: Create, Update in einem
+wird nicht erfüllt um einen einziges Interface zum implementieren zu haben, an dass die Datenbanken angebunden werden können ohne verschiedenste Implementationen bieten zu müssen
 
 
 # Kapitel 4: Weitere Prinzipien
