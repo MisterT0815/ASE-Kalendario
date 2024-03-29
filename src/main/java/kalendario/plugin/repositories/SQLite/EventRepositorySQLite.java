@@ -7,6 +7,7 @@ import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.SaveException;
 import kalendario.domain.value_objects.Zeitraum;
+import org.hibernate.boot.model.internal.ResultSetMappingSecondPass;
 
 import java.sql.*;
 import java.util.*;
@@ -68,12 +69,20 @@ public class EventRepositorySQLite implements EventRepository {
             """;
 
     private static final String INSERT_EVENT = "INSERT INTO Events (EventId, Titel, HerkunftId, Sichtbarkeit, Beschreibung, SerienId, Typ) VALUES (?, ?, ?, ?, ?, ?, ?);";
+    private static final String GET_EVENT = "SELECT * FROM Events WHERE EventId = ?;";
     private static final String INSERT_ZEITRAUM = "INSERT INTO Zeitraum (EventId, Start, Ende) VALUES (?, ?, ?);";
+    private static final String GET_ZEITRAUM = "SELECT * FROM Zeitraum WHERE EventId = ?;";
     private static final String INSERT_SICHTBARKEIT = "INSERT INTO Sichtbarkeit (EventId, BenutzerId) VALUES (?, ?);";
-    private static final String GET_EVENT = "SELECT * FROM Events WHERE EventId = ?";
-    private static final String GET_SICHTBARKEIT = "SELECT * FROM Sichtbarkeit WHERE EventId = ?";
-    private static final String GET_TERMIN = "SELECT * FROM Zeitraum WHERE EventId = ?";
-
+    private static final String GET_SICHTBARKEIT = "SELECT * FROM Sichtbarkeit WHERE EventId = ?;";
+    private static final String INSERT_MACHBAR = "INSERT INTO Machbar (EventId, Gemacht, Von) VALUES (?, ?, ?);";
+    private static final String GET_MACHBAR = "SELECT * FROM Machbar WHERE EventId = ?;";
+    private static final String INSERT_DEADLINE = "INSERT INTO Deadline (EventId, Deadline) VALUES (?, ?);";
+    private static final String GET_DEADLINE = "SELECT * FROM Deadline WHERE EventId = ?;";
+    private static final String UPDATE_SERIEN_ID = "UPDATE Events SET SerienId = ? WHERE EventId = ?;";
+    private static final String UPDATE_TITEL = "UPDATE Events SET Titel = ? WHERE EventId = ?;";
+    private static final String UPDATE_BESCHREIBUNG = "UPDATE Events SET Beschreibung = ? WHERE EventId = ?;";
+    private static final String UPDATE_SICHTBARKEIT = "UPDATE Events SET Sichtbarkeit = ? WHERE EventId = ?;";
+    private static final String DELETE_EVENT_FROM_SICHTBARKEIT = "DELETE FROM Sichtbarkeit WHERE EventId = ?;";
 
     public EventRepositorySQLite(Connection connection) throws SQLException {
         this.connection = connection;
@@ -111,7 +120,7 @@ public class EventRepositorySQLite implements EventRepository {
             connection.setAutoCommit(false);
             this.saveEvent(aufgabe, TYP_AUFGABE);
             this.saveDeadline(aufgabe.getId(), aufgabe.getDeadline());
-            this.saveMachbar(aufgabe.getId(), aufgabe.istGetan(), aufgabe.wurdeGemachtVon());
+            this.saveMachbar(aufgabe.getId(), aufgabe.istGetan(), aufgabe.wurdeGemachtVon().orElse(null));
             connection.commit();
             connection.setAutoCommit(true);
         } catch (SQLException e) {
@@ -121,7 +130,16 @@ public class EventRepositorySQLite implements EventRepository {
 
     @Override
     public void saveGeplanteAufgabe(GeplanteAufgabe geplanteAufgabe) throws SaveException {
-
+        try{
+            connection.setAutoCommit(false);
+            this.saveEvent(geplanteAufgabe, TYP_GEPLANTE_AUFGABE);
+            this.saveZeitraum(geplanteAufgabe.getId(), geplanteAufgabe.getZeitraum());
+            this.saveMachbar(geplanteAufgabe.getId(), geplanteAufgabe.istGetan(), geplanteAufgabe.wurdeGemachtVon().orElse(null));
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new SaveException(e);
+        }
     }
 
     private void saveEvent(Event event, String typ) throws SQLException {
@@ -172,16 +190,25 @@ public class EventRepositorySQLite implements EventRepository {
                 switch (resultsEvent.getString("Typ")){
                     case TYP_TERMIN -> {
                         Zeitraum zeitraum = getZeitraum(eventId);
-                        return new Termin(eventId,titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
+                        return new Termin(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
                     }
                     case TYP_AUFGABE -> {
                         Machbar machbar = getMachbar(eventId);
                         Date deadline = getDeadline(eventId);
                         Aufgabe aufgabe = new Aufgabe(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, deadline);
-                        if(machbar != null && machbar.istGetan()){
+                        if(machbar.istGetan()){
                             aufgabe.setGetan(machbar.wurdeGemachtVon().get(), machbar.istGetan());
                         }
                         return aufgabe;
+                    }
+                    case TYP_GEPLANTE_AUFGABE ->{
+                        Machbar machbar = getMachbar(eventId);
+                        Zeitraum zeitraum = getZeitraum(eventId);
+                        GeplanteAufgabe geplanteAufgabe = new GeplanteAufgabe(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
+                        if(machbar.istGetan()){
+                            geplanteAufgabe.setGetan(machbar.wurdeGemachtVon().get(), machbar.istGetan());
+                        }
+                        return geplanteAufgabe;
                     }
                 }
             }
@@ -191,8 +218,6 @@ public class EventRepositorySQLite implements EventRepository {
         }
     }
 
-
-
     @Override
     public List<Event> getEventsOfSerie(SerienId serie) {
         return null;
@@ -200,26 +225,66 @@ public class EventRepositorySQLite implements EventRepository {
 
     @Override
     public void setSerie(EventId event, SerienId serie) throws SaveException {
-
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SERIEN_ID);
+            if(serie != null){
+                preparedStatement.setString(1, serie.getId().toString());
+            }else{
+                preparedStatement.setNull(1, Types.NULL);
+            }
+            preparedStatement.setString(2, event.getId().toString());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new SaveException(e);
+        }
     }
 
     @Override
     public void setTitel(EventId event, String titel) throws SaveException {
-
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_TITEL);
+            preparedStatement.setString(1, titel);
+            preparedStatement.setString(2, event.getId().toString());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new SaveException(e);
+        }
     }
 
     @Override
     public void setBeschreibung(EventId event, String beschreibung) throws SaveException {
-
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BESCHREIBUNG);
+            preparedStatement.setString(1, beschreibung);
+            preparedStatement.setString(2, event.getId().toString());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new SaveException(e);
+        }
     }
 
     @Override
     public void setSichtbarkeit(EventId event, Sichtbarkeit sichtbarkeit) throws SaveException {
-
+        try{
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatementDropOld = connection.prepareStatement(DELETE_EVENT_FROM_SICHTBARKEIT);
+            preparedStatementDropOld.setString(1, event.getId().toString());
+            preparedStatementDropOld.execute();
+            PreparedStatement preparedStatementSetSichtbarkeitInEvent = connection.prepareStatement(UPDATE_SICHTBARKEIT);
+            preparedStatementSetSichtbarkeitInEvent.setString(2, event.getId().toString());
+            if(sichtbarkeit instanceof PublicSichtbarkeit){
+                preparedStatementSetSichtbarkeitInEvent.setString(1, SICHTBARKEIT_PUBLIC);
+            }else if(sichtbarkeit instanceof PrivateSichtbarkeit){
+                preparedStatementSetSichtbarkeitInEvent.setString(1, SICHTBARKEIT_PRIVAT);
+                savePrivateSichtbarkeit(event, (PrivateSichtbarkeit) sichtbarkeit);
+            }
+            preparedStatementSetSichtbarkeitInEvent.execute();
+            connection.commit();
+            connection.setAutoCommit(true);
+        } catch (SQLException e) {
+            throw new SaveException(e);
+        }
     }
-
-
-
 
 
     private void saveZeitraum(EventId eventId, Zeitraum zeitraum) throws SQLException {
@@ -231,7 +296,7 @@ public class EventRepositorySQLite implements EventRepository {
     }
 
     private Zeitraum getZeitraum(EventId eventId) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(GET_TERMIN);
+        PreparedStatement preparedStatement = connection.prepareStatement(GET_ZEITRAUM);
         preparedStatement.setString(1, eventId.getId().toString());
         ResultSet results = preparedStatement.executeQuery();
         if(results.next()){
@@ -242,20 +307,66 @@ public class EventRepositorySQLite implements EventRepository {
         throw new SQLException("Kein Eintrag in Termine fuer EventId " + eventId.getId().toString());
     }
 
-    private void saveMachbar(EventId id, boolean b, Optional<BenutzerId> benutzerId) {
-
+    private void saveMachbar(EventId id, boolean getan, BenutzerId von) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_MACHBAR);
+        preparedStatement.setString(1, id.getId().toString());
+        if(getan){
+            preparedStatement.setInt(2, 1);
+            preparedStatement.setString(3, von.getId().toString());
+        } else {
+            preparedStatement.setInt(2, 0);
+            preparedStatement.setNull(3, Types.NULL);
+        }
+        preparedStatement.execute();
     }
 
-    private Machbar getMachbar(EventId id){
-        return null;
+    private Machbar getMachbar(EventId id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(GET_MACHBAR);
+        preparedStatement.setString(1, id.getId().toString());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if(resultSet.next()){
+            boolean getan = resultSet.getInt("Gemacht") == 1;
+            BenutzerId von = null;
+            if(getan){
+                von = new BenutzerId(UUID.fromString(resultSet.getString("Von")));
+            }
+            BenutzerId finalVon = von;
+            return new Machbar() {
+
+                @Override
+                public boolean istGetan() {
+                    return getan;
+                }
+
+                @Override
+                public Optional<BenutzerId> wurdeGemachtVon() {
+                    return Optional.ofNullable(finalVon);
+                }
+
+                @Override
+                public void setGetan(BenutzerId von, boolean zu) {
+
+                }
+            };
+        }
+        throw new SQLException("Kein Machbar gefunden fuer Id " + id.getId().toString());
     }
 
-    private void saveDeadline(EventId id, Date deadline) {
-
+    private void saveDeadline(EventId id, Date deadline) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DEADLINE);
+        preparedStatement.setString(1, id.getId().toString());
+        preparedStatement.setTimestamp(2, Timestamp.from(deadline.toInstant()));
+        preparedStatement.execute();
     }
 
-    private Date getDeadline(EventId id){
-        return null;
+    private Date getDeadline(EventId id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(GET_DEADLINE);
+        preparedStatement.setString(1, id.getId().toString());
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if(resultSet.next()){
+            return new Date(Long.parseLong(resultSet.getString("Deadline")));
+        }
+        throw new SQLException("Keine Deadline fuer Event gefunden " + id.getId().toString());
     }
 
     private void savePrivateSichtbarkeit(EventId event, PrivateSichtbarkeit sichtbarkeit) throws SQLException {

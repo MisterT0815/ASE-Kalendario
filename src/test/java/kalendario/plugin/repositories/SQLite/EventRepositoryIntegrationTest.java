@@ -95,6 +95,73 @@ public class EventRepositoryIntegrationTest {
         assertEquals(aufgabe2.getDeadline(), actual_aufgabe2.getDeadline());
     }
 
+    @Test
+    void createGeplanteAufgabeUndRead() throws SaveException {
+        GeplanteAufgabe geplanteAufgabe1 = new GeplanteAufgabe(eventRepository.neueId(), "Titel", new HerkunftId(UUID.randomUUID()), new PublicSichtbarkeit(), "Beschreibung", zeitraum);
+        GeplanteAufgabe geplanteAufgabe2 = new GeplanteAufgabe(eventRepository.neueId(), "Titel2", new HerkunftId(UUID.randomUUID()), privateSichtbarkeit, "Beschreibung2", new SerienId(UUID.randomUUID()), zeitraum);
+        BenutzerId getanVon = new BenutzerId(UUID.randomUUID());
+        geplanteAufgabe2.setGetan(getanVon, true);
+        eventRepository.saveGeplanteAufgabe(geplanteAufgabe1);
+        eventRepository.saveGeplanteAufgabe(geplanteAufgabe2);
+        Event event1 = eventRepository.getEvent(geplanteAufgabe1.getId());
+        Event event2 = eventRepository.getEvent(geplanteAufgabe2.getId());
+        assertInstanceOf(GeplanteAufgabe.class, event1);
+        assertInstanceOf(GeplanteAufgabe.class, event2);
+        equalsEvent(geplanteAufgabe1, event1);
+        equalsEvent(geplanteAufgabe2, event2);
+        GeplanteAufgabe actual_aufgabe1 = (GeplanteAufgabe) event1;
+        GeplanteAufgabe actual_aufgabe2 = (GeplanteAufgabe) event2;
+        assertEquals(geplanteAufgabe1.getZeitraum(), actual_aufgabe1.getZeitraum());
+        assertEquals(geplanteAufgabe2.getZeitraum(), actual_aufgabe2.getZeitraum());
+        assertEquals(geplanteAufgabe1.istGetan(), actual_aufgabe1.istGetan());
+        assertEquals(geplanteAufgabe2.istGetan(), actual_aufgabe2.istGetan());
+        assertEquals(geplanteAufgabe1.wurdeGemachtVon(), actual_aufgabe1.wurdeGemachtVon());
+        assertEquals(geplanteAufgabe2.wurdeGemachtVon(), actual_aufgabe2.wurdeGemachtVon());
+    }
+
+    @Test
+    void setSerie() throws SaveException {
+        Termin termin = new Termin(eventRepository.neueId(), "Titel", new HerkunftId(UUID.randomUUID()), new PublicSichtbarkeit(), "Beschreibung", new SerienId(UUID.randomUUID()), zeitraum);
+        SerienId neueSerie = new SerienId(UUID.randomUUID());
+        eventRepository.saveTermin(termin);
+        eventRepository.setSerie(termin.getId(), neueSerie);
+        assertEquals(neueSerie, eventRepository.getEvent(termin.getId()).getSerienId().get());
+        eventRepository.setSerie(termin.getId(), null);
+        assertTrue(eventRepository.getEvent(termin.getId()).getSerienId().isEmpty());
+    }
+
+    @Test
+    void setTitel() throws SaveException {
+        Termin termin = new Termin(eventRepository.neueId(), "Titel", new HerkunftId(UUID.randomUUID()), new PublicSichtbarkeit(), "Beschreibung", new SerienId(UUID.randomUUID()), zeitraum);
+        String neuerTitel = "Neuer Titel";
+        eventRepository.saveTermin(termin);
+        eventRepository.setTitel(termin.getId(), neuerTitel);
+        assertEquals(neuerTitel, eventRepository.getEvent(termin.getId()).getTitel());
+    }
+
+    @Test
+    void setBeschreibung() throws SaveException{
+        Termin termin = new Termin(eventRepository.neueId(), "Titel", new HerkunftId(UUID.randomUUID()), new PublicSichtbarkeit(), "Beschreibung", new SerienId(UUID.randomUUID()), zeitraum);
+        String neueBeschreibung = "Neuer Titel";
+        eventRepository.saveTermin(termin);
+        eventRepository.setBeschreibung(termin.getId(), neueBeschreibung);
+        assertEquals(neueBeschreibung, eventRepository.getEvent(termin.getId()).getBeschreibung());
+    }
+
+    @Test
+    void setSichtbarkeit() throws SaveException{
+        Termin termin = new Termin(eventRepository.neueId(), "Titel", new HerkunftId(UUID.randomUUID()), new PublicSichtbarkeit(), "Beschreibung", new SerienId(UUID.randomUUID()), zeitraum);
+        eventRepository.saveTermin(termin);
+        eventRepository.setSichtbarkeit(termin.getId(), privateSichtbarkeit);
+        assertEquals(privateSichtbarkeit.getSichtbarFuer(), ((PrivateSichtbarkeit) eventRepository.getEvent(termin.getId()).getSichtbarkeit()).getSichtbarFuer());
+        eventRepository.setSichtbarkeit(termin.getId(), new PublicSichtbarkeit());
+        assertInstanceOf(PublicSichtbarkeit.class, eventRepository.getEvent(termin.getId()).getSichtbarkeit());
+        Set<BenutzerId> privateSichtbarkeit_set = new HashSet<>();
+        privateSichtbarkeit_set.add(new BenutzerId(UUID.randomUUID()));
+        PrivateSichtbarkeit privateSichtbarkeit2 = new PrivateSichtbarkeit(privateSichtbarkeit_set);
+        eventRepository.setSichtbarkeit(termin.getId(), privateSichtbarkeit2);
+        assertEquals(privateSichtbarkeit2.getSichtbarFuer(), ((PrivateSichtbarkeit) eventRepository.getEvent(termin.getId()).getSichtbarkeit()).getSichtbarFuer());
+    }
 
     void equalsEvent(Event expected, Event actual){
         assertEquals(expected.getId(), actual.getId());
