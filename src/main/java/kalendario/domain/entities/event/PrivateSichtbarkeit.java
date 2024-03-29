@@ -26,4 +26,7 @@ public class PrivateSichtbarkeit implements Sichtbarkeit {
     public boolean entferneSichtbarkeitFuer(BenutzerId benutzer){
         return sichtbarFuer.remove(benutzer);
     }
+    public Set<BenutzerId> getSichtbarFuer(){
+        return sichtbarFuer;
+    }
 }

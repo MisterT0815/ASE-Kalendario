@@ -16,8 +16,9 @@ public class EventId{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EventId that)) return false;
-        return id == that.id;
+        if (o == null || getClass() != o.getClass()) return false;
+        EventId eventId = (EventId) o;
+        return Objects.equals(id, eventId.id);
     }
 
     @Override

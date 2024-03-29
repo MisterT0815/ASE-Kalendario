@@ -39,7 +39,7 @@ public class BenutzerRepositoryIntegrationTest {
     static void deleteConnection() throws SQLException {
         connection.close();
         boolean result = new File("benutzerrepositorytest.db").delete();
-        System.out.println("connection dead: " + result);
+        System.out.println("Temp Database deleted: " + result);
     }
 
     BenutzerRepository benutzerRepository;

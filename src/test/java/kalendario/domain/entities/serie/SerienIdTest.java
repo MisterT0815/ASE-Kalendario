@@ -6,6 +6,8 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -14,11 +16,12 @@ public class SerienIdTest {
 
     @Test
     void zweiEventIdsSollenGleichSeinWennSieAusDemselbenIntegerStammen(){
-        assertEquals(new SerienId(1), new SerienId(1));
+        UUID id = UUID.randomUUID();
+        assertEquals(new SerienId(id), new SerienId(id));
     }
 
     @Test
     void zweiEventIdsSollenNichtGleichSeinWennSieAusVerschiedenenIntegernStammen(){
-        assertNotEquals(new SerienId(1), new SerienId(2));
+        assertNotEquals(new SerienId(UUID.randomUUID()), new SerienId(UUID.randomUUID()));
     }
 }
