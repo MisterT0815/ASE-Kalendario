@@ -1,11 +1,16 @@
 package kalendario.application.crud.serie;
 
+import kalendario.application.crud.sicherheit.ExistiertNichtException;
 import kalendario.application.crud.sicherheit.LeseZugriffVerfizierer;
 import kalendario.application.session.KeinZugriffException;
+import kalendario.domain.entities.event.Event;
+import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.SerienRepository;
+import kalendario.domain.value_objects.Zeitraum;
 
+import java.util.List;
 import java.util.Optional;
 
 public class SerieRead {

@@ -37,7 +37,9 @@ public class ZeitlicherAbstandWiederholung implements Wiederholung {
         }
         Date naechsterZeitpunkt = naechsterZeitpunktAb(zeitraum.getStart());
         while(zeitraum.enthaelt(naechsterZeitpunkt)){
-            dates.add(naechsterZeitpunkt);
+            if(istZeitpunktInWiederholung(naechsterZeitpunkt)){
+                dates.add(naechsterZeitpunkt);
+            }
             naechsterZeitpunkt = this.naechsterZeitpunktAb(naechsterZeitpunkt);
         }
         return dates;

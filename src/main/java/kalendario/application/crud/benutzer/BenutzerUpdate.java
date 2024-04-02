@@ -37,7 +37,7 @@ public class BenutzerUpdate {
         BenutzerId benutzer = session.getCurrentBenutzer().orElseThrow(KeinZugriffException::new);
         try {
             if(benutzerRepository.benutzerNameExistiert(neuerName)){
-                throw new BenutzerNameExistiertException();
+                throw new BenutzerNameExistiertException("Benutzer mit Name existiert bereits");
             }
         } catch (SQLException e) {
             throw new SaveException(e);

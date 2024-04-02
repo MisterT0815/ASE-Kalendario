@@ -10,4 +10,9 @@ public class PublicSichtbarkeit implements Sichtbarkeit {
     public boolean istSichtbarFuer(BenutzerId benutzer) {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "PublicSichtbarkeit{}";
+    }
 }

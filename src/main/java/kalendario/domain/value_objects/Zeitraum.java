@@ -41,4 +41,12 @@ public final class Zeitraum {
     public int hashCode() {
         return Objects.hash(start, ende);
     }
+
+    @Override
+    public String toString() {
+        return "Zeitraum{" +
+                "start=" + start +
+                ", ende=" + ende +
+                '}';
+    }
 }

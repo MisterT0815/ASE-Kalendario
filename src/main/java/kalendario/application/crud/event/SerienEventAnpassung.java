@@ -15,7 +15,6 @@ import kalendario.domain.repositories.SerienRepository;
 import kalendario.domain.value_objects.Zeitraum;
 
 import java.util.Date;
-import java.util.function.Consumer;
 
 public class SerienEventAnpassung {
 
@@ -40,7 +39,7 @@ public class SerienEventAnpassung {
 
         EventId id = eventRepository.neueId();
         Termin termin = new Termin(id, titel, herkunft, sichtbarkeit, beschreibung, serie, zeitraum);
-        fuegeEventSerieHinzu(serie, originalerZeitpunktInSerie, id, herkunft);
+        packeEventAnSerie(serie, originalerZeitpunktInSerie, id, herkunft);
 
         try{
             eventRepository.saveTermin(termin);
@@ -60,7 +59,7 @@ public class SerienEventAnpassung {
         if (getan) {
             aufgabe.setGetan(session.getCurrentBenutzer().orElseThrow(), true);
         }
-        fuegeEventSerieHinzu(serie, originalerZeitpunktInSerie, id, herkunft);
+        packeEventAnSerie(serie, originalerZeitpunktInSerie, id, herkunft);
 
         try{
             eventRepository.saveAufgabe(aufgabe);
@@ -80,7 +79,7 @@ public class SerienEventAnpassung {
         if (getan) {
             geplanteAufgabe.setGetan(session.getCurrentBenutzer().orElseThrow(), true);
         }
-        fuegeEventSerieHinzu(serie, originalerZeitpunktInSerie, id, herkunft);
+        packeEventAnSerie(serie, originalerZeitpunktInSerie, id, herkunft);
 
         try{
             eventRepository.saveGeplanteAufgabe(geplanteAufgabe);
@@ -92,7 +91,18 @@ public class SerienEventAnpassung {
         return geplanteAufgabe;
     }
 
-    private void fuegeEventSerieHinzu(SerienId serie, Date originalerZeitpunktInSerie, EventId eventId, HerkunftId herkunft) throws SaveException, KeinZugriffException {
+    public void fuegeEventSerieHinzu(SerienId serie, Date originalerZeitpunktInSerie, EventId eventId, HerkunftId herkunft) throws SaveException, KeinZugriffException {
+        verifiziereZugriffe(herkunft, serie);
+        try{
+            eventRepository.setSerie(eventId, serie);
+            this.packeEventAnSerie(serie, originalerZeitpunktInSerie, eventId, herkunft);
+        } catch (SaveException e) {
+            serienRepository.removeAngepasstesEvent(serie, originalerZeitpunktInSerie);
+            throw e;
+        }
+    }
+
+    private void packeEventAnSerie(SerienId serie, Date originalerZeitpunktInSerie, EventId eventId, HerkunftId herkunft) throws SaveException, KeinZugriffException {
         Serie serieToEdit = serieRead.getSerie(serie).orElseThrow(() -> new SaveException("Serie existiert nicht, sollte bereits früher ueberprueft worden sein"));
         Event defaultEvent = eventRead.getEvent(serieToEdit.getDefaultEvent()).orElseThrow(() -> new SaveException("Serie hat ungueltiges DefaultEvent"));
 
@@ -107,7 +117,6 @@ public class SerienEventAnpassung {
         }
 
         serienRepository.addAngepasstesEvent(serie, originalerZeitpunktInSerie, eventId);
-
     }
 
     private void verifiziereZugriffe(HerkunftId herkunft, SerienId serie) throws KeinZugriffException, SaveException {

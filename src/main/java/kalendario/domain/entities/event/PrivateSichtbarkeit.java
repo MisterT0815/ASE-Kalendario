@@ -29,4 +29,11 @@ public class PrivateSichtbarkeit implements Sichtbarkeit {
     public Set<BenutzerId> getSichtbarFuer(){
         return sichtbarFuer;
     }
+
+    @Override
+    public String toString() {
+        return "PrivateSichtbarkeit{" +
+                "sichtbarFuer=" + sichtbarFuer +
+                '}';
+    }
 }

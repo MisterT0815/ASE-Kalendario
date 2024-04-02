@@ -25,8 +25,8 @@ public class Signup implements Command {
                 throw new LoginException("Login braucht mindestens 2 Parameter: Benutzername und Passwort");
             }
             session.signUp(
-                    parameters.get(0).asText,
-                    new PasswortHasher().hashPasswort(parameters.get(1).asText)
+                    parameters.get(0).asText(),
+                    new PasswortHasher().hashPasswort(parameters.get(1).asText())
             );
             return true;
         }

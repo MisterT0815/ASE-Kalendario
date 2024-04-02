@@ -12,14 +12,10 @@ import java.util.List;
 public class SimpleCommandLine {
 
     BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-    List<Command> commands = new ArrayList<>();
-    Session session;
+    List<Command> commands;
 
-    public SimpleCommandLine(Session session){
-        this.session = session;
-        commands.add(new Login(session));
-        commands.add(new Signup(session));
-        commands.add(new UserInfo(session));
+    public SimpleCommandLine(Session session, List<Command> commands){
+        this.commands = commands;
     }
 
     public void run() throws IOException {

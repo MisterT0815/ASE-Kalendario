@@ -4,6 +4,7 @@ import kalendario.application.crud.sicherheit.ExistiertNichtException;
 import kalendario.application.crud.sicherheit.LeseZugriffVerfizierer;
 import kalendario.application.session.KeinZugriffException;
 import kalendario.domain.entities.event.*;
+import kalendario.domain.entities.herkunft.HerkunftId;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.EventRepository;
 
@@ -71,6 +72,17 @@ public class EventRead {
         }).toList();
     }
 
+    public List<Event> getEventsOfHerkunft(HerkunftId herkunftId){
+        List<Event> eventIdsMitHerkunft = eventRepository.getEventsOfHerkunft(herkunftId);
+        return eventIdsMitHerkunft.stream().filter(event -> {
+            try{
+                leseZugriffVerfizierer.verifiziereZugriffFuerEvent(event);
+            } catch (KeinZugriffException e) {
+                return false;
+            }
+            return true;
+        }).toList();
+    }
 
 
 }

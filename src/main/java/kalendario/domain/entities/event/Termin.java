@@ -21,4 +21,17 @@ public class Termin extends Event {
     public Zeitraum getZeitraum() {
         return zeitraum;
     }
+
+    @Override
+    public String toString() {
+        return "Termin{" +
+                "zeitraum=" + zeitraum +
+                ", id=" + id +
+                ", titel='" + titel + '\'' +
+                ", herkunft=" + herkunft +
+                ", sichtbarkeit=" + sichtbarkeit +
+                ", beschreibung='" + beschreibung + '\'' +
+                ", serienId=" + serienId +
+                '}';
+    }
 }

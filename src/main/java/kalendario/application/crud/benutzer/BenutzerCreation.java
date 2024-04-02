@@ -18,7 +18,7 @@ public class BenutzerCreation {
     public Benutzer createBenutzer(String name, String passwordHashed) throws BenutzerNameExistiertException, SaveException {
         try {
             if(benutzerRepository.benutzerNameExistiert(name)){
-                throw new BenutzerNameExistiertException();
+                throw new BenutzerNameExistiertException("Benutzer mit Name existiert bereits");
             }
         } catch (SQLException e) {
             throw new SaveException(e);

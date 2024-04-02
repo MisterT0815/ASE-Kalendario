@@ -57,4 +57,16 @@ public abstract class Event {
     }
 
     public Sichtbarkeit getSichtbarkeit(){return sichtbarkeit;}
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", titel='" + titel + '\'' +
+                ", herkunft=" + herkunft.toString() +
+                ", sichtbarkeit=" + sichtbarkeit.toString() +
+                ", beschreibung='" + beschreibung + '\'' +
+                ", serienId=" + getSerienId().toString() +
+                '}';
+    }
 }

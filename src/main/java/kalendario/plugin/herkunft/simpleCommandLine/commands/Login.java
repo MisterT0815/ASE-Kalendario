@@ -6,8 +6,6 @@ import kalendario.plugin.herkunft.simpleCommandLine.Command;
 import kalendario.plugin.herkunft.simpleCommandLine.Parameter;
 
 import javax.security.auth.login.LoginException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class Login implements Command {
             }
             session.login(
                     parameters.get(0).asText(),
-                    new PasswortHasher().hashPasswort(parameters.get(1).asText)
+                    new PasswortHasher().hashPasswort(parameters.get(1).asText())
             );
             return true;
         }

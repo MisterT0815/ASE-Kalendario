@@ -46,4 +46,19 @@ public class Aufgabe extends Event implements Machbar {
     public Date getDeadline() {
         return deadline;
     }
+
+    @Override
+    public String toString() {
+        return "Aufgabe{" +
+                "deadline=" + deadline +
+                ", getan=" + getan +
+                ", getanVon=" + getanVon +
+                ", id=" + id +
+                ", titel='" + titel + '\'' +
+                ", herkunft=" + herkunft +
+                ", sichtbarkeit=" + sichtbarkeit +
+                ", beschreibung='" + beschreibung + '\'' +
+                ", serienId=" + serienId +
+                '}';
+    }
 }

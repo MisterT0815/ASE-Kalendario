@@ -69,6 +69,8 @@ public class EventRepositorySQLite implements EventRepository {
 
     private static final String INSERT_EVENT = "INSERT INTO Events (EventId, Titel, HerkunftId, Sichtbarkeit, Beschreibung, SerienId, Typ) VALUES (?, ?, ?, ?, ?, ?, ?);";
     private static final String GET_EVENT = "SELECT * FROM Events WHERE EventId = ?;";
+    private static final String GET_EVENT_OF_SERIE = "SELECT * FROM Events WHERE SerienId = ?;";
+    private static final String GET_EVENT_OF_HERKUNFT = "SELECT * FROM Events WHERE HerkunftId = ?;";
     private static final String INSERT_ZEITRAUM = "INSERT INTO Zeitraum (EventId, Start, Ende) VALUES (?, ?, ?);";
     private static final String GET_ZEITRAUM = "SELECT * FROM Zeitraum WHERE EventId = ?;";
     private static final String INSERT_SICHTBARKEIT = "INSERT INTO Sichtbarkeit (EventId, BenutzerId) VALUES (?, ?);";
@@ -167,58 +169,45 @@ public class EventRepositorySQLite implements EventRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(GET_EVENT);
             preparedStatement.setString(1, id.getId().toString());
             ResultSet resultsEvent = preparedStatement.executeQuery();
-            if(resultsEvent.next()){
-                EventId eventId = new EventId(UUID.fromString(resultsEvent.getString("EventId")));
-                String titel = resultsEvent.getString("Titel");
-                HerkunftId herkunft = new HerkunftId(UUID.fromString(resultsEvent.getString("HerkunftId")));
-                Sichtbarkeit sichtbarkeit;
-                if(resultsEvent.getString("Sichtbarkeit").equals(SICHTBARKEIT_PUBLIC)){
-                    sichtbarkeit = new PublicSichtbarkeit();
-                }else{
-                    sichtbarkeit = getPrivateSichtbarkeit(eventId);
-                }
-                String beschreibung = resultsEvent.getString("Beschreibung");
-                String serienIdStr = resultsEvent.getString("SerienId");
-                SerienId serienId;
-                try{
-                    serienId = new SerienId(UUID.fromString(serienIdStr));
-                }catch(IllegalArgumentException | NullPointerException e){
-                    serienId = null;
-                }
-                switch (resultsEvent.getString("Typ")){
-                    case TYP_TERMIN -> {
-                        Zeitraum zeitraum = getZeitraum(eventId);
-                        return new Termin(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
-                    }
-                    case TYP_AUFGABE -> {
-                        Machbar machbar = getMachbar(eventId);
-                        Date deadline = getDeadline(eventId);
-                        Aufgabe aufgabe = new Aufgabe(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, deadline);
-                        if(machbar.istGetan()){
-                            aufgabe.setGetan(machbar.wurdeGemachtVon().get(), machbar.istGetan());
-                        }
-                        return aufgabe;
-                    }
-                    case TYP_GEPLANTE_AUFGABE ->{
-                        Machbar machbar = getMachbar(eventId);
-                        Zeitraum zeitraum = getZeitraum(eventId);
-                        GeplanteAufgabe geplanteAufgabe = new GeplanteAufgabe(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
-                        if(machbar.istGetan()){
-                            geplanteAufgabe.setGetan(machbar.wurdeGemachtVon().get(), machbar.istGetan());
-                        }
-                        return geplanteAufgabe;
-                    }
-                }
+            Event event = null;
+            if(resultsEvent.next()) {
+                event = getEventFromResultSet(resultsEvent);
             }
+            if (event != null) return event;
             return null;
         } catch (SQLException e) {
             return null;
         }
     }
 
+
+
     @Override
     public List<Event> getEventsOfSerie(SerienId serie) {
-        return null;
+        return getEventsOfStatementAndID(GET_EVENT_OF_SERIE, serie.getId());
+    }
+
+    @Override
+    public List<Event> getEventsOfHerkunft(HerkunftId herkunftId) {
+        return getEventsOfStatementAndID(GET_EVENT_OF_HERKUNFT, herkunftId.getId());
+    }
+
+    private List<Event> getEventsOfStatementAndID(String getEventOfHerkunft, UUID id) {
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(getEventOfHerkunft);
+            preparedStatement.setString(1, id.toString());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Event> events = new ArrayList<>();
+            while(resultSet.next()){
+                Event event = getEventFromResultSet(resultSet);
+                if( event != null){
+                    events.add(event);
+                }
+            }
+            return events;
+        } catch (SQLException e) {
+            return null;
+        }
     }
 
     @Override
@@ -390,6 +379,49 @@ public class EventRepositorySQLite implements EventRepository {
         return sichtbarkeit;
     }
 
-
+    private Event getEventFromResultSet(ResultSet resultsEvent) throws SQLException {
+        EventId eventId = new EventId(UUID.fromString(resultsEvent.getString("EventId")));
+        String titel = resultsEvent.getString("Titel");
+        HerkunftId herkunft = new HerkunftId(UUID.fromString(resultsEvent.getString("HerkunftId")));
+        Sichtbarkeit sichtbarkeit;
+        if(resultsEvent.getString("Sichtbarkeit").equals(SICHTBARKEIT_PUBLIC)){
+            sichtbarkeit = new PublicSichtbarkeit();
+        }else{
+            sichtbarkeit = getPrivateSichtbarkeit(eventId);
+        }
+        String beschreibung = resultsEvent.getString("Beschreibung");
+        String serienIdStr = resultsEvent.getString("SerienId");
+        SerienId serienId;
+        try{
+            serienId = new SerienId(UUID.fromString(serienIdStr));
+        }catch(IllegalArgumentException | NullPointerException e){
+            serienId = null;
+        }
+        switch (resultsEvent.getString("Typ")){
+            case TYP_TERMIN -> {
+                Zeitraum zeitraum = getZeitraum(eventId);
+                return new Termin(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
+            }
+            case TYP_AUFGABE -> {
+                Machbar machbar = getMachbar(eventId);
+                Date deadline = getDeadline(eventId);
+                Aufgabe aufgabe = new Aufgabe(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, deadline);
+                if(machbar.istGetan()){
+                    aufgabe.setGetan(machbar.wurdeGemachtVon().get(), machbar.istGetan());
+                }
+                return aufgabe;
+            }
+            case TYP_GEPLANTE_AUFGABE ->{
+                Machbar machbar = getMachbar(eventId);
+                Zeitraum zeitraum = getZeitraum(eventId);
+                GeplanteAufgabe geplanteAufgabe = new GeplanteAufgabe(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
+                if(machbar.istGetan()){
+                    geplanteAufgabe.setGetan(machbar.wurdeGemachtVon().get(), machbar.istGetan());
+                }
+                return geplanteAufgabe;
+            }
+        }
+        return null;
+    }
 
 }
