@@ -7,7 +7,6 @@ import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.SaveException;
 import kalendario.domain.value_objects.Zeitraum;
-import org.hibernate.boot.model.internal.ResultSetMappingSecondPass;
 
 import java.sql.*;
 import java.util.*;
@@ -104,21 +103,20 @@ public class EventRepositorySQLite implements EventRepository {
     public void saveTermin(Termin termin) throws SaveException {
         try{
             connection.setAutoCommit(false);
-            this.saveEvent(termin, TYP_TERMIN);
+            this.saveEventInformation(termin, TYP_TERMIN);
             this.saveZeitraum(termin.getId(), termin.getZeitraum());
             connection.commit();
             connection.setAutoCommit(true);
         } catch (SQLException e) {
             throw new SaveException(e);
         }
-
     }
 
     @Override
     public void saveAufgabe(Aufgabe aufgabe) throws SaveException {
         try{
             connection.setAutoCommit(false);
-            this.saveEvent(aufgabe, TYP_AUFGABE);
+            this.saveEventInformation(aufgabe, TYP_AUFGABE);
             this.saveDeadline(aufgabe.getId(), aufgabe.getDeadline());
             this.saveMachbar(aufgabe.getId(), aufgabe.istGetan(), aufgabe.wurdeGemachtVon().orElse(null));
             connection.commit();
@@ -132,7 +130,7 @@ public class EventRepositorySQLite implements EventRepository {
     public void saveGeplanteAufgabe(GeplanteAufgabe geplanteAufgabe) throws SaveException {
         try{
             connection.setAutoCommit(false);
-            this.saveEvent(geplanteAufgabe, TYP_GEPLANTE_AUFGABE);
+            this.saveEventInformation(geplanteAufgabe, TYP_GEPLANTE_AUFGABE);
             this.saveZeitraum(geplanteAufgabe.getId(), geplanteAufgabe.getZeitraum());
             this.saveMachbar(geplanteAufgabe.getId(), geplanteAufgabe.istGetan(), geplanteAufgabe.wurdeGemachtVon().orElse(null));
             connection.commit();
@@ -142,7 +140,7 @@ public class EventRepositorySQLite implements EventRepository {
         }
     }
 
-    private void saveEvent(Event event, String typ) throws SQLException {
+    private void saveEventInformation(Event event, String typ) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(INSERT_EVENT);
         preparedStatement.setString(1, event.getId().getId().toString());
         preparedStatement.setString(2, event.getTitel());

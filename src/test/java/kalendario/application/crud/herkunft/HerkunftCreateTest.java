@@ -7,6 +7,7 @@ import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.herkunft.Herkunft;
 import kalendario.domain.entities.herkunft.HerkunftId;
 import kalendario.domain.repositories.HerkunftRepository;
+import kalendario.domain.repositories.SaveException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -36,7 +37,7 @@ public class HerkunftCreateTest {
     }
 
     @Test
-    void createOrGetCommandLineHerkunftVonAktuellemBenutzerSollHerkunftVonRepositoryNehmenWennBenutzerBereitsCommandLineHerkunftHat() throws KeinZugriffException {
+    void createOrGetCommandLineHerkunftVonAktuellemBenutzerSollHerkunftVonRepositoryNehmenWennBenutzerBereitsCommandLineHerkunftHat() throws KeinZugriffException, SaveException {
         CommandLineHerkunft commandLineHerkunftBereitsExistend = new CommandLineHerkunft(session);
         commandLineHerkunftBereitsExistend.setId(herkunftId);
         List<Herkunft> bereitsExistierendeHerkuenfte = List.of(herkunft, commandLineHerkunftBereitsExistend);

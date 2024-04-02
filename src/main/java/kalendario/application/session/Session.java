@@ -23,6 +23,9 @@ public class Session {
     }
 
     public void login(String name, String password) throws LoginException {
+        if(benutzer != null){
+            logout();
+        }
         try {
             if(!benutzerRead.verifyBenutzer(name, password)){
                 throw new LoginException("Fehler bei Login, checke Benutzername und Passwort");

@@ -48,4 +48,8 @@ public class ZeitlicherAbstandWiederholung implements Wiederholung {
         long startDateDiff = date.getTime() - start.getTime();
         return (startDateDiff % abstandInMilli) == 0 && (date.after(start) || date.equals(start));
     }
+
+    public Duration getAbstand(){
+        return this.abstand;
+    }
 }

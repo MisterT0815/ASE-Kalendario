@@ -65,4 +65,8 @@ public class Serie{
     public Wiederholung getWiederholung() {
         return wiederholung;
     }
+
+    public Map<Date, EventId> getAngepassteEventIds() {
+        return angepassteEventIds;
+    }
 }

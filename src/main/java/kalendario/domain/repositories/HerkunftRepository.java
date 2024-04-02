@@ -10,5 +10,5 @@ public interface HerkunftRepository {
     HerkunftId neueId();
     Herkunft getHerkunftMitId(HerkunftId herkunftId);
     List<Herkunft> getHerkuenfteVonBesitzer(BenutzerId besitzer);
-    void saveHerkunft(Herkunft herkunft);
+    void saveHerkunft(Herkunft herkunft) throws SaveException;
 }

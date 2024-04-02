@@ -2,6 +2,7 @@ package kalendario.application.herkunft;
 
 import kalendario.application.session.KeinZugriffException;
 import kalendario.application.session.Session;
+import kalendario.domain.entities.benutzer.Benutzer;
 import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.herkunft.Herkunft;
 import kalendario.domain.entities.herkunft.HerkunftId;
@@ -15,6 +16,11 @@ public class CommandLineHerkunft implements Herkunft {
 
     public CommandLineHerkunft(Session session) throws KeinZugriffException {
         this.benutzer = session.getCurrentBenutzer().orElseThrow(KeinZugriffException::new);
+    }
+
+    public CommandLineHerkunft(BenutzerId benutzer, HerkunftId herkunftId){
+        this.benutzer = benutzer;
+        this.id = herkunftId;
     }
 
     @Override
@@ -35,6 +41,7 @@ public class CommandLineHerkunft implements Herkunft {
         return Objects.hash(benutzer);
     }
 
+    @Override
     public HerkunftId getId() {
         return id;
     }

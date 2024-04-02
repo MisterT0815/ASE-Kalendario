@@ -5,6 +5,7 @@ import kalendario.application.session.KeinZugriffException;
 import kalendario.application.session.Session;
 import kalendario.domain.entities.herkunft.Herkunft;
 import kalendario.domain.repositories.HerkunftRepository;
+import kalendario.domain.repositories.SaveException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,11 @@ public class HerkunftCreate {
         Optional<Herkunft> schonGespeicherteHerkunft =  herkuenfteVonBesitzer.stream().filter(herkunft -> herkunft.equals(commandLineHerkunft)).findFirst();
         if(schonGespeicherteHerkunft.isEmpty()){
             commandLineHerkunft.setId(herkunftRepository.neueId());
-            herkunftRepository.saveHerkunft(commandLineHerkunft);
+            try {
+                herkunftRepository.saveHerkunft(commandLineHerkunft);
+            } catch (SaveException e) {
+                throw new KeinZugriffException(e);
+            }
             return commandLineHerkunft;
         }else{
             return schonGespeicherteHerkunft.get();

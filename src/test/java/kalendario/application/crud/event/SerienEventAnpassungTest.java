@@ -62,7 +62,7 @@ public class SerienEventAnpassungTest {
         Event event = serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(Termin.class, event);
         verify(eventRepository).saveTermin((Termin) event);
-        verify(serienRepository).addAngepasstesEvent(originalerZeitpunktInWiederholung, event.getId());
+        verify(serienRepository).addAngepasstesEvent(serienId, originalerZeitpunktInWiederholung, event.getId());
         Termin termin = (Termin) event;
         assertEquals(titel, termin.getTitel());
         assertEquals(herkunftId, termin.getHerkunftId());
@@ -77,7 +77,7 @@ public class SerienEventAnpassungTest {
         Event event = serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline,false, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(Aufgabe.class, event);
         verify(eventRepository).saveAufgabe((Aufgabe) event);
-        verify(serienRepository).addAngepasstesEvent(originalerZeitpunktInWiederholung, event.getId());
+        verify(serienRepository).addAngepasstesEvent(serienId, originalerZeitpunktInWiederholung, event.getId());
         assertEquals(titel, event.getTitel());
         assertEquals(herkunftId, event.getHerkunftId());
         assertEquals(beschreibung, event.getBeschreibung());
@@ -98,7 +98,7 @@ public class SerienEventAnpassungTest {
         assertTrue(aufgabe.istGetan());
         assertEquals(besitzerId, aufgabe.wurdeGemachtVon().get());
         verify(eventRepository).saveAufgabe(aufgabe);
-        verify(serienRepository).addAngepasstesEvent(originalerZeitpunktInWiederholung, event.getId());
+        verify(serienRepository).addAngepasstesEvent(serienId, originalerZeitpunktInWiederholung, event.getId());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class SerienEventAnpassungTest {
         Event event = serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(GeplanteAufgabe.class, event);
         verify(eventRepository).saveGeplanteAufgabe((GeplanteAufgabe) event);
-        verify(serienRepository).addAngepasstesEvent(originalerZeitpunktInWiederholung, event.getId());
+        verify(serienRepository).addAngepasstesEvent(serienId, originalerZeitpunktInWiederholung, event.getId());
         assertEquals(titel, event.getTitel());
         assertEquals(herkunftId, event.getHerkunftId());
         assertEquals(beschreibung, event.getBeschreibung());
@@ -127,7 +127,7 @@ public class SerienEventAnpassungTest {
         assertTrue(geplanteAufgabe.istGetan());
         assertEquals(besitzerId, geplanteAufgabe.wurdeGemachtVon().get());
         verify(eventRepository).saveGeplanteAufgabe(geplanteAufgabe);
-        verify(serienRepository).addAngepasstesEvent(originalerZeitpunktInWiederholung, event.getId());
+        verify(serienRepository).addAngepasstesEvent(serienId, originalerZeitpunktInWiederholung, event.getId());
     }
 
     @Test
@@ -206,11 +206,11 @@ public class SerienEventAnpassungTest {
         doThrow(SaveException.class).when(eventRepository).saveTermin(any());
         doThrow(SaveException.class).when(eventRepository).saveGeplanteAufgabe(any());
         assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
-        verify(serienRepository, times(1)).removeAngepasstesEvent(originalerZeitpunktInWiederholung);
+        verify(serienRepository, times(1)).removeAngepasstesEvent(serienId, originalerZeitpunktInWiederholung);
         assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
-        verify(serienRepository, times(2)).removeAngepasstesEvent(originalerZeitpunktInWiederholung);
+        verify(serienRepository, times(2)).removeAngepasstesEvent(serienId, originalerZeitpunktInWiederholung);
         assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
-        verify(serienRepository, times(3)).removeAngepasstesEvent(originalerZeitpunktInWiederholung);
+        verify(serienRepository, times(3)).removeAngepasstesEvent(serienId, originalerZeitpunktInWiederholung);
     }
 
 

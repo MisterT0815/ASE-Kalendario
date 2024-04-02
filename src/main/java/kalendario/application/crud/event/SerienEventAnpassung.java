@@ -45,7 +45,7 @@ public class SerienEventAnpassung {
         try{
             eventRepository.saveTermin(termin);
         }catch (SaveException e){
-            serienRepository.removeAngepasstesEvent(originalerZeitpunktInSerie);
+            serienRepository.removeAngepasstesEvent(serie, originalerZeitpunktInSerie);
             throw e;
         }
 
@@ -65,7 +65,7 @@ public class SerienEventAnpassung {
         try{
             eventRepository.saveAufgabe(aufgabe);
         }catch (SaveException e){
-            serienRepository.removeAngepasstesEvent(originalerZeitpunktInSerie);
+            serienRepository.removeAngepasstesEvent(serie, originalerZeitpunktInSerie);
             throw e;
         }
 
@@ -85,7 +85,7 @@ public class SerienEventAnpassung {
         try{
             eventRepository.saveGeplanteAufgabe(geplanteAufgabe);
         }catch (SaveException e){
-            serienRepository.removeAngepasstesEvent(originalerZeitpunktInSerie);
+            serienRepository.removeAngepasstesEvent(serie, originalerZeitpunktInSerie);
             throw e;
         }
 
@@ -106,7 +106,7 @@ public class SerienEventAnpassung {
             throw new SaveException("Event ist nicht Teil der Serie, checke den urspünglichen Zeitpunkt in der Serie");
         }
 
-        serienRepository.addAngepasstesEvent(originalerZeitpunktInSerie, eventId);
+        serienRepository.addAngepasstesEvent(serie, originalerZeitpunktInSerie, eventId);
 
     }
 
