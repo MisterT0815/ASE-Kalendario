@@ -11,8 +11,5 @@ public class PublicSichtbarkeit implements Sichtbarkeit {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "PublicSichtbarkeit{}";
-    }
+
 }

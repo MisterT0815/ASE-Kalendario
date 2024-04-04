@@ -43,17 +43,9 @@ public final class Zeitraum {
         return Objects.hash(start, ende);
     }
 
-    @Override
-    public String toString() {
-        return "Zeitraum{" +
-                "start=" + start +
-                ", ende=" + ende +
-                '}';
-    }
-
     public Zeitraum pushByDuration(Duration duration) {
         Date neuerStart = new Date(this.start.getTime() + duration.getSeconds() *1000);
-        Date neuesEnde = new Date(this.start.getTime() + duration.getSeconds() *1000);
+        Date neuesEnde = new Date(this.ende.getTime() + duration.getSeconds() *1000);
         return new Zeitraum(neuerStart, neuesEnde);
     }
 }

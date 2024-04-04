@@ -1,0 +1,24 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Event {
+  # serienId: SerienId
+  # titel: String
+  # herkunft: HerkunftId
+  # id: EventId
+  # beschreibung: String
+  # sichtbarkeit: Sichtbarkeit
+  + getTitel(): String
+  + pushByDuration(Duration): void
+  + getSerienId(): Optional<SerienId>
+  + getId(): EventId
+  + getSichtbarkeit(): Sichtbarkeit
+  + getHerkunftId(): HerkunftId
+  + getBeschreibung(): String
+  + istSichtbarFuer(BenutzerId): boolean
+}
+
+@enduml

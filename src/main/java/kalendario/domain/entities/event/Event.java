@@ -61,15 +61,4 @@ public abstract class Event {
 
     public abstract void pushByDuration(Duration duration);
 
-    @Override
-    public String toString() {
-        return "Event{" +
-                "id=" + id +
-                ", titel='" + titel + '\'' +
-                ", herkunft=" + herkunft.toString() +
-                ", sichtbarkeit=" + sichtbarkeit.toString() +
-                ", beschreibung='" + beschreibung + '\'' +
-                ", serienId=" + getSerienId().toString() +
-                '}';
-    }
 }

@@ -30,16 +30,4 @@ public class Termin extends Event {
         zeitraum = zeitraum.pushByDuration(duration);
     }
 
-    @Override
-    public String toString() {
-        return "Termin{" +
-                "zeitraum=" + zeitraum +
-                ", id=" + id +
-                ", titel='" + titel + '\'' +
-                ", herkunft=" + herkunft +
-                ", sichtbarkeit=" + sichtbarkeit +
-                ", beschreibung='" + beschreibung + '\'' +
-                ", serienId=" + serienId +
-                '}';
-    }
 }

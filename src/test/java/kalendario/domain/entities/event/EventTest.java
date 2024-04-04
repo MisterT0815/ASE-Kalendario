@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,6 +24,11 @@ public class EventTest {
 
         public DefaultEventImplementation(EventId id, String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, SerienId serienId) {
             super(id, titel, herkunft, sichtbarkeit, beschreibung, serienId);
+        }
+
+        @Override
+        public void pushByDuration(Duration duration) {
+
         }
     }
 
@@ -47,6 +53,14 @@ public class EventTest {
         DefaultEventImplementation event = new DefaultEventImplementation(id, titel, herkunft, sichtbarkeit, beschreibung);
         Optional<SerienId> actual = event.getSerienId();
         assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void istSichtbarFuerSollAnSichtbarkeitDelegieren(){
+        DefaultEventImplementation event = new DefaultEventImplementation(id, titel, herkunft, sichtbarkeit, beschreibung);
+        BenutzerId benutzerId = mock();
+        event.istSichtbarFuer(benutzerId);
+        verify(sichtbarkeit).istSichtbarFuer(benutzerId);
     }
 
 

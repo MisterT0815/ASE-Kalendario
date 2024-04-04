@@ -41,19 +41,4 @@ public class GeplanteAufgabe extends Termin implements Machbar {
             this.getanVon = null;
         }
     }
-
-    @Override
-    public String toString() {
-        return "GeplanteAufgabe{" +
-                "getan=" + getan +
-                ", getanVon=" + getanVon +
-                ", zeitraum=" + zeitraum +
-                ", id=" + id +
-                ", titel='" + titel + '\'' +
-                ", herkunft=" + herkunft +
-                ", sichtbarkeit=" + sichtbarkeit +
-                ", beschreibung='" + beschreibung + '\'' +
-                ", serienId=" + serienId +
-                '}';
-    }
 }

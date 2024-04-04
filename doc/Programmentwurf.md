@@ -10,14 +10,21 @@ Abgabedatum:
 
 ## Übersicht über die Applikation
 [Was macht die Applikation? Wie funktioniert sie? Welches Problem löst sie/welchen Zweck hat sie?]
+Die Applikation ist ein einfacher Kalender, der Events und Serien von Events speichert und wieder ausgeben kann. Sie hat die Möglichekeit dies für mehrere Benutzer zu tun, sodass jeder Benutzer seine eigene Events hat. Das anschauen von Events anderer Benutzer ist möglich, wenn dessen Event Ids bekannt sind.
 
 ## Wie startet man die Applikation
 [Wie startet man die Applikation? Welche Voraussetzungen werden benötigt? Schritt-für-Schritt-Anleitung]
+Benötigte Libraries: 
+google.code.gson
+xerial.sqlite.jdbc
+Starten durch laufen lassen der Main Klasse.
 
 ## Wie testet man die Applikation?
 [Wie testet man die Applikation? Welche Voraussetzungen werden benötigt? Schritt-für-Schritt-Anleitung]
-
-
+Benötigte Libraries:
+junit.jupiter
+mockito.core
+Laufen lassen aller Tests in sry/test directory
 
 # Kapitel 2: Clean Architecture
 
@@ -33,8 +40,11 @@ Abgabedatum:
 
 ## Analyse der Schichten
 [jeweils 1 Klasse zu 2 unterschiedlichen Schichten der Clean-Architecture: jeweils UML der Klasse (ggf. auch zusammenspielenden Klassen), Beschreibung der Aufgabe, Einordnung mit Begründung in die Clean-Architecture]
-### Schicht: [Name]
-### Schicht: [Name]
+### Schicht: Domain
+Die Domain Schicht definiert die für die Applikation notwendigen Entities, Value Objects und Repositories für diese.
+
+### Schicht: Application
+In der Application Schicht werden UseCases implementiert. Besonders Verhalten über Aggregatgrenzen hinaus werden hier beachtet und bearbeitet. Dies ist besonders erkennbar in der Interaktion zwischen Serie und Event.
 
 
 
@@ -106,9 +116,15 @@ wird nicht erfüllt um einen einziges Interface zum implementieren zu haben, an 
 
 ## Code Coverage
 [Code Coverage im Projekt analysieren und begründen]
+Code Coverage insbesondere in Domain Layer nahe 100%. Die wichtigsten Funktionalitäten sind hier definiert und sollten auch funktionieren. Nur generierte Methoden wie z.B. Hashcode sind nicht getestet.
+Im Application Layer ist die Code Coverage bei ca. 80%. Alle Happy Paths sind getestet, sowie die komplizierten Möglichkeiten von Fehlschägen. 
+Im Plugin Layer sind die Repositories nur mit Integration Tests in Happy Paths getestet, die CLI ist nicht automatisch getestet. Dies liegt daran, dass die Codemenge die Anforderungen zum Implementationszeitpunkt der CLI bereits erreicht hat und der Fokus der Applikation auf die Korrektheit in den Inneren Layern liegen soll, daher ist die CLI eher trivial implementiert und ungetestet.
+Da die CLI auch beliebig ausgetauscht werden kann und dann neue automatische Tests notwendig sind, ist das manuelle Testen ausreichend.
 
 ## Fakes und Mocks
 [Analyse und Begründung des Einsatzes von 2 Fake/Mock-Objekten; zusätzlich jeweils UML Diagramm der Klasse]
+EventTest: Nutzung von Mocks für SerienId, EventId, HerkunftId und Sichtbarkeit, da im EventTest nur die Funktionalität von der Klasse Event getestet werden soll, alle anderen Dependencies werden gemockt. Diese Dependencies werden in anderen Testklassen getestet.
+![Event.svg](Event.svg)
 
 
 

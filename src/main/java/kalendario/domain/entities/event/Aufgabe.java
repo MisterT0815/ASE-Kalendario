@@ -54,18 +54,4 @@ public class Aufgabe extends Event implements Machbar {
         this.deadline = new Date( deadline.getTime() + duration.getSeconds()*1000);
     }
 
-    @Override
-    public String toString() {
-        return "Aufgabe{" +
-                "deadline=" + deadline +
-                ", getan=" + getan +
-                ", getanVon=" + getanVon +
-                ", id=" + id +
-                ", titel='" + titel + '\'' +
-                ", herkunft=" + herkunft +
-                ", sichtbarkeit=" + sichtbarkeit +
-                ", beschreibung='" + beschreibung + '\'' +
-                ", serienId=" + serienId +
-                '}';
-    }
 }

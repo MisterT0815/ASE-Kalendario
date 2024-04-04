@@ -11,8 +11,11 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
 public class GeplanteAufgabeTest {
@@ -53,6 +56,14 @@ public class GeplanteAufgabeTest {
 
         assertFalse(geplanteAufgabe.istGetan());
         assertTrue(geplanteAufgabe.wurdeGemachtVon().isEmpty());
+    }
+
+    @Test
+    void pushByDurationSollZeitraumPushen(){
+        Duration duration = mock();
+        GeplanteAufgabe geplanteAufgabe = new GeplanteAufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, zeitraum);
+        geplanteAufgabe.pushByDuration(duration);
+        verify(zeitraum).pushByDuration(duration);
     }
 
 }

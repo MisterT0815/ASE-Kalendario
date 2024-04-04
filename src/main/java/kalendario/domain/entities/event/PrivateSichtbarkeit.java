@@ -30,10 +30,4 @@ public class PrivateSichtbarkeit implements Sichtbarkeit {
         return sichtbarFuer;
     }
 
-    @Override
-    public String toString() {
-        return "PrivateSichtbarkeit{" +
-                "sichtbarFuer=" + sichtbarFuer +
-                '}';
-    }
 }

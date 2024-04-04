@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,5 +55,12 @@ class ZeitraumTest {
         assertEquals(zeitraum1, zeitraum2);
     }
 
+    @Test
+    void pushByDurationSollZeitraumMitBeidenDatenVerschobenGeben(){
+        Zeitraum zeitraum = new Zeitraum(ersterZeitpunkt, dritterZeitpunkt);
+        Zeitraum zeitraumZiel = new Zeitraum(zweiterZeitpunkt, vierterZeitpunkt);
+        Zeitraum verschobenerZeitraum = zeitraum.pushByDuration(Duration.ofMillis(1000L));
+        assertEquals(zeitraumZiel, verschobenerZeitraum);
+    }
 
 }

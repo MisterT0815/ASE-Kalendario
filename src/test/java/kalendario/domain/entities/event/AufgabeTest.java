@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,5 +55,15 @@ public class AufgabeTest {
 
         assertFalse(aufgabe.istGetan());
         assertTrue(aufgabe.wurdeGemachtVon().isEmpty());
+    }
+
+    @Test
+    void pushByDurationSollDeadlineVerschieben(){
+        Duration duration = Duration.ofMillis(1000L);
+        Date date1 = new Date(1000L);
+        Date date2 = new Date(2000L);
+        Aufgabe aufgabe = new Aufgabe(id, titel, herkunft, sichtbarkeit, beschreibung, date1);
+        aufgabe.pushByDuration(duration);
+        assertEquals(date2, aufgabe.getDeadline());
     }
 }
