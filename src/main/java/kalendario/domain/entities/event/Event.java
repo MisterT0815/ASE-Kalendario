@@ -5,6 +5,7 @@ import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.herkunft.HerkunftId;
 import kalendario.domain.entities.serie.SerienId;
 
+import java.time.Duration;
 import java.util.Optional;
 
 public abstract class Event {
@@ -57,6 +58,8 @@ public abstract class Event {
     }
 
     public Sichtbarkeit getSichtbarkeit(){return sichtbarkeit;}
+
+    public abstract void pushByDuration(Duration duration);
 
     @Override
     public String toString() {

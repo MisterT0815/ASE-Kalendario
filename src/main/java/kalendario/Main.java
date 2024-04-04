@@ -16,7 +16,6 @@ import kalendario.application.crud.serie.SerieRead;
 import kalendario.application.crud.sicherheit.LeseZugriffVerfizierer;
 import kalendario.application.crud.sicherheit.SchreibZugriffVerifizierer;
 import kalendario.application.session.Session;
-import kalendario.domain.entities.serie.Serie;
 import kalendario.domain.repositories.BenutzerRepository;
 import kalendario.domain.repositories.EventRepository;
 import kalendario.domain.repositories.HerkunftRepository;

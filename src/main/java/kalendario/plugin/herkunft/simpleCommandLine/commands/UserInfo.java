@@ -20,7 +20,7 @@ public class UserInfo implements Command {
                 System.out.println("Name: " + session.getCurrentBenutzerName().orElseThrow(()-> new Exception("Fehler beim holen des Namens")));
                 System.out.println("ID: " + session.getCurrentBenutzer().get().getId().toString());
             }else{
-                System.out.println("Kein Benutzer ist angemelted");
+                System.out.println("Kein Benutzer ist angemeldet");
             }
             return true;
         }

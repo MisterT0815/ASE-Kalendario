@@ -6,6 +6,7 @@ import kalendario.domain.entities.herkunft.HerkunftId;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.value_objects.Zeitraum;
 
+import java.time.Duration;
 import java.util.Optional;
 
 public class GeplanteAufgabe extends Termin implements Machbar {

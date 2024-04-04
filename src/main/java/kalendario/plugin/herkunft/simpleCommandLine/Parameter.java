@@ -43,7 +43,7 @@ public class Parameter {
             if (this.asText().equals("Public")) {
                 return new PublicSichtbarkeit();
             } else if (this.asText().startsWith("Privat(")) {
-                String working = this.asText.replace("Private(", "");
+                String working = this.asText.replace("Privat(", "");
                 working = working.replace(")", "");
                 String[] benutzerIds = working.split(",");
                 return new PrivateSichtbarkeit(Arrays.stream(benutzerIds).map(benutzerId -> new BenutzerId(UUID.fromString(benutzerId.trim()))).collect(Collectors.toSet()));

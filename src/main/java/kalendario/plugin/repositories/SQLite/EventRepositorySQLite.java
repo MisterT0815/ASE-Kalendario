@@ -25,7 +25,7 @@ public class EventRepositorySQLite implements EventRepository {
                     EventId VARCHAR(255) PRIMARY KEY,
                     Titel VARCHAR(255),
                     HerkunftId VARCHAR(255),
-                    Sichtbarkeit VARCHAR(6),
+                    Sichtbarkeit VARCHAR(255),
                     Beschreibung TEXT,
                     SerienId VARCHAR(255),
                     Typ VARCHAR(16)

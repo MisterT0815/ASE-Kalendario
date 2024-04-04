@@ -4,12 +4,14 @@ import kalendario.domain.entities.benutzer.BenutzerId;
 import kalendario.domain.entities.herkunft.HerkunftId;
 import kalendario.domain.entities.serie.SerienId;
 
+import java.time.Duration;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
 public class Aufgabe extends Event implements Machbar {
 
-    private final Date deadline;
+    private Date deadline;
     private boolean getan = false;
     private BenutzerId getanVon = null;
 
@@ -45,6 +47,11 @@ public class Aufgabe extends Event implements Machbar {
 
     public Date getDeadline() {
         return deadline;
+    }
+
+    @Override
+    public void pushByDuration(Duration duration) {
+        this.deadline = new Date( deadline.getTime() + duration.getSeconds()*1000);
     }
 
     @Override

@@ -1,6 +1,9 @@
 package kalendario.domain.entities.event;
 
 
+import java.time.Duration;
+import java.util.Date;
+
 import kalendario.domain.entities.herkunft.HerkunftId;
 import kalendario.domain.entities.serie.SerienId;
 import kalendario.domain.value_objects.Zeitraum;
@@ -20,6 +23,11 @@ public class Termin extends Event {
 
     public Zeitraum getZeitraum() {
         return zeitraum;
+    }
+
+    @Override
+    public void pushByDuration(Duration duration) {
+        zeitraum = zeitraum.pushByDuration(duration);
     }
 
     @Override

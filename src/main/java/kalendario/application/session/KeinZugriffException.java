@@ -2,6 +2,7 @@ package kalendario.application.session;
 
 public class KeinZugriffException extends Exception{
     public KeinZugriffException() {
+        super("Kein Zugriff");
     }
 
     public KeinZugriffException(String message) {

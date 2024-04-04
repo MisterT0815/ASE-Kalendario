@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import kalendario.application.crud.event.EventRead;
 import kalendario.application.crud.serie.SerieRead;
 import kalendario.application.crud.sicherheit.ExistiertNichtException;
+import kalendario.application.wiederholung.ZeitlicherAbstandWiederholung;
 import kalendario.domain.entities.event.Event;
 import kalendario.domain.entities.event.EventId;
 import kalendario.domain.entities.serie.Serie;
@@ -35,8 +36,14 @@ public class SerienEventsInZeitraum implements Command {
             Optional<Serie> maybeSerie = serieRead.getSerie(serienId);
             List<EventId> eventIds = maybeSerie.orElseThrow(() -> new ExistiertNichtException("Keine Serie mit Id " + serienId.getId().toString())).getEventsInZeitraum(new Zeitraum(start, end));
             List<Event> events = new ArrayList();
-            for(EventId eventId : eventIds){
-                events.add(eventRead.getEvent(eventId).get());
+            for(int i = 0; i < eventIds.size(); i++){
+                Event event = eventRead.getEvent(eventIds.get(i)).get();
+                if(event.getId().equals(maybeSerie.get().getDefaultEvent())) {
+                    for (int k = 0; k < i; k++) {
+                        event.pushByDuration(((ZeitlicherAbstandWiederholung) maybeSerie.get().getWiederholung()).getAbstand());
+                    }
+                }
+                events.add(event);
             }
             System.out.println(gson.toJson(events));
             return true;

@@ -1,5 +1,6 @@
 package kalendario.domain.value_objects;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.Objects;
 
@@ -48,5 +49,11 @@ public final class Zeitraum {
                 "start=" + start +
                 ", ende=" + ende +
                 '}';
+    }
+
+    public Zeitraum pushByDuration(Duration duration) {
+        Date neuerStart = new Date(this.start.getTime() + duration.getSeconds() *1000);
+        Date neuesEnde = new Date(this.start.getTime() + duration.getSeconds() *1000);
+        return new Zeitraum(neuerStart, neuesEnde);
     }
 }
