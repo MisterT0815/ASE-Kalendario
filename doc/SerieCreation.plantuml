@@ -1,0 +1,15 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class SerieCreation {
+  + SerieCreation(SerienRepository, EventRepository, SchreibZugriffVerifizierer): 
+  ~ serienRepository: SerienRepository
+  ~ schreibZugriffVerifizierer: SchreibZugriffVerifizierer
+  ~ eventRepository: EventRepository
+  + createSerie(EventId, Date, Wiederholung): Serie
+}
+
+@enduml

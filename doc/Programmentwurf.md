@@ -24,29 +24,78 @@ Starten durch laufen lassen der Main Klasse.
 Benötigte Libraries:
 junit.jupiter
 mockito.core
-Laufen lassen aller Tests in sry/test directory
+Laufen lassen aller Tests in src/test directory
 
 # Kapitel 2: Clean Architecture
 
 ## Was ist Clean Architecture?
 [allgemeine Beschreibung der Clean Architecture in eigenen Worten]
+Clean Architecture ist eine Art guideline für die Architektur einer Software Applikation. Sie soll dabei helfen ein Programm verständlicher, einfacher, übersichtlicher, Änderungen einfacher und im ganzen Wartbarer zu machen. 
+Dabei setzt Clean Architecture auf die Definition von Schichten, die jeweils eine eindeutig definierte Aufgabe haben. Dabei ist wichtig, dass die Schichten jeweils nur ihre eigene Aufgabe erfüllen und voneinander unabhängig sind.
+Schichten weiter außen sind dabei austauschbarer und innere Schichten sind der Kern der Applikation, wo die wichtigste Logik implementiert ist. Diese soll so sich so wenig wie möglich ändern.
 
 ## Analyse der Dependency Rule
 [(1 Klasse, die die Dependency Rule einhält und eine Klasse, die die Dependency Rule verletzt);   jeweils UML der Klasse und Analyse der Abhängigkeiten in beide Richtungen (d.h., von wem hängt die Klasse ab und wer hängt von der Klasse ab) in Bezug auf die Dependency Rule]
 
 ### Positiv-Beispiel: Dependency Rule
+![EventRead.png](EventRead.png)
+EventRead hängt von folgenden Klassen der Domain Schicht ab:
+- EventRepository
+- Termin
+- GeplanteAufgabe
+- Aufgabe
+- HerkunftId
+- Event
+- SerienId
+
+EventRead hängt von folgenden Klassen der Application Schicht ab:
+- LeseZugriffVerifizierer
+
+EventRead hängt von keinen Klassen der Plugin Schicht ab
+
+Keine Klassen der Domain Schicht hängen von EventRead ab
+
+Folgende Klassen der Application Schicht hängen von EventRead ab:
+- SerienEventAnpassung
+- EventUpdate
+
+Folgende Klassen der Plugin Schicht hängen von EventRead ab:
+- AlleEventsVonHier
+- EventInfo
+- SerienEventsInZeitraum
+
+Da sich EventRead in der Application Schicht befindet ist somit die Dependency Rule erfüllt
 
 ### Negativ-Beispiel: Dependency Rule
+Es gibt keine negativ Beispiele, da strikt erst Domain Layer, dann Application Layer und zuletzt Plugin Layer programmiert wurde. Daher hier ein weiteres Positiv Beispiel:
+![PasswortHasher.png](PasswortHasher.png)
+PasswortHasher hängt von keinen Klassen ab (Ausgenommen MessageDigest, was eine Standartbibliothek aus java.security ist)
+
+Von PasswortHasher hängen Login und Signup ab. Beide sind Klassen in der Plugin Schicht.
+Da PasswortHasher in der Domain Schicht definiert ist, ist damit die Dependency Rule erfüllt.
 
 ## Analyse der Schichten
 [jeweils 1 Klasse zu 2 unterschiedlichen Schichten der Clean-Architecture: jeweils UML der Klasse (ggf. auch zusammenspielenden Klassen), Beschreibung der Aufgabe, Einordnung mit Begründung in die Clean-Architecture]
 ### Schicht: Domain
 Die Domain Schicht definiert die für die Applikation notwendigen Entities, Value Objects und Repositories für diese.
+Beispielklasse: Benutzer
+![Benutzer.png](Benutzer.png)
+Der Benutzer ist eine Klasse die einen User der Applikation repräsentiert. Er ist die Entity für den Benutzer. Er hält Eigenschaften des Users, wie Name und Passwort. Er ist eindeutig über seine Id identifiziert, da sich der Name ändern kann. 
+Da es sich hierbei um eine Entity handelt, wird der Benutzer der Domain Schicht zugeteilt.
 
 ### Schicht: Application
-In der Application Schicht werden UseCases implementiert. Besonders Verhalten über Aggregatgrenzen hinaus werden hier beachtet und bearbeitet. Dies ist besonders erkennbar in der Interaktion zwischen Serie und Event.
+In der Application Schicht werden UseCases implementiert. Besonders Verhalten über Aggregatgrenzen hinaus werden hier beachtet und bearbeitet. 
+Sichtbarkeiten werden verifiziert und Interaktionen zwischen Event und Serie kontrolliert, sodass es zu keinen inkonsistenten Zuständen kommtn.
+Beispielklasse: SerienEventAnpassung
+![SerienEventAnpassung.png](SerienEventAnpassung.png)
+Die SerienEventAnpassung fügt Serien neue Events zu, die andere Attribute haben als die des Serien Defaults. So kann ein Benutzer einzelne Events in einer Serie bearbeiten. Dies ist z.B. nützlich, wenn ein Termin der jede Woche auftritt an einem Tag verschoben wurde, aber in sonstigen Wochen gleich bleibt.
+SerieneEventAnpassung koordiniert das Zusammenspiel vieler Klassen und delegiert an diese die einzelnen zwischenschritte. 
+Session und Zugriffverifizierer werden genutzt, um zu überprüfen, ob der aktuelle Benutzer überhaupt das Recht hat eine solche Operation auszuführen.
+SerienRead und EventRead werden genutzt, um die Entities sicher von der Datenbank zu holen, um Sie zu überprüfen.
+Ob das Einfügen des Events in die Serie überhaupt möglich ist überprüft die Serie selbst.
+Wenn alles gültig ist, werden die Änderungen über die EventRepository und SerienRepository geschrieben.
 
-
+Da es sich hier um die Koordination eines UseCases handelt, ist die Klasse SerienEventRepository in der Application Schicht.
 
 # Kapitel 3: SOLID
 
@@ -55,7 +104,8 @@ In der Application Schicht werden UseCases implementiert. Besonders Verhalten ü
 ### Positiv-Beispiel
 Session: einzige Aufgabe ist den aktuell angemeldeten Benutzer zu tracken. Es gibt keine weiteren Aufgaben zum speichern, Zugriffe verifizieren oder ähnliches.
 ### Negativ-Beispiel
-Herkunft. Sehr überladene Klasse. Ist gleichzeitig Anzeigepunkt für den Besitzer von Events als auch Implementationsstelle im Plugin Layer für die Nutzung von Use Cases.
+SimpleCommandLine: Diese Klasse übernimmt das Parsen eines vom Benutzer eingegebenen Strings, übernimmt teilweise die Ausgabe bei auftretenden fehlern, übernimmt das Aufrufen der Commands und übernimmt die Loop für den Gesamtablauf der Applikation.
+Damit ist sie sehr überladen. Dies kann einfach refactored werden, indem die einzelnen Aufgabe in eine einzelne Klasse verschoben werden.
 
 ## Analyse Open-Closed-Principle (OCP)
 [jeweils eine Klasse als positives und negatives Beispiel für OCP;  jeweils UML der Klasse und Analyse mit Begründung, warum das OCP erfüllt/nicht erfüllt wurde – falls erfüllt: warum hier sinnvoll/welches Problem gab es? Falls nicht erfüllt: wie könnte man es lösen (inkl. UML)?]
@@ -92,27 +142,44 @@ wird nicht erfüllt um einen einziges Interface zum implementieren zu haben, an 
 ## 10 Unit Tests
 [Nennung von 10 Unit-Tests und Beschreibung, was getestet wird]
 
-| Unit Test      | Beschreibung |
-|----------------|--------------|
-| Klasse#Methode |              |
-|                |              |
-|                |              |
-|                |              |
-|                |              |
-|                |              |
-|                |              |
-|                |              |
-|                |              |
-|                |              |
+| Unit Test                                                                                   | Beschreibung                                                                                                                                                                    |
+|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| SerieCreationTest#createSerieSollSchreibZugriffVerifizieren                                 | Bei der Erstellung einer Serie muss zunächst getestet werden, ob der Benutzer eine Solche Serie erstellen darf, daher wird das Aufrufen der Methode verifiziert                 |
+| SerieCreationTest#createSerieSollExceptionWerfenWennSerienRepositoryFehlerWirft             | Wenn bei der Erstellung einer Serie auf der Repository ettwas fehlschlägt, soll dieses weitergegeben werden                                                                     |
+| SerieCreationTest#createSerieSollAlleUebergebenenEigenschaftenSpeichern                     | Bei der Erstellung einer Serie wird verifiziert, dass das Ergebnis des Speichervorgangs zu den mitgegebenen Daten passt                                                         |
+| SerieTest#changeEventAnZeitpunktSollIllegalArgumentExceptionWerfenWennZeitpunktNichtInSerie | Diese Methode verifiziert, dass Events, die einer Serie hinzugefügt werden, aber nicht in diese Serie passen, nicht in die Serie gespiechert werden.                            |
+| SerieTest#getEventsInZeitraumSollFuerJedenZeitpunktInWiederholungEinEventZurueckgeben       | Hier wird verifiziert, dass die Serie die korrekte Anzahl an Events zurückgibt, wenn sie einen Zeitraum bekommt, von dem sie Events zurückgeben soll                            |
+| SerieTest#getEventInZeitraumSollExceptionWerfenWennZeitraumVorStart                         | Hier wird die Integritätsbedingung kontrolliert, nach der der Start der Serie das erste Vorkommen eines Events in der Serie ist und die Abfrage nach Events vorher ungültig ist |
+| PrivateSichtbarkeitTest#istSichtbarFuerSollTrueZurueckgebenFuerAlleErlaubtenBenutzer        | Hier wird getestet, dass erlaubte Benutzer auch als solche von der PrivateSichtbarkeit erkannt werden                                                                           |
+| PrivateSichtbarkeitTest#istSichtbarFuerSollFalseZurueckgebenFuerAlleUnerlaubtenBenutzer     | Hier wird das Gegenstück des oberen Falles getestet, dass ein unerlaubter Benutzer auch als solcher markiert wird.                                                              |
+| ZeitraumTest#invaliderZeitraumSollExceptionWerfen                                           | Dieser Test testet die Integrität beim erstellen eines Zeitraums, der Start eines Zeitraums muss immer vor dessen Ende sein                                                     |
+| ZeitraumTest#pushByDurationSollZeitraumMitBeidenDatenVerschobenGeben                        | Hier wird die pushBeiDuration Methode getestet, ein Verschobener Zeitraum soll Start und Ende um die angegebene Duration verschieben                                            |
+
 
 ## ATRIP: Automatic
 [Begründung/Erläuterung, wie ‘Automatic’ realisiert wurde]
+Alle Tests laufen mit JUnit und Mockito. Alle Tests haben automatische Initialisierung, für das Testen der Datenbank wird automatisch eine Datenbank erstellt und nach Abschluss der Tests wieder gelöscht.
+Es ist dadurch keine Eingreifen des Nutzers beim Lauf der Tests notwendig
 
 ## ATRIP: Thorough
 [jeweils 1 positives und negatives Beispiel zu ‘Thorough’; jeweils Code-Beispiel, Analyse und Begründung, was professionell/nicht professionell ist]
+Positivbeispiel:
+
+EventReadTest: Hier wurden sowohl alle gewollten Ausgaben getestet, als auch alle Verhalten in Fehlerfällen (z.B. was gemacht werden soll, wenn Exceptions ausgelöst werden)
+
+Negativbeispiel:
+
+Repository Tests: Hier wurden keine Unit Tests erstellt, sondern ausschließlich Integration Tests. Diese testen auch nur die Fälle, in denen alles gut läuft, und nicht ausgiebig, was in Fehlerfällen (z.B. SQLException von der Datenbank) passieren soll.
 
 ## ATRIP: Professional
 [jeweils 1 positives und negatives Beispiel zu ‘Professional’; jeweils Code-Beispiel, Analyse und Begründung, was professionell/nicht professionell ist]
+Positivbeispiel:
+
+BenutzerUpdateTest: Hier wird Code durch die Nutzung einer Init Methode wiederverwendet, das einstellen von Mocks wird nicht in jeder Methode wieder gemacht. Es werden keine unnötigen Tests geschriben und alle Testfälle gamz eindeutig und unabhängig voneinander definiert.
+
+Negativbeispiel:
+
+EventCreationTest: Hier werden immer wieder dieselben Mocks gleich eingestellt, es gibt viel Code replication und mögliche Nutzung von Polymorphie wurde ignoriert. Viele Code Smells. 
 
 ## Code Coverage
 [Code Coverage im Projekt analysieren und begründen]
@@ -123,9 +190,14 @@ Da die CLI auch beliebig ausgetauscht werden kann und dann neue automatische Tes
 
 ## Fakes und Mocks
 [Analyse und Begründung des Einsatzes von 2 Fake/Mock-Objekten; zusätzlich jeweils UML Diagramm der Klasse]
-EventTest: Nutzung von Mocks für SerienId, EventId, HerkunftId und Sichtbarkeit, da im EventTest nur die Funktionalität von der Klasse Event getestet werden soll, alle anderen Dependencies werden gemockt. Diese Dependencies werden in anderen Testklassen getestet.
-![Event.svg](Event.svg)
+SerieCreationTest: Nutzung von Mocks für alle Dependecies, da im EventTest nur die Funktionalität von der Klasse Event getestet werden soll, alle anderen Dependencies werden gemockt. Diese Dependencies werden in anderen Testklassen getestet.
 
+So kann zum Beispiel beim schreiben einer Serie auf die Repository eine Exception hervorgerufen werden, um den Fehlerfall zu testen. (createSerieSollSerieBeiDefaultEventRollbackenWennSerienSaveFehlschlaegt)
+
+Und es kann verifiziert werden, dass der Schreibzugriff getestet wurde, indem der Aufruf der Methode verifiziert wird (createSerieSollSchreibZugriffVerifizieren)
+
+![SerieCreation.png](SerieCreation.png)
+![SerieCreationTest.png](SerieCreationTest.png)
 
 
 # Kapitel 6: Domain Driven Design
