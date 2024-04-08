@@ -3,7 +3,7 @@ class Benutzer{
     String name,
     String passwordHashed
 }
-class SerienEventController<? extends Event>{
+class Serie<? extends Event>{
     ? event,
     Date start,
     Wiederholung wiederholung
@@ -14,11 +14,11 @@ abstract class Event{
     Herkunft herkunft,
     Sichtbarkeit sichtbarkeit,
     String Beschreibung,
-    Optional<SerienEventController> Serie
+    Optional<Serie> Serie
 }
 
-SerienEventController "0..1" o-- "0..*" Event
-SerienEventController::defaultEvent o-- "1" Event
+Serie "0..1" o-- "0..*" Event
+Serie::defaultEvent o-- "1" Event
 
 interface Herkunft{
     getBesitzer(): Benutzer
@@ -66,6 +66,6 @@ Event "1" o-- "0..*" Zuordnung
 Benutzer "1" o-- "0..*" Zuordnung
 Benutzer "1" o-- "0..*" Herkunft::getBesitzer
 
-SerienEventController "1" o-- "1" Wiederholung
+Serie "1" o-- "1" Wiederholung
 
 @enduml

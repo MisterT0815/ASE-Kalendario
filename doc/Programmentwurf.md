@@ -110,18 +110,20 @@ Damit ist sie sehr überladen. Dies kann einfach refactored werden, indem die ei
 ## Analyse Open-Closed-Principle (OCP)
 [jeweils eine Klasse als positives und negatives Beispiel für OCP;  jeweils UML der Klasse und Analyse mit Begründung, warum das OCP erfüllt/nicht erfüllt wurde – falls erfüllt: warum hier sinnvoll/welches Problem gab es? Falls nicht erfüllt: wie könnte man es lösen (inkl. UML)?]
 ### Positiv-Beispiel
-
+SimpleCommandLine: Weitere Commands können ohne weiteres durch das erweitern der Command List des Konstruktors erweitert werden. So ist die CommandLine um weitere Commands erweiterbar ohne Modifikationen am Code der Command List vornehmen zu müssen.
 ### Negativ-Beispiel
-
+EventCreate ist nicht offen für weitere Subtypen von Events. Stattdessen muss ein neuer Event-Subtyp neue Methoden in der EventCreate Klasse bekommen, damit solche neuen Subtypen durch EventCreate erstellt werden können.
 
 ## Analyse Liskov-Substitution- (LSP), Interface-Segreggation- (ISP), Dependency-Inversion-Principle (DIP)
 [jeweils eine Klasse als positives und negatives Beispiel für entweder LSP oder ISP oder DIP);  jeweils UML der Klasse und Begründung, warum man hier das Prinzip erfüllt/nicht erfüllt wird]
 [Anm.: es darf nur ein Prinzip ausgewählt werden; es darf NICHT z.B. ein positives Beispiel für LSP und ein negatives Beispiel für ISP genommen werden]
+## Interface-Segreggation Principle
 ### Positiv-Beispiel
-Wiederholung
+Machbar ist ein Positivbeispiel. Hier werden nur Methoden verlangt, die auch tatsächlich verwendet werden müssen um etwas "Machbar" zu machen. Nämlich das setzen der gemacht-Eigenschaft und das Abfragen dieser, sowie des Benutzers der diese gesetzt hat.
 ### Negativ-Beispiel
-EventRepository: Create, Update in einem
-wird nicht erfüllt um einen einziges Interface zum implementieren zu haben, an dass die Datenbanken angebunden werden können ohne verschiedenste Implementationen bieten zu müssen
+EventRepository: Read, Create, Update in einem.
+ISP wird nicht erfüllt um einen einziges Interface zum implementieren zu haben, an dass die Datenbanken angebunden werden können ohne verschiedenste Implementationen bieten zu müssen.
+So nutzt EventRead z.B. nur ein Teilset der Methoden, EventCreation ein anderes. Dies wurde bewusst so gemacht, um die Datenbankanbindung an einem einzigen Ort machen zu können.
 
 
 # Kapitel 4: Weitere Prinzipien
@@ -129,13 +131,53 @@ wird nicht erfüllt um einen einziges Interface zum implementieren zu haben, an 
 ## Analyse GRASP: Geringe Kopplung
 [jeweils eine bis jetzt noch nicht behandelte Klasse als positives und negatives Beispiel geringer Kopplung; jeweils UML Diagramm mit zusammenspielenden Klassen, Aufgabenbeschreibung und Begründung für die Umsetzung der geringen Kopplung bzw. Beschreibung, wie die Kopplung aufgelöst werden kann]
 ### Positiv-Beispiel
+![SerieCreation_Coupling.png](SerieCreation_Coupling.png)
+SerieCreation ist die Klasse für den UseCase: Der Nutzer möchte eine Serie aus einem Event erstellen können.
+Hierfür ist sowohl notwendig eine Serie zu erstellen, als auch das Event, aus dem die Serie erstellt wurde zu verändern. Darüber hinaus muss überprüft werden, ob der Benutzer dies machen darf, indem der Schreibzugriff des Nutzers auf das Event getestet wird.
+
+Geringe Kopplung wird dadurch erreicht, dass die Repositories zum Speichern der Änderungen nur Interfaces sind, also Implementationsänderungen an diesen keinen EInfluss auf SerieCreation haben.
+Zudem wird die Überprüfung des Schreibzugriffs komplett an den mitgegebenen Schreibzugriffverifizierer abgegeben. Damit sind auch Änderungen an der Art wie Schreibzugriff verifiziert wird, ohne Einfluss auf diese Klasse.
+Damit wird maximale Wiederverwendbarkeit garantiert. Andere Usecases, die eine Serie erstellen müssen, können einfach SerieCreation dazu benutzen, um sich nicht um die Einzelheiten, die dazu notwendig sind kümmern zu müssen.
+
 ### Negativ-Beispiel
+![SerienEventsInZeitraum.png](SerienEventsInZeitraum.png)
+SerienEventsInZeitraum ist ein Command, der die Events einer Serie in einem bestimmten Zeitraum ausgibt.
+Hierzu muss er sich auf Implementationsdetails und Zusammenhänge zwischen Event, Serie, SerieRead und EventRead verlassen.
+Damit steigt die Kopplung sehr stark. Die Kopplung kann aufgelöst werden, indem das Zusammenspiel in einen Usecase im Application Layer verschoben wird, wo die Events einer Serie in einem Zeitraum sinnvoll zusammengefügt werden. Dann ist der Command nur noch von diesem Usecase abhängig. Der Usecase wiederum kann dann eventuell in mehrere Usecases aufgeteilt werden, um weitere Abhängigkeiten aufzulösen.
 
 ## Analyse GRASP: Hohe Kohäsion
 [eine Klasse als positives Beispiel hoher Kohäsion; UML Diagramm und Begründung, warum die Kohäsion hoch ist]
+![BenutzerRead.png](BenutzerRead.png)
+BenutzerRead hat ausschließlich Aufgaben zum Lesen von Benutzerdaten und keine weiteren Aufgaben. Damit ist die Kohäsion hoch, da das Objekt sehr fokussiert und somit einfach zu handhaben und verstehen ist.
+
 ## Don’t Repeat Yourself (DRY)
 [ein Commit angeben, bei dem duplizierter Code/duplizierte Logik aufgelöst wurde; Code-Beispiele (vorher/nachher); begründen und Auswirkung beschreiben]
+Commit: d06ec9746d9f5c88c1a347ff62ac49ba3fd0a944
+Sowohl LesezugriffVerifizierer als auch SchreibzugriffVerifizierer hatten folgende Methoden:
 
+```
+private boolean currentBenutzerIstBesitzerVon(Event event) throws KeinZugriffException {
+    Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
+    if(herkunft == null) {
+        throw new KeinZugriffException();
+    }
+    return herkunft.getBesitzerId().equals(getCurrentBenutzerOrThrow());
+}
+
+private BenutzerId getCurrentBenutzerOrThrow() throws KeinZugriffException{
+    return session.getCurrentBenutzer().orElseThrow(KeinZugriffException::new);
+}
+
+private void nullCheck(Object o) throws KeinZugriffException{
+    if(o == null){
+        throw new KeinZugriffException();
+    }
+}
+```
+Dies wurde geändert indem das Interface ZugriffVerifizierer zu einer abstrakten Klasse Methode gemacht wurde,
+die beide Methoden als protected definiert, sodass beide Klassen diese nicht einzeln definieren müssen und Änderungen an diesen an einem Ort stattfinden können-
+In den folgenden Commits wurde hier weiter Refactored, sodass auch die übrigen Methoden nicht mehr abstract in der Klasse ZugriffVerifizierer
+definiert sind, sondern dort Standartimplementationen definiert werden, die Predicates (die in den Konstuktoren der beiden Subklassen definiert werden und so das Verhalten der Klasse definieren) nutzen.
 
 
 # Kapitel 5: Unit Tests
@@ -226,13 +268,20 @@ Zeitraum ist ein Wert in der Domäne, so Semantik definierbar.
 
 ## Repositories
 [UML, Beschreibung und Begründung des Einsatzes eines Repositories; falls kein Repository vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]
+Für jedes Aggregat Root Entity in der Domain Schicht wurde eine einzelne Repository erstellt:
+![Repositories.png](Repositories.png)
+
 
 ## Aggregates
 [UML, Beschreibung und Begründung des Einsatzes eines Aggregates; falls kein Aggregate vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]
-Event zum Zugriff auf Sichbarkeit
+Event zum Zugriff auf Sichbarkeit:
+![Event_Aggregat.png](Event_Aggregat.png)
+Die Sichtbarkeit eines Events ist zentraler Bestandteils dessen. Ohne die Sichtbarkeit eines Events zu kennen ist nicht klar, ob das Event für einen Benutzer angezeigt werden darf. 
+Daher ist die Sichtbarkeit stark an das Event gekoppelt und so zum Aggregat mit dem Event. Event ist aber immer noch der Zentrale Anlaufpunkt, da es das Hauptobjekt der Domäne darstellt, daher ist Event die Aggregate-Root-Entity.
 
-Serie zum Zugriff auf Wiederholung
-
+Serie zum Zugriff auf Wiederholung:
+![Serie_Aggregat.png](Serie_Aggregat.png)
+Die Wiederholung einer Serie ist offensichtlich essentiell für die Serie. Mit dieser bestimmt die Serie an welchen Zeitpunkten Events stattfinden. Daher ist Wiederholung ein Bestandteil des Serien Aggregats.
 
 # Kapitel 7: Refactoring
 
