@@ -422,8 +422,13 @@ private void nullCheck(Object o) throws KeinZugriffException{
 ...
 ```
 
-Refactoring 2: 
+Refactoring 2: Rename Method: In SerienEventAnpassung die Methodennamen genauer spezifiziert. Commit 6e8ebef996d6606c0d557ff2b152367021a91c1d:
 
+Die Methoden in SerienEventAnpassung haben nur Events zurückgegeben und die Methodennamen haben das auch reflektiert. In Wirklichkeit hat die Methoden aber Subklassen des Events zurück gegeben. Die Methoden wurden umbenannt um dies zu reflektieren:
+Vorher:
+![SerienEventAnpassung_Refactoring_Vorher.png](SerienEventAnpassung_Refactoring_Vorher.png)
+Nachher:
+![SerienEventAnpassung_Refactoring_Nachher.png](SerienEventAnpassung_Refactoring_Nachher.png)
 
 
 # Kapitel 8: Entwurfsmuster
