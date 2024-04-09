@@ -59,7 +59,7 @@ public class SerienEventAnpassungTest {
     @Test
     void createEventSollTerminSpeichernWennZeitraumMitgegeben() throws SaveException, KeinZugriffException, ExistiertNichtException {
         Zeitraum zeitraum = mock();
-        Event event = serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung);
+        Event event = serienEventAnpassung.createTermin(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(Termin.class, event);
         verify(eventRepository).saveTermin((Termin) event);
         verify(serienRepository).addAngepasstesEvent(serienId, originalerZeitpunktInWiederholung, event.getId());
@@ -74,7 +74,7 @@ public class SerienEventAnpassungTest {
     @Test
     void createEventSollAufgabeSpeichernWennDeadlineUndGetanMitgegeben() throws SaveException, KeinZugriffException, ExistiertNichtException {
         Date deadline = mock();
-        Event event = serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline,false, serienId, originalerZeitpunktInWiederholung);
+        Event event = serienEventAnpassung.createAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, deadline,false, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(Aufgabe.class, event);
         verify(eventRepository).saveAufgabe((Aufgabe) event);
         verify(serienRepository).addAngepasstesEvent(serienId, originalerZeitpunktInWiederholung, event.getId());
@@ -92,7 +92,7 @@ public class SerienEventAnpassungTest {
         Date deadline = mock();
         BenutzerId besitzerId = mock();
         when(session.getCurrentBenutzer()).thenReturn(Optional.of(besitzerId));
-        Event event = serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, true, serienId, originalerZeitpunktInWiederholung);
+        Event event = serienEventAnpassung.createAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, deadline, true, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(Aufgabe.class, event);
         Aufgabe aufgabe = (Aufgabe) event;
         assertTrue(aufgabe.istGetan());
@@ -104,7 +104,7 @@ public class SerienEventAnpassungTest {
     @Test
     void createEventSollGeplanteAufgabeSpeichernWennZeitraumUndGeplantMitgegeben() throws SaveException, KeinZugriffException, ExistiertNichtException {
         Zeitraum zeitraum = mock();
-        Event event = serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung);
+        Event event = serienEventAnpassung.createGeplanteAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(GeplanteAufgabe.class, event);
         verify(eventRepository).saveGeplanteAufgabe((GeplanteAufgabe) event);
         verify(serienRepository).addAngepasstesEvent(serienId, originalerZeitpunktInWiederholung, event.getId());
@@ -121,7 +121,7 @@ public class SerienEventAnpassungTest {
         Zeitraum zeitraum = mock();
         BenutzerId besitzerId = mock();
         when(session.getCurrentBenutzer()).thenReturn(Optional.of(besitzerId));
-        Event event = serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, true, serienId, originalerZeitpunktInWiederholung);
+        Event event = serienEventAnpassung.createGeplanteAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, true, serienId, originalerZeitpunktInWiederholung);
         assertInstanceOf(GeplanteAufgabe.class, event);
         GeplanteAufgabe geplanteAufgabe = (GeplanteAufgabe) event;
         assertTrue(geplanteAufgabe.istGetan());
@@ -135,16 +135,16 @@ public class SerienEventAnpassungTest {
         EventId id = mock();
         Zeitraum zeitraum = mock();
         when(eventRepository.neueId()).thenReturn(id);
-        Event event = serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung);
+        Event event = serienEventAnpassung.createTermin(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung);
         assertEquals(id, event.getId());
     }
 
     @Test
     void createEventSollSaveExceptionWerfenWennKeinSchreibzugriffAufHerkunftExistiert() throws KeinZugriffException, ExistiertNichtException {
         doThrow(KeinZugriffException.class).when(schreibZugriffVerifizierer).verifiziereZugriffFuerHerkunft(herkunftId);
-        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
-        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
-        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createTermin(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createGeplanteAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
         verifyNoInteractions(eventRepository);
         verifyNoInteractions(serienRepository);
     }
@@ -152,9 +152,9 @@ public class SerienEventAnpassungTest {
     @Test
     void createEventSollSaveExceptionWerfenWennKeinSchreibzugriffAufSerieExistiert() throws KeinZugriffException, ExistiertNichtException {
         doThrow(KeinZugriffException.class).when(schreibZugriffVerifizierer).verifiziereZugriffFuerSerie(serienId);
-        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
-        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
-        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createTermin(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(KeinZugriffException.class, () -> serienEventAnpassung.createGeplanteAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
         verifyNoInteractions(eventRepository);
         verifyNoInteractions(serienRepository);
     }
@@ -163,9 +163,9 @@ public class SerienEventAnpassungTest {
     void createEventSollSaveExceptionWerfenWennEventNichtVonSelberHerkunftWieSerieIst() throws SaveException {
         HerkunftId serienHerkunft = mock();
         when(defaultEvent.getHerkunftId()).thenReturn(serienHerkunft);
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createTermin(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createGeplanteAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
         verify(eventRepository, times(0)).saveTermin(any());
         verify(eventRepository, times(0)).saveAufgabe(any());
         verify(eventRepository, times(0)).saveGeplanteAufgabe(any());
@@ -175,9 +175,9 @@ public class SerienEventAnpassungTest {
     @Test
     void createEventSollExceptionWerfenWennEventNichtInSerieSeinKann() throws SaveException {
         doThrow(IllegalArgumentException.class).when(serie).changeEventAnZeitpunkt(any(), any());
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createTermin(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createGeplanteAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
         verify(eventRepository, times(0)).saveTermin(any());
         verify(eventRepository, times(0)).saveAufgabe(any());
         verify(eventRepository, times(0)).saveGeplanteAufgabe(any());
@@ -187,7 +187,7 @@ public class SerienEventAnpassungTest {
     @Test
     void createEventSollSaveExceptionWerfenWennHerkunftNichtExistiert() throws KeinZugriffException, ExistiertNichtException {
         doThrow(ExistiertNichtException.class).when(schreibZugriffVerifizierer).verifiziereZugriffFuerHerkunft(herkunftId);
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createTermin(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
         verifyNoInteractions(eventRepository);
         verifyNoInteractions(serienRepository);
     }
@@ -195,7 +195,7 @@ public class SerienEventAnpassungTest {
     @Test
     void createEventSollSaveExceptionWerfenWennSerieNichtExistiert() throws KeinZugriffException, ExistiertNichtException {
         doThrow(ExistiertNichtException.class).when(schreibZugriffVerifizierer).verifiziereZugriffFuerSerie(serienId);
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createTermin(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
         verifyNoInteractions(eventRepository);
         verifyNoInteractions(serienRepository);
     }
@@ -205,11 +205,11 @@ public class SerienEventAnpassungTest {
         doThrow(SaveException.class).when(eventRepository).saveAufgabe(any());
         doThrow(SaveException.class).when(eventRepository).saveTermin(any());
         doThrow(SaveException.class).when(eventRepository).saveGeplanteAufgabe(any());
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createTermin(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, serienId, originalerZeitpunktInWiederholung));
         verify(serienRepository, times(1)).removeAngepasstesEvent(serienId, originalerZeitpunktInWiederholung);
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, deadline, false, serienId, originalerZeitpunktInWiederholung));
         verify(serienRepository, times(2)).removeAngepasstesEvent(serienId, originalerZeitpunktInWiederholung);
-        assertThrows(SaveException.class, () -> serienEventAnpassung.createEvent(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
+        assertThrows(SaveException.class, () -> serienEventAnpassung.createGeplanteAufgabe(titel, herkunftId, sichtbarkeit, beschreibung, zeitraum, false, serienId, originalerZeitpunktInWiederholung));
         verify(serienRepository, times(3)).removeAngepasstesEvent(serienId, originalerZeitpunktInWiederholung);
     }
 

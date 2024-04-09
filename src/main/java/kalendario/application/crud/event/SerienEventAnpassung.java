@@ -34,7 +34,7 @@ public class SerienEventAnpassung {
         this.schreibZugriffVerifizierer = schreibZugriffVerifizierer;
     }
 
-    public Event createEvent(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum, SerienId serie, Date originalerZeitpunktInSerie) throws SaveException, KeinZugriffException, ExistiertNichtException {
+    public Termin createTermin(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum, SerienId serie, Date originalerZeitpunktInSerie) throws SaveException, KeinZugriffException, ExistiertNichtException {
         verifiziereZugriffe(herkunft, serie);
 
         EventId id = eventRepository.neueId();
@@ -51,7 +51,7 @@ public class SerienEventAnpassung {
         return termin;
     }
 
-    public Event createEvent(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Date deadline, boolean getan, SerienId serie, Date originalerZeitpunktInSerie) throws SaveException, KeinZugriffException, ExistiertNichtException {
+    public Aufgabe createAufgabe(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Date deadline, boolean getan, SerienId serie, Date originalerZeitpunktInSerie) throws SaveException, KeinZugriffException, ExistiertNichtException {
         verifiziereZugriffe(herkunft, serie);
 
         EventId id = eventRepository.neueId();
@@ -71,7 +71,7 @@ public class SerienEventAnpassung {
         return aufgabe;
     }
 
-    public Event createEvent(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum, boolean getan, SerienId serie, Date originalerZeitpunktInSerie) throws SaveException, KeinZugriffException, ExistiertNichtException {
+    public GeplanteAufgabe createGeplanteAufgabe(String titel, HerkunftId herkunft, Sichtbarkeit sichtbarkeit, String beschreibung, Zeitraum zeitraum, boolean getan, SerienId serie, Date originalerZeitpunktInSerie) throws SaveException, KeinZugriffException, ExistiertNichtException {
         verifiziereZugriffe(herkunft, serie);
 
         EventId id = eventRepository.neueId();
