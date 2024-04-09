@@ -8,7 +8,7 @@ import kalendario.domain.entities.serie.SerienId;
 import java.time.Duration;
 import java.util.Optional;
 
-public abstract class Event {
+public abstract class Event implements Verschiebbar{
     protected EventId id;
     protected String titel;
     protected HerkunftId herkunft;
@@ -59,6 +59,5 @@ public abstract class Event {
 
     public Sichtbarkeit getSichtbarkeit(){return sichtbarkeit;}
 
-    public abstract void pushByDuration(Duration duration);
 
 }
