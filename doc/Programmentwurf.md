@@ -287,9 +287,142 @@ Die Wiederholung einer Serie ist offensichtlich essentiell für die Serie. Mit d
 
 ## Code Smells
 [jeweils 1 Code-Beispiel zu 2 Code Smells aus der Vorlesung; jeweils Code-Beispiel und einen möglichen Lösungsweg bzw. den genommen Lösungsweg beschreiben (inkl. (Pseudo-)Code)]
+Code Smell 1: Long Method: EventRepositorySQLite#getEventFromResultSet(ResultSet resultsEvent)
+```
+private Event getEventFromResultSet(ResultSet resultsEvent) throws SQLException {
+    EventId eventId = new EventId(UUID.fromString(resultsEvent.getString("EventId")));
+    String titel = resultsEvent.getString("Titel");
+    HerkunftId herkunft = new HerkunftId(UUID.fromString(resultsEvent.getString("HerkunftId")));
+    Sichtbarkeit sichtbarkeit;
+    if(resultsEvent.getString("Sichtbarkeit").equals(SICHTBARKEIT_PUBLIC)){
+        sichtbarkeit = new PublicSichtbarkeit();
+    }else{
+        sichtbarkeit = getPrivateSichtbarkeit(eventId);
+    }
+    String beschreibung = resultsEvent.getString("Beschreibung");
+    String serienIdStr = resultsEvent.getString("SerienId");
+    SerienId serienId;
+    try{
+        serienId = new SerienId(UUID.fromString(serienIdStr));
+    }catch(IllegalArgumentException | NullPointerException e){
+        serienId = null;
+    }
+    switch (resultsEvent.getString("Typ")){
+        case TYP_TERMIN -> {
+            Zeitraum zeitraum = getZeitraum(eventId);
+            return new Termin(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
+        }
+        case TYP_AUFGABE -> {
+            Machbar machbar = getMachbar(eventId);
+            Date deadline = getDeadline(eventId);
+            Aufgabe aufgabe = new Aufgabe(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, deadline);
+            if(machbar.istGetan()){
+                aufgabe.setGetan(machbar.wurdeGemachtVon().get(), machbar.istGetan());
+            }
+            return aufgabe;
+        }
+        case TYP_GEPLANTE_AUFGABE ->{
+            Machbar machbar = getMachbar(eventId);
+            Zeitraum zeitraum = getZeitraum(eventId);
+            GeplanteAufgabe geplanteAufgabe = new GeplanteAufgabe(eventId, titel, herkunft, sichtbarkeit, beschreibung, serienId, zeitraum);
+            if(machbar.istGetan()){
+                geplanteAufgabe.setGetan(machbar.wurdeGemachtVon().get(), machbar.istGetan());
+            }
+            return geplanteAufgabe;
+        }
+    }
+    return null;
+}
+```
+Viel zu lange Methode. Stattdessen könnte das herausfiltern der einzelnen Attribute aus dem Resultset in eigene Methoden gepackt werden. Bsp. für Sichtbarkeit:
+```
+private Sichtbarkeit fromResultSet(ResultSet resultset){
+    if(resultsEvent.getString("Sichtbarkeit").equals(SICHTBARKEIT_PUBLIC)){
+        return new PublicSichtbarkeit();
+    }else{
+        return getPrivateSichtbarkeit(eventId);
+    }
+}
+```
+
+und dann in getEventFromResultSet:
+```
+...
+Sichtbarkeit sichtbarkeit = fromResultSet(resultsEvent);
+...
+```
+ebenso kann versucht werden die Aufrufe in dem langen switch-case in einzelne Methoden auszulagern.
+
+Code Smell 2: Large Class: auch EventRepositorySQLite
+Viele Methoden zum speichern, ändern und lesen, dazu viele Hilfmethoden, die die Vorgänge verienfachen.
+Hier können Verantwortlichkeiten aufgeteilt werden. Durch die Anwendung des Interface Segregation Principles könnte das EventRepsository Interace in mehrere aufgeteilt werden (z.B. in Create, Read, Update und Delete).
+Desweiteren können gemeinsame Methoden (z.B. zum initialisieren der Tabellen) können beispielsweise in Helfer-Klassen ausgelagert werden.
+Durch diesen Vorgang können die vielen Aufgaben und Helfermethoden in mehrere Klassen aufgeteilt werden:
+
 
 ## 2 Refactorings
 [2 unterschiedliche Refactorings aus der Vorlesung anwenden, begründen, sowie UML vorher/nachher liefern; jeweils auf die Commits verweisen]
+
+Refactoring 1: Extract Method: Wiederholte nullchecks in Methode ausgelagert. Commit 1e4b0370f9bb7d64ca6d1db995af87404035802d
+
+Kein Einfluss auf UML, da nur Methodenimplementationen sich verändert haben, stattdessen hier Codebeispiel:
+Vorher:
+```
+public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException{
+    Serie serie = serienRepository.getSerie(serienId);
+    if(serie == null){
+        throw new KeinZugriffException();
+    }
+    verifiziereZugriffFuerSerie(serie);
+}
+...
+public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException{
+    Serie serie = serienRepository.getSerie(serienId);
+    if(serie == null){
+        throw new KeinZugriffException();
+    }
+    verifiziereZugriffFuerSerie(serie);
+}
+...
+private boolean currentBenutzerIstBesitzerVon(Event event) throws KeinZugriffException {
+    Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
+    if(herkunft == null) {
+        throw new KeinZugriffException();
+    }
+    return herkunft.getBesitzerId().equals(getCurrentBenutzerOrThrow());
+}
+...
+```
+
+Nachher:
+```
+public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException{
+    Serie serie = serienRepository.getSerie(serienId);
+    nullCheck(serie);
+    verifiziereZugriffFuerSerie(serie);
+}
+...
+public void verifiziereZugriffFuerSerie(SerienId serienId) throws KeinZugriffException{
+    Serie serie = serienRepository.getSerie(serienId);
+    nullCheck(serie);
+    verifiziereZugriffFuerSerie(serie);
+}
+...
+private boolean currentBenutzerIstBesitzerVon(Event event) throws KeinZugriffException {
+    Herkunft herkunft = herkunftRepository.getHerkunftWithId(event.getHerkunftId());
+    nullCheck(serie);
+    return herkunft.getBesitzerId().equals(getCurrentBenutzerOrThrow());
+}
+...
+private void nullCheck(Object o) throws KeinZugriffException{
+    if(o == null){
+        throw new KeinZugriffException();
+    }
+}
+...
+```
+
+Refactoring 2: 
 
 
 
