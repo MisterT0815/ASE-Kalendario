@@ -433,5 +433,9 @@ Nachher:
 
 # Kapitel 8: Entwurfsmuster
 [2 unterschiedliche Entwurfsmuster aus der Vorlesung (oder nach Absprache auch andere) jeweils sinnvoll einsetzen, begründen und UML-Diagramm]
-## Entwurfsmuster: [Name]
+## Entwurfsmuster: Strategie
+![Verschiebbar.png](Verschiebbar.png)
+
+Strategie hier eingesetzt, da das Verschieben von verschiedenen Events je nach Art unterschiedlich funktioniert (verschiedene Algorithmen). Bei Events mit Deadline muss nur die Deadline verschoben werden, bei Events mit Zeiträumen muss der gesamte Zeitraum verschoben werden.
+
 ## Entwurfsmuster: [Name]
