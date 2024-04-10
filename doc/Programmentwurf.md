@@ -438,4 +438,8 @@ Nachher:
 
 Strategie hier eingesetzt, da das Verschieben von verschiedenen Events je nach Art unterschiedlich funktioniert (verschiedene Algorithmen). Bei Events mit Deadline muss nur die Deadline verschoben werden, bei Events mit Zeiträumen muss der gesamte Zeitraum verschoben werden.
 
-## Entwurfsmuster: [Name]
+## Entwurfsmuster: Kommando
+![Command.png](Command.png)
+Commando ist die Basisklasse für alle Kommandos. ALle Implementationen (in plugin.herkunft.simpleCommandLine.commands) sind konkrete Befehle, hier sind als Beispiel EvenCreate und UserInfo abgebildet.
+Empfänger der Befehle sind die Usecase Klassen des Application Layers. Für UserInfo ist das die Session, für EventCreate sind das EventCreation und HerkunftCreation.
+Der Klient, der die konkreten Befehle erzeugt und Verweise auf die Empfänger gibt ist in dieser Applikation die Main Klasse. Der Klient gibt dem Aufrufer auch die Referenzen auf die konkreten Befehle über eine Befehlsliste.
