@@ -103,9 +103,15 @@ Da es sich hier um die Koordination eines UseCases handelt, ist die Klasse Serie
 [jeweils eine Klasse als positives und negatives Beispiel für SRP;  jeweils UML der Klasse und Beschreibung der Aufgabe bzw. der Aufgaben und möglicher Lösungsweg des Negativ-Beispiels (inkl. UML)]
 ### Positiv-Beispiel
 Session: einzige Aufgabe ist den aktuell angemeldeten Benutzer zu tracken. Es gibt keine weiteren Aufgaben zum speichern, Zugriffe verifizieren oder ähnliches.
+![Session.png](Session.png)
+
 ### Negativ-Beispiel
-SimpleCommandLine: Diese Klasse übernimmt das Parsen eines vom Benutzer eingegebenen Strings, übernimmt teilweise die Ausgabe bei auftretenden fehlern, übernimmt das Aufrufen der Commands und übernimmt die Loop für den Gesamtablauf der Applikation.
-Damit ist sie sehr überladen. Dies kann einfach refactored werden, indem die einzelnen Aufgabe in eine einzelne Klasse verschoben werden.
+SimpleCommandLine: Diese Klasse übernimmt das Parsen eines vom Benutzer eingegebenen Strings, übernimmt teilweise die Ausgabe bei auftretenden Fehlern, übernimmt das Aufrufen der Commands und übernimmt die Loop für den Gesamtablauf der Applikation.
+Damit ist sie sehr überladen. 
+![SimpleCommandLine.png](SimpleCommandLine.png)
+
+Dies kann einfach refactored werden, indem die einzelnen Aufgabe in einzelne Klasse verschoben werden.
+![SimpleCommandLineAberSingleResponsibility.png](SimpleCommandLineAberSingleResponsibility.png)
 
 ## Analyse Open-Closed-Principle (OCP)
 [jeweils eine Klasse als positives und negatives Beispiel für OCP;  jeweils UML der Klasse und Analyse mit Begründung, warum das OCP erfüllt/nicht erfüllt wurde – falls erfüllt: warum hier sinnvoll/welches Problem gab es? Falls nicht erfüllt: wie könnte man es lösen (inkl. UML)?]
@@ -126,11 +132,13 @@ Lösen könnte man dies, indem ein Builder eingeführt wird, die die Objekte ers
 ## Interface-Segreggation Principle
 ### Positiv-Beispiel
 Machbar ist ein Positivbeispiel. Hier werden nur Methoden verlangt, die auch tatsächlich verwendet werden müssen um etwas "Machbar" zu machen. Nämlich das setzen der gemacht-Eigenschaft und das Abfragen dieser, sowie des Benutzers der diese gesetzt hat.
+![Machbar.png](Machbar.png)
+
 ### Negativ-Beispiel
 EventRepository: Read, Create, Update in einem.
 ISP wird nicht erfüllt um einen einziges Interface zum implementieren zu haben, an dass die Datenbanken angebunden werden können ohne verschiedenste Implementationen bieten zu müssen.
 So nutzt EventRead z.B. nur ein Teilset der Methoden, EventCreation ein anderes. Dies wurde bewusst so gemacht, um die Datenbankanbindung an einem einzigen Ort machen zu können.
-
+![EventRepository.png](EventRepository.png)
 
 # Kapitel 4: Weitere Prinzipien
 
@@ -271,10 +279,11 @@ Und es kann verifiziert werden, dass der Schreibzugriff getestet wurde, indem de
 Nur Zeitraum, der einen Zeitraum zwischen einem Date Start und einem Date Ende beschreibt. 
 Wird benötigt um feste Regeln einfacher zu machen, die sonst an vielen Stellen kontrolliert werden müssten (Start muss vor Ende sein)
 Zeitraum ist ein Wert in der Domäne, so Semantik definierbar.
+![Zeitraum.png](Zeitraum.png)
 
 ## Repositories
 [UML, Beschreibung und Begründung des Einsatzes eines Repositories; falls kein Repository vorhanden: ausführliche Begründung, warum es keines geben kann/hier nicht sinnvoll ist]
-Für jedes Aggregat Root Entity in der Domain Schicht wurde eine einzelne Repository erstellt:
+Für jedes Aggregat Root Entity in der Domain Schicht wurde eine einzelne Repository erstellt, damit alle Aggregats unabhängig voneinenader gespeichert werden können:
 ![Repositories.png](Repositories.png)
 
 
@@ -364,6 +373,33 @@ Viele Methoden zum speichern, ändern und lesen, dazu viele Hilfmethoden, die di
 Hier können Verantwortlichkeiten aufgeteilt werden. Durch die Anwendung des Interface Segregation Principles könnte das EventRepsository Interace in mehrere aufgeteilt werden (z.B. in Create, Read, Update und Delete).
 Desweiteren können gemeinsame Methoden (z.B. zum initialisieren der Tabellen) können beispielsweise in Helfer-Klassen ausgelagert werden.
 Durch diesen Vorgang können die vielen Aufgaben und Helfermethoden in mehrere Klassen aufgeteilt werden:
+Nicht:
+```
+public class EventRepositorySQLite implements EventRepository {
+/*
+...
+viele Methoden: save, edit, delete, 
+...
+*/
+}
+```
+Stattdessen:
+```
+public class EventWriteRepositorySQLite implements EventWriteRepository {
+
+//nur save Methoden:
+@Override
+public void saveTermin(Termin termin) throws SaveException{
+//...
+}
+
+public void saveAufgabe(Aufgabe aufgabe) throws SaveException{
+//...
+}
+
+//...
+}
+```
 
 
 ## 2 Refactorings
@@ -446,6 +482,6 @@ Strategie hier eingesetzt, da das Verschieben von verschiedenen Events je nach A
 
 ## Entwurfsmuster: Kommando
 ![Command.png](Command.png)
-Commando ist die Basisklasse für alle Kommandos. ALle Implementationen (in plugin.herkunft.simpleCommandLine.commands) sind konkrete Befehle, hier sind als Beispiel EvenCreate und UserInfo abgebildet.
+Commando ist die Basisklasse für alle Kommandos. Alle Implementationen (in plugin.herkunft.simpleCommandLine.commands) sind konkrete Befehle, hier sind als Beispiel EvenCreate und UserInfo abgebildet.
 Empfänger der Befehle sind die Usecase Klassen des Application Layers. Für UserInfo ist das die Session, für EventCreate sind das EventCreation und HerkunftCreation.
 Der Klient, der die konkreten Befehle erzeugt und Verweise auf die Empfänger gibt ist in dieser Applikation die Main Klasse. Der Klient gibt dem Aufrufer auch die Referenzen auf die konkreten Befehle über eine Befehlsliste.
