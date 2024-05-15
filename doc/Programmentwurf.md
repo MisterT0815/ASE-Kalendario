@@ -110,9 +110,15 @@ Damit ist sie sehr überladen. Dies kann einfach refactored werden, indem die ei
 ## Analyse Open-Closed-Principle (OCP)
 [jeweils eine Klasse als positives und negatives Beispiel für OCP;  jeweils UML der Klasse und Analyse mit Begründung, warum das OCP erfüllt/nicht erfüllt wurde – falls erfüllt: warum hier sinnvoll/welches Problem gab es? Falls nicht erfüllt: wie könnte man es lösen (inkl. UML)?]
 ### Positiv-Beispiel
-SimpleCommandLine: Weitere Commands können ohne weiteres durch das erweitern der Command List des Konstruktors erweitert werden. So ist die CommandLine um weitere Commands erweiterbar ohne Modifikationen am Code der Command List vornehmen zu müssen.
+SimpleCommandLine: Weitere Commands können ohne weiteres durch das erweitern der Command List des Konstruktors erweitert werden. So ist die CommandLine um weitere Commands erweiterbar ohne Modifikationen am Code der SimpleCommandLine vornehmen zu müssen.
+
+![SimpleCommandLine.png](SimpleCommandLine.png)
+
 ### Negativ-Beispiel
-EventCreate ist nicht offen für weitere Subtypen von Events. Stattdessen muss ein neuer Event-Subtyp neue Methoden in der EventCreate Klasse bekommen, damit solche neuen Subtypen durch EventCreate erstellt werden können.
+EventCreation ist nicht offen für weitere Subtypen von Events. Stattdessen muss ein neuer Event-Subtyp neue Methoden in der EventCreation Klasse bekommen, damit solche neuen Subtypen durch EventCreate erstellt werden können.
+![EventCreation.png](EventCreation.png)
+Lösen könnte man dies, indem ein Builder eingeführt wird, die die Objekte erstellt und EventCreation diesen Builder benutzt, um die Eventtypen zu erstellen:
+![EventCreationMitBuilder.png](EventCreationMitBuilder.png)
 
 ## Analyse Liskov-Substitution- (LSP), Interface-Segreggation- (ISP), Dependency-Inversion-Principle (DIP)
 [jeweils eine Klasse als positives und negatives Beispiel für entweder LSP oder ISP oder DIP);  jeweils UML der Klasse und Begründung, warum man hier das Prinzip erfüllt/nicht erfüllt wird]
